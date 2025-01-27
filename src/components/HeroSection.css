@@ -6,8 +6,9 @@ video {
   z-index: -1;
 }
 
+
 .hero-container {
-  /* background: url('/images/img-home.jpg') center center/cover no-repeat; */
+  position: relative; /* Ensure elements stack properly */
   height: 100vh;
   width: 100%;
   display: flex;
@@ -15,30 +16,38 @@ video {
   justify-content: center;
   align-items: center;
   box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.2);
-  object-fit: contain;
 }
 
 .hero-container > h1 {
+  position: relative; /* Ensure it is above the overlay */
   color: #fff;
   font-size: 100px;
   margin-top: -100px;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Add text shadow */
 }
 
 .hero-container > p {
+  position: relative; /* Ensure it is above the overlay */
   margin-top: 8px;
   color: #fff;
   font-size: 32px;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
-    'Lucida Sans', Arial, sans-serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.green {
+  color: #2E7D32;
+}
+
+.orange {
+  color: #C9680D;
 }
 
 .hero-btns {
+  position: relative; /* Ensure buttons are above the overlay */
   margin-top: 32px;
 }
 
-.hero-btns .btn {
-  margin: 6px;
-}
 
 .fa-play-circle {
   margin-left: 4px;

@@ -6,8 +6,12 @@ import './HeroSection.css';
 function HeroSection() {
   return (
     <div className='hero-container'>
+      <div className='hero-overlay'></div> {/* Overlay for background dimming */}
       <video src='/videos/fridge.mp4' autoPlay loop muted />
-      <h1>ADVENTURE AWAITS</h1>
+      <h1>
+        <p className='green'>LESS WASTE</p>
+        <p className='orange'>MORE TASTE</p>
+      </h1>
       <p>What are you waiting for?</p>
       <div className='hero-btns'>
         <Button
@@ -27,8 +31,8 @@ function HeroSection() {
         </Button>
       </div>
     </div>
-    
   );
 }
+
 
 export default HeroSection;

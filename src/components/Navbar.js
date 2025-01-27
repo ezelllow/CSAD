@@ -29,7 +29,7 @@ function Navbar() {
       <nav className='navbar'>
         <div className='navbar-container'>
           <Link to='/' className='navbar-logo' onClick={closeMobileMenu}>
-            HarvestHub
+            <span className='green'>Harvest</span><span className='orange'>Hub</span>
             <img 
               src='/images/harvest.png' 
               alt='HarvestHub Logo' 
@@ -86,7 +86,7 @@ function Navbar() {
             </li>
           </ul>
           {button && <Button buttonStyle='btn--outline'>SIGN UP</Button>}
-          {button && <Button buttonStyle='btn--outline'>Login</Button>}
+          {button && <Button buttonStyle='btn--outline'>LOGIN</Button>}
         </div>
       </nav>
     </>

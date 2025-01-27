@@ -64,11 +64,16 @@ function Footer() {
         <div class='social-media-wrap'>
           <div class='footer-logo'>
             <Link to='/' className='social-logo'>
-              TRVL
-              <i class='fab fa-typo3' />
+            <span className='green'>Harvest</span><span className='orange'>Hub</span>
+              <img 
+              src='/images/harvest.png' 
+              alt='HarvestHub Logo' 
+              className='navbar-logo-image' 
+              style={{ height: '100px', width: 'auto' }} // Adjust size as needed
+            />
             </Link>
           </div>
-          <small class='website-rights'>TRVL © 2020</small>
+          <small class='website-rights'>HarvestHub © 2025</small>
           <div class='social-icons'>
             <Link
               class='social-icon-link facebook'

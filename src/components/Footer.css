@@ -146,6 +146,14 @@
     width: 100%;
   }
 
+  .green {
+    color: #2E7D32;
+  }
+  
+  .orange {
+    color: #C9680D;
+  }
+
   .btn {
     width: 100%;
   }

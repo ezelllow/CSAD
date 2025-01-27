@@ -26,6 +26,17 @@
   border: 1px solid var(--primary);
   transition: all 0.3s ease-out;
 }
+.btn--outline {
+  width: 120px;
+  margin: auto 10px;
+  background-color: transparent;
+  color: #fff;
+  text-wrap: nowrap;
+  padding: 8px 1px;
+  border: 1px solid var(--primary);
+  transition: all 0.3s ease-out;
+}
+
 
 .btn--medium {
   padding: 8px 20px;
