@@ -15,6 +15,63 @@ h1 {
   width: 90%;
   margin: 0 auto;
 }
+/* Back of the card */
+.card-back {
+  width: 300px;
+  height: 400px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden; /* Ensure the blur effect stays within the card's borders */
+  background-size: cover;
+  background-position: center;
+}
+
+/* Isolate the blur effect */
+.card-back::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: inherit; /* Use the same background as the card */
+  filter: blur(5px); /* Apply blur only to the background */
+  z-index: 0; /* Ensure it stays below everything else */
+  border-radius: 10px; /* Match the card's border */
+}
+
+/* Overlay to darken the background */
+.card-back-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1; /* Place the overlay above the blurred background */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Darken the background */
+  color: white;
+  padding: 20px;
+  border-radius: 10px; /* Match the card's shape */
+  text-align: center;
+}
+
+/* Text inside the back overlay */
+.card-back-overlay h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.card-back-overlay p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
 
 .cards__wrapper {
   position: relative;
