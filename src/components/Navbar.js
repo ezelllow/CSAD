@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from './Button';
+import { Link as ScrollLink } from 'react-scroll'; // Import Link from react-scroll
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 
@@ -42,27 +43,37 @@ function Navbar() {
           </div>
           <ul className={click ? 'nav-menu active' : 'nav-menu'}>
             <li className='nav-item'>
-              <Link to='/' className='nav-links' onClick={closeMobileMenu}>
-                Home
-              </Link>
-            </li>
-            <li className='nav-item'>
-              <Link
-                to='/services'
-                className='nav-links'
+              <ScrollLink
+                to="hero-section" // ID of the HeroSection
+                smooth={true}
+                duration={500}
+                className="nav-links"
                 onClick={closeMobileMenu}
               >
-                Services
-              </Link>
+                Home
+              </ScrollLink>
             </li>
             <li className='nav-item'>
-              <Link
-                to='/products'
-                className='nav-links'
+              <ScrollLink
+                to="cards-section" // ID of the Cards section
+                smooth={true}
+                duration={500}
+                className="nav-links"
+                onClick={closeMobileMenu}
+              >
+                Community
+              </ScrollLink>
+            </li>
+            <li className='nav-item'>
+              <ScrollLink
+                to="slider-section" // ID of the Slider section
+                smooth={true}
+                duration={500}
+                className="nav-links"
                 onClick={closeMobileMenu}
               >
                 Products
-              </Link>
+              </ScrollLink>
             </li>
 
             <li>

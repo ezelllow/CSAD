@@ -8,9 +8,15 @@ function Home() {
 
   return (
     <>
-      <HeroSection />
-      <Cards />
-      <Slider />
+      <div id="hero-section"> {/* Add ID here */}
+        <HeroSection />
+      </div>
+      <div id="cards-section"> {/* Add ID here */}
+        <Cards />
+      </div>
+      <div id="slider-section"> {/* Add ID here */}
+        <Slider />
+      </div>
       <Footer />
     </>
   );
