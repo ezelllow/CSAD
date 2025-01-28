@@ -10,10 +10,10 @@ function ContactForm({ setShowForm }) {
 
     emailjs
       .sendForm(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID',
+        'service_0latjzk',
+        'template_3jdv687',
         form.current,
-        'YOUR_PUBLIC_KEY'
+        '7n3dYj_qNQ1mWiG23'
       )
       .then(
         (result) => {
