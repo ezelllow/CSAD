@@ -17,7 +17,7 @@ function Cards() {
     }));
   };
   return (
-    <div className='cards'>
+    <div className='cards' id='cards-section'>
       <h1>Check out our Community Events!</h1>
       <div className='cards__container'>
         <div className='cards__wrapper'>

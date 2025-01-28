@@ -14,7 +14,7 @@ function HeroSection() {
     document.body.removeChild(link);
   };
   return (
-    <div className='hero-container'>
+    <div className='hero-container'id='hero-section'>
       <div className='hero-overlay'></div> {/* Overlay for background dimming */}
       <video src='/videos/fridge.mp4' autoPlay loop muted />
       <h1>

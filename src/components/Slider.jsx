@@ -17,7 +17,7 @@ const images = [
 function Slider() {
   return (
     <div className="swiper-container">
-      <h1 className="app">App Sneak Peak</h1>
+      <h1 className="app" id="slider-section">App Sneak Peak</h1>
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         navigation

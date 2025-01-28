@@ -1,10 +1,32 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from './Button';
-import { Link as ScrollLink } from 'react-scroll'; // Import Link from react-scroll
-import { Link } from 'react-router-dom';
+import { Link as ScrollLink,scroller } from 'react-scroll'; // Correct alias to avoid conflict
 import './Navbar.css';
 
 function Navbar() {
+  const location = useLocation(); // Get current page
+  const navigate = useNavigate(); // For page navigation
+
+  const handleScrollToSection = (section) => {
+    if (location.pathname === '/') {
+      // If already on Home page, scroll smoothly
+      scroller.scrollTo(section, {
+        smooth: true,
+        duration: 800,
+      });
+    } else {
+      // If on another page, navigate to home first, then scroll after load
+      navigate('/');
+      setTimeout(() => {
+        scroller.scrollTo(section, {
+          smooth: true,
+          duration: 800,
+        });
+      }, 500); // Delay to ensure page loads before scrolling
+    }
+  };
+
   const [click, setClick] = useState(false);
   const [button, setButton] = useState(true);
 
@@ -29,7 +51,7 @@ function Navbar() {
     <>
       <nav className='navbar'>
         <div className='navbar-container'>
-          <Link to='/' className='navbar-logo' onClick={closeMobileMenu}>
+          <Link to='/' className='navbar-logo' onClick={() => handleScrollToSection("hero-section")}>
             <span className='green'>Harvest</span><span className='orange'>Hub</span>
             <img 
               src='/images/harvest.png' 
@@ -48,7 +70,7 @@ function Navbar() {
                 smooth={true}
                 duration={500}
                 className="nav-links"
-                onClick={closeMobileMenu}
+                onClick={() => handleScrollToSection("hero-section")}
               >
                 Home
               </ScrollLink>
@@ -59,7 +81,7 @@ function Navbar() {
                 smooth={true}
                 duration={500}
                 className="nav-links"
-                onClick={closeMobileMenu}
+                onClick={() => handleScrollToSection("cards-section")}
               >
                 Community
               </ScrollLink>
@@ -70,12 +92,22 @@ function Navbar() {
                 smooth={true}
                 duration={500}
                 className="nav-links"
-                onClick={closeMobileMenu}
+                onClick={() => handleScrollToSection("slider-section")}
               >
-                Products
+                App
               </ScrollLink>
             </li>
-
+            <li className='nav-item'>
+              <ScrollLink
+                to="contact-us-section" // ID of the HeroSection
+                smooth={true}
+                duration={500}
+                className="nav-links"
+                onClick={() => handleScrollToSection("contact-us-section")}
+              >
+                Contact Us
+              </ScrollLink>
+            </li>
             <li>
               <Link
                 to='/sign-up'
