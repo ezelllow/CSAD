@@ -81,8 +81,8 @@ function Cards() {
               <div className='card' onClick={() => handleFlip('card3')}>
                 <CardItem
                 src='images/3event.jpg'
-                text='Set Sail in the Atlantic Ocean visiting Uncharted Waters'
-                label='Mystery'
+                text='SG Farmers’ Market @ Hillion Mall'
+                label='Community Events'
                 path='/services'
                 />
               </div>
@@ -90,6 +90,7 @@ function Cards() {
                 
                 style={{
                   backgroundImage: `url(images/3event.jpg)`, // Use the same image as the front
+                  
                 }}
 
                 >
@@ -107,8 +108,8 @@ function Cards() {
               <div className='card' onClick={() => handleFlip('card4')}>
                 <CardItem
                 src='images/4event.jpg'
-                text='Experience Football on Top of the Himilayan Mountains'
-                label='Adventure'
+                text='SG Farmers’ Market @ Cairnhill Community Club'
+                label='Community Events'
                 path='/products'
                 />
               </div>

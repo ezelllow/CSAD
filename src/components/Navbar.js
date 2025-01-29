@@ -8,13 +8,47 @@ function Navbar() {
   const location = useLocation(); // Get current page
   const navigate = useNavigate(); // For page navigation
 
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+
+  const openLogin = () => {
+    setShowLogin(true);
+    setShowSignUp(false);
+  };
+
+  const openSignUp = () => {
+    setShowSignUp(true);
+    setShowLogin(false);
+  };
+
+  const closePopup = () => {
+    setShowLogin(false);
+    setShowSignUp(false);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closePopup();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+    
+
   const handleScrollToSection = (section) => {
     if (location.pathname === '/') {
       // If already on Home page, scroll smoothly
-      scroller.scrollTo(section, {
-        smooth: true,
-        duration: 800,
-      });
+      setTimeout(() => {
+        scroller.scrollTo(section, {
+          smooth: true,
+          duration: 800,
+        });
+      }, 500); // Delay to ensure page loads before scrolling
     } else {
       // If on another page, navigate to home first, then scroll after load
       navigate('/');
@@ -122,16 +156,46 @@ function Navbar() {
               <Link
                 to='/sign-up'
                 className='nav-links-mobile'
-                onClick={closeMobileMenu}
+                onClick={closeMobileMenu} 
               >
                 Login
               </Link>
             </li>
           </ul>
-          {button && <Button buttonStyle='btn--outline'>SIGN UP</Button>}
-          {button && <Button buttonStyle='btn--outline'>LOGIN</Button>}
+          {button && <Button buttonStyle='btn--outline' onClick={openSignUp}>SIGN UP</Button>}
+          {button && <Button buttonStyle='btn--outline' onClick={openLogin}>LOGIN</Button>}
         </div>
       </nav>
+      {showLogin && (
+        <div className="popup" onClick={closePopup}>
+          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+            <span className="close-btn" onClick={closePopup}>&times;</span>
+            <h2>Login</h2>
+            <form>
+              <input type="email" placeholder="Email" required />
+              <input type="password" placeholder="Password" required />
+              <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <span onClick={openSignUp} className="popup-link">Sign Up</span></p>
+          </div>
+        </div>
+      )}
+
+      {showSignUp && (
+        <div className="popup" onClick={closePopup}>
+          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+            <span className="close-btn" onClick={closePopup}>&times;</span>
+            <h2>Sign Up</h2>
+            <form>
+              <input type="text" placeholder="Full Name" required />
+              <input type="email" placeholder="Email" required />
+              <input type="password" placeholder="Password" required />
+              <button type="submit">Sign Up</button>
+            </form>
+            <p>Already have an account? <span onClick={openLogin} className="popup-link">Login</span></p>
+          </div>
+        </div>
+      )}
     </>
   );
 }
