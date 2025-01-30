@@ -4,9 +4,7 @@ import './App.css';
 import Home from './pages/Home';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Services from './pages/Services';
-import Products from './pages/Products';
-import Signin from './Signin';       
-import Login from './Login';        
+import Products from './pages/Products';    
 import PrivateRoute from './PrivateRoute';  
 import ForgotPassword from './ForgotPassword';  
 import SignUp from './pages/SignUp'; 
@@ -21,13 +19,11 @@ function App() {
         <Navbar />
         <Routes>
           {/* Public Routes */}
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Home />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
-            <Route path="/" element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />} /> {/* Added */}
             <Route path="/update-profile" element={<UpdateProfile />} /> {/* Added */}
             <Route path="/services" element={<Services />} />
