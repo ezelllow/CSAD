@@ -13,6 +13,10 @@ import { AuthProvider } from '../context/AuthContext';
 import Dashboard from './Dashboard';  
 import UpdateProfile from './UpdateProfile';  
 import Map from './pages/map';
+import Punggol from './pages/locations/Punggol';
+import Bedok from './pages/locations/Bedok';
+import Woodlands from './pages/locations/Woodlands';
+import TeckWhye from './pages/locations/TeckWhye';
 
 function ConditionalNavbar() {
   const location = useLocation();
@@ -37,6 +41,10 @@ function App() {
             <Route path="/services" element={<Services />} />
             <Route path="/products" element={<Products />} />
             <Route path="/map" element={<Map />} />
+            <Route path="/punggol" element={<Punggol />} />
+            <Route path="/bedok" element={<Bedok />} />
+            <Route path="/woodlands" element={<Woodlands />} />
+            <Route path="/teckwhye" element={<TeckWhye />} />
           </Route>
           
           <Route path="/sign-up" element={<SignUp />} />
