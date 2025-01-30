@@ -1,29 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import './Navbar.css';
 import { Button } from './Button';
 import { Link as ScrollLink,scroller } from 'react-scroll'; // Correct alias to avoid conflict
-import './Navbar.css';
+
 
 function Navbar() {
-  const location = useLocation(); // Get current page
-  const navigate = useNavigate(); // For page navigation
-
+  const navigate = useNavigate();
+  const location = useLocation();
+  const auth = getAuth();
   const [showLogin, setShowLogin] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
 
   const openLogin = () => {
     setShowLogin(true);
     setShowSignUp(false);
+    setIsResettingPassword(false);
+    setError('');
   };
 
   const openSignUp = () => {
     setShowSignUp(true);
     setShowLogin(false);
+    setIsResettingPassword(false);
+    setError('');
   };
 
   const closePopup = () => {
     setShowLogin(false);
     setShowSignUp(false);
+    setIsResettingPassword(false);
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    setError('');
   };
 
   useEffect(() => {
@@ -38,9 +54,8 @@ function Navbar() {
     };
   }, []);
 
-    
 
-  const handleScrollToSection = (section) => {
+  /* const handleScrollToSection = (section) => {
     if (location.pathname === '/') {
       // If already on Home page, scroll smoothly
       setTimeout(() => {
@@ -58,6 +73,17 @@ function Navbar() {
           duration: 800,
         });
       }, 500); // Delay to ensure page loads before scrolling
+    }
+  }; */
+
+  const handleScrollToSection = (section) => {
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        scroller.scrollTo(section, { smooth: true, duration: 800 });
+      }, 500);
+    } else {
+      scroller.scrollTo(section, { smooth: true, duration: 800 });
     }
   };
 
@@ -79,24 +105,75 @@ function Navbar() {
     showButton();
   }, []);
 
-  window.addEventListener('resize', showButton);
+  //window.addEventListener('resize', showButton);
+  useEffect(() => {
+    const handleResize = () => showButton();
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert('Login successful!');
+      closePopup();
+      navigate('/dashboard');  // Redirect to dashboard
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert('Account created successfully!');
+      closePopup();
+      navigate('/dashboard');  // Redirect to dashboard
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email) {
+      setError('Please enter your email to reset your password');
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      alert('Password reset email sent! Check your inbox.');
+      closePopup();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
     <>
-      <nav className='navbar'>
-        <div className='navbar-container'>
-          <Link to='/' className='navbar-logo' onClick={() => handleScrollToSection("hero-section")}>
-            <span className='green'>Harvest</span><span className='orange'>Hub</span>
-            <img 
+    <nav className="navbar">
+      <div className="navbar-container">
+        <Link to="/" className="navbar-logo">
+          <span className="green">Harvest</span><span className="orange">Hub</span>
+          <img 
               src='/images/harvest.png' 
               alt='HarvestHub Logo' 
               className='navbar-logo-image' 
               style={{ height: '100px', width: 'auto' }} // Adjust size as needed
             />
-          </Link>
-          <div className='menu-icon' onClick={handleClick}>
+        </Link>
+
+        <div className='menu-icon' onClick={handleClick}>
             <i className={click ? 'fas fa-times' : 'fas fa-bars'} />
-          </div>
+        </div>
           <ul className={click ? 'nav-menu active' : 'nav-menu'}>
             <li className='nav-item'>
               <ScrollLink
@@ -162,41 +239,53 @@ function Navbar() {
               </Link>
             </li>
           </ul>
-          {button && <Button buttonStyle='btn--outline' onClick={openSignUp}>SIGN UP</Button>}
-          {button && <Button buttonStyle='btn--outline' onClick={openLogin}>LOGIN</Button>}
-        </div>
-      </nav>
-      {showLogin && (
-        <div className="popup" onClick={closePopup}>
-          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-            <span className="close-btn" onClick={closePopup}>&times;</span>
-            <h2>Login</h2>
-            <form>
-              <input type="email" placeholder="Email" required />
-              <input type="password" placeholder="Password" required />
-              <button type="submit">Login</button>
-            </form>
-            <p>Don't have an account? <span onClick={openSignUp} className="popup-link">Sign Up</span></p>
+          {button && !isResettingPassword && <Button buttonStyle='btn--outline' onClick={openSignUp}>SIGN UP</Button>}
+          {button && !isResettingPassword && <Button buttonStyle='btn--outline' onClick={openLogin}>LOGIN</Button>}
+      </div>  
+    </nav>
+
+        {showLogin && (
+          <div className="popup" onClick={closePopup}>
+            <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+              <span className="close-btn" onClick={closePopup}>&times;</span>
+              {!isResettingPassword &&<h2>Login</h2>}
+              {error && <p className="error">{error}</p>}
+              <form onSubmit={handleLogin}>
+              <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              {!isResettingPassword && (
+                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              )}
+              {!isResettingPassword && <button type="submit">Login</button>}
+              </form>
+            {!isResettingPassword ? (
+              <p><span onClick={() => setIsResettingPassword(true)} className="popup-link">Forgot Password?</span></p>
+            ) : (
+              <button onClick={handlePasswordReset} className="reset-button">Reset Password</button>
+            )}
+            {!isResettingPassword && <p>Don't have an account? <span onClick={openSignUp} className="popup-link">Sign Up</span></p>}
           </div>
         </div>
       )}
 
-      {showSignUp && (
-        <div className="popup" onClick={closePopup}>
-          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-            <span className="close-btn" onClick={closePopup}>&times;</span>
-            <h2>Sign Up</h2>
-            <form>
-              <input type="text" placeholder="Full Name" required />
-              <input type="email" placeholder="Email" required />
-              <input type="password" placeholder="Password" required />
-              <button type="submit">Sign Up</button>
-            </form>
-            <p>Already have an account? <span onClick={openLogin} className="popup-link">Login</span></p>
+        {showSignUp && (
+          <div className="popup" onClick={closePopup}>
+            <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+              <span className="close-btn" onClick={closePopup}>&times;</span>
+              <h2>Sign Up</h2>
+              {error && <p className="error">{error}</p>}
+              <form onSubmit={handleSignUp}>
+                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                <button type="submit">Sign Up</button>
+              </form>
+              <p>Already have an account? <span onClick={openLogin} className="popup-link">Login</span></p>
+            </div>
           </div>
-        </div>
-      )}
-    </>
+        )}
+
+    </>  
+      
   );
 }
 

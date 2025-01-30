@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client'; // Updated import for React 18
-import App from './App';
+import App from './components/App';
+
 
 // Create a root using ReactDOM.createRoot
 const root = ReactDOM.createRoot(document.getElementById('root'));
