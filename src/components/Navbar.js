@@ -55,36 +55,11 @@ function Navbar() {
   }, []);
 
 
-  /* const handleScrollToSection = (section) => {
-    if (location.pathname === '/') {
-      // If already on Home page, scroll smoothly
-      setTimeout(() => {
-        scroller.scrollTo(section, {
-          smooth: true,
-          duration: 800,
-        });
-      }, 500); // Delay to ensure page loads before scrolling
-    } else {
-      // If on another page, navigate to home first, then scroll after load
-      navigate('/');
-      setTimeout(() => {
-        scroller.scrollTo(section, {
-          smooth: true,
-          duration: 800,
-        });
-      }, 500); // Delay to ensure page loads before scrolling
-    }
-  }; */
-
   const handleScrollToSection = (section) => {
     if (location.pathname !== '/') {
       navigate('/');
-      setTimeout(() => {
-        scroller.scrollTo(section, { smooth: true, duration: 800 });
-      }, 500);
-    } else {
       scroller.scrollTo(section, { smooth: true, duration: 800 });
-    }
+    } 
   };
 
   const [click, setClick] = useState(false);
