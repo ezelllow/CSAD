@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Navbar.css';
+import './homeNavbar.css';
 
 
 
@@ -15,6 +15,10 @@ function Navbar() {
     <>
       <nav className='navbar'>
         <div className='navbar-container'>
+          {/* Profile Button (Left Side) */}
+          <Link to="/dashboard" className="profile-button">
+            <img src="/images/profile-placeholder.png" alt="Profile" className="profile-icon" />
+          </Link>
           <Link to='/homePage' className='navbar-logo'>
             <span className='green'>Harvest</span><span className='orange'>Hub</span>
             <img 

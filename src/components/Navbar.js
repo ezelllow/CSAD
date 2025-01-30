@@ -96,7 +96,7 @@ function Navbar() {
       await signInWithEmailAndPassword(auth, email, password);
       alert('Login successful!');
       closePopup();
-      navigate('/dashboard');  // Redirect to dashboard
+      navigate('/homePage');  // Redirect to dashboard
     } catch (err) {
       setError(err.message);
     }
@@ -112,7 +112,7 @@ function Navbar() {
       await createUserWithEmailAndPassword(auth, email, password);
       alert('Account created successfully!');
       closePopup();
-      navigate('/dashboard');  // Redirect to dashboard
+      navigate('/homePage');  // Redirect to dashboard
     } catch (err) {
       setError(err.message);
     }
