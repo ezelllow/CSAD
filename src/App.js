@@ -7,6 +7,7 @@ import Home from './components/pages/Home';
 import HomePage from './components/pages/homePage';
 import Products from './components/pages/Products';
 import SignUp from './components/pages/SignUp';
+import Map from './components/pages/map';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/homePage" element={<HomePage />} />
+        <Route path="/map" element={<Map />} />
         <Route path="/products" element={<Products />} />
         <Route path="/sign-up" element={<SignUp />} />
       </Routes>
@@ -26,11 +28,11 @@ function App() {
 function ConditionalNavbar() {
   const location = useLocation(); // Get current route
 
-  if (location.pathname === '/homePage') {
-    return <HomePageNavbar />; // Show a different navbar for homePage
+  if (location.pathname === '/') {
+    return <Navbar />; // Show a different navbar for homePage
   }
 
-  return <Navbar />; // Show the default navbar for other pages
+  return <HomePageNavbar />; // Show the default navbar for other pages
 }
 
 export default App;
