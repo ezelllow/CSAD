@@ -1,260 +1,57 @@
-.navbar {
-    background: linear-gradient(90deg, rgb(28, 27, 27) 0%, rgb(26, 23, 23) 100%);
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2rem;
-    position: sticky;
-    top: 0;
-    z-index: 999;
-  }
-  /* Profile Button (Left Side) */
-.profile-button {
-    position: absolute;
-    left: 20px;
-    top: 15px;
-    cursor: pointer;
-  }
-  
-  .profile-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
-    transition: transform 0.2s ease-in-out;
-  }
-  
-  .profile-icon:hover {
-    transform: scale(1.1);
-  }
-  
-  /* Popup Background */
-  .popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  /* Popup Content */
-  .popup-content {
-    background: white;
-    padding: 20px;
-    width: 350px;
-    text-align: center;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-  }
-  
-  /* Close Button */
-  .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-  
-  /* Form Styles */
-  .popup-content form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .popup-content input {
-    padding: 10px;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  /* Button */
-  .popup-content button {
-    background: #2E7D32;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-  }
-  
-  .popup-content button:hover {
-    background: #27672A;
-  }
-  
-  /* Link to switch between login/signup */
-  .popup-link {
-    color: #C9680D;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .popup-link:hover {
-    text-decoration: underline;
-  }
-  
-  
-  .navbar-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80px;
-    max-width: 1500px;
-  }
-  
-  .navbar-logo {
-    color: #fff;
-    justify-self: start;
-    margin-left: 20px;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 2rem;
-    display: flex;
-    align-items: center;
-  }
-  
-  .fa-typo3 {
-    margin-left: 0.5rem;
-    font-size: 1.8rem;
-  }
-  
-  .nav-menu {
-    display: grid;
-    grid-template-columns: repeat(4, auto);
-    grid-gap: 10px;
-    list-style: none;
-    text-align: center;
-    width: 60vw;
-    justify-content: end;
-    margin-right: 2rem;
-  }
-  
-  .nav-item {
-    height: 80px;
-  }
-  
-  .nav-links {
-    color: #fff;
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    height: 100%;
-  }
-  
-  .nav-links:hover {
-    border-bottom: 4px solid #fff;
-    transition: all 0.2s ease-out;
-  }
-  
-  .fa-bars {
-    color: #fff;
-  }
-  
-  .nav-links-mobile {
-    display: none;
-  }
-  
-  .menu-icon {
-    display: none;
-  }
-  
-  @media screen and (max-width: 960px) {
-    .NavbarItems {
-      position: relative;
-    }
-  
-    .nav-menu {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      height: 90vh;
-      position: absolute;
-      top: 80px;
-      left: -100%;
-      opacity: 1;
-      transition: all 0.5s ease;
-    }
-  
-    .nav-menu.active {
-      background: #242222;
-      left: 0;
-      opacity: 1;
-      transition: all 0.5s ease;
-      z-index: 1;
-    }
-  
-    .nav-links {
-      text-align: center;
-      padding: 2rem;
-      width: 100%;
-      display: table;
-    }
-    .green {
-      color: #2E7D32;
-    }
-    
-    .orange {
-      color: #C9680D;
-    }
-  
-    .nav-links:hover {
-      background-color: #fff;
-      color: #242424;
-      border-radius: 0;
-    }
-  
-    .navbar-logo {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform: translate(25%, 50%);
-    }
-  
-    .menu-icon {
-      display: block;
-      position: absolute;
-      top: 0;
-      right: 0;
-      transform: translate(-100%, 60%);
-      font-size: 1.8rem;
-      cursor: pointer;
-    }
-  
-    .fa-times {
-      color: #fff;
-      font-size: 2rem;
-    }
-  
-    .nav-links-mobile {
-      display: table;
-      text-align: center;
-      margin: 2rem auto;
-      border-radius: 4px;
-      width: 80%;
-      text-decoration: none;
-      font-size: 1.5rem;
-      background-color: transparent;
-      color: #fff;
-      padding: 14px 20px;
-      border: 1px solid #fff;
-      transition: all 0.3s ease-out;
-    }
-  
-    .nav-links-mobile:hover {
-      background: #fff;
-      color: #242424;
-      transition: 250ms;
-    }
-  }
-  
+/* Navbar Profile Section */
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  position: absolute;
+  left: 20px;
+  top: 15px;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  transition: transform 0.2s ease-in-out;
+}
+
+.profile-icon:hover {
+  transform: scale(1.1);
+}
+
+.profile-name {
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Profile Dropdown */
+.profile-dropdown {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  background: white;
+  width: 160px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+
+.profile-dropdown-item {
+  padding: 10px;
+  color: black;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.profile-dropdown-item:hover {
+  background: #f1f1f1;
+}
