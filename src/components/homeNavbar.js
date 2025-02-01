@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth, database } from '../firebase'; // Import Firebase auth and database
 import { ref, get } from 'firebase/database'; // Import database functions
 import './homeNavbar.css';
@@ -8,7 +8,7 @@ function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [username, setUsername] = useState(''); // State to store username
   const profileRef = useRef(null); // Reference for dropdown
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsername = async () => {
@@ -29,6 +29,15 @@ function Navbar() {
 
   const toggleProfile = () => {
     setProfileOpen(!profileOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigate('/'); // Redirect to home or login page after logout
+    } catch (error) {
+      console.error("Logout Error: ", error.message);
+    }
   };
 
   // Function to close dropdown when clicking outside
@@ -62,9 +71,9 @@ function Navbar() {
             {/* Profile Dropdown */}
             {profileOpen && (
               <div className="profile-dropdown">
-                <Link to="/dashboard" className="profile-dropdown-item">View Profile</Link>
+                <Link to="/profile" className="profile-dropdown-item">View Profile</Link>
                 <Link to="/settings" className="profile-dropdown-item">Settings</Link>
-                <Link to="/logout" className="profile-dropdown-item">Logout</Link>
+                <button className="profile-dropdown-item logout-button" onClick={handleLogout}>Logout</button>
               </div>
             )}
           </div>

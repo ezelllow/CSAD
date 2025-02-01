@@ -10,7 +10,7 @@ import PrivateRoute from './PrivateRoute';
 import ForgotPassword from './ForgotPassword';  
 import SignUp from './pages/SignUp'; 
 import { AuthProvider } from '../context/AuthContext';  
-import Dashboard from './Dashboard';  
+import Profile from './profile';  
 import UpdateProfile from './UpdateProfile';  
 import Map from './pages/map';
 import Punggol from './pages/locations/Punggol';
@@ -36,7 +36,7 @@ function App() {
           {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
             <Route path="/homePage" element={<HomePage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/update-profile" element={<UpdateProfile />} />
             <Route path="/services" element={<Services />} />
             <Route path="/products" element={<Products />} />

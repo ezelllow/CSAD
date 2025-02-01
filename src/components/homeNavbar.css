@@ -55,3 +55,15 @@
 .profile-dropdown-item:hover {
   background: #f1f1f1;
 }
+.logout-button {
+  background: none;
+  border: none;
+  color: #ff4b5c;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.logout-button:hover {
+  color: #d43f4b;
+}
