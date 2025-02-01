@@ -11,8 +11,16 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  function signup(email, password) {
-    return auth.createUserWithEmailAndPassword(email, password);  //creates user with the parameters
+  function signup(email, password, username) {
+    return auth.createUserWithEmailAndPassword(email, password)  //creates user with the parameters
+    .then((userCredential) => {
+      const user = userCredential.user;
+
+      // Capture username but don't save it to Firebase yet
+      console.log(username); // Just log for now, to confirm it's working
+      
+      return userCredential;
+    });
   }
 
   function login(email, password) {

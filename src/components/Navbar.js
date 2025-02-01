@@ -4,6 +4,8 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, se
 import './Navbar.css';
 import { Button } from './Button';
 import { Link as ScrollLink,scroller } from 'react-scroll'; // Correct alias to avoid conflict
+import { database } from '../firebase';
+import { set, ref } from "firebase/database";  //new
 
 
 function Navbar() {
@@ -17,6 +19,8 @@ function Navbar() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [username, setUsername] = useState('');
+
 
   const openLogin = () => {
     setShowLogin(true);
@@ -109,7 +113,17 @@ function Navbar() {
       return;
     }
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);  //new
+      const user = userCredential.user; //new
+      //await createUserWithEmailAndPassword(auth, email, password);
+       // Save username to Realtime Database
+       await set(ref(database, "Users/" + user.uid), {
+        email: email,
+        role: "Seller", // Adjust based on logic if needed
+        username: username
+      });
+
       alert('Account created successfully!');
       closePopup();
       navigate('/homePage');  // Redirect to dashboard
@@ -249,6 +263,7 @@ function Navbar() {
               <h2>Sign Up</h2>
               {error && <p className="error">{error}</p>}
               <form onSubmit={handleSignUp}>
+                <input type="text" placeholder="Enter username" value={username} onChange={(e) => setUsername(e.target.value)} required/>
                 <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />

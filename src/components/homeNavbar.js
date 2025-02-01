@@ -1,10 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { auth, database } from '../firebase'; // Import Firebase auth and database
+import { ref, get } from 'firebase/database'; // Import database functions
 import './homeNavbar.css';
 
 function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
+  const [username, setUsername] = useState(''); // State to store username
   const profileRef = useRef(null); // Reference for dropdown
+
+
+  useEffect(() => {
+    const fetchUsername = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = ref(database, `Users/${user.uid}/username`);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          setUsername(snapshot.val()); // Set username from database
+        } else {
+          setUsername('User'); // Fallback username
+        }
+      }
+    };
+
+    fetchUsername();
+  }, []);
 
   const toggleProfile = () => {
     setProfileOpen(!profileOpen);
@@ -36,7 +57,7 @@ function Navbar() {
               alt="Profile" 
               className="profile-icon" 
             />
-            <span className="profile-name">Ezell</span>
+            <span className="profile-name">{username}</span>
 
             {/* Profile Dropdown */}
             {profileOpen && (

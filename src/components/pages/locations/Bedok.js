@@ -1,10 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { database, auth } from '../../../firebase';
+import { ref, get, push, onValue, off } from 'firebase/database';
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+  const [username, setUsername] = useState('Anonymous');
   const user = auth.currentUser;
+
+  // Fetch user's username from Firebase Realtime Database
+  useEffect(() => {
+    const fetchUsername = async () => {
+      if (user) {
+        const userRef = ref(database, `Users/${user.uid}/username`);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          setUsername(snapshot.val()); // Store username from database
+        }
+      }
+    };
+
+    fetchUsername();
+  }, [user]);
 
   // Fetch messages from Firebase Realtime Database
   useEffect(() => {
@@ -27,7 +44,7 @@ const Chat = () => {
       const chatRef = database.ref('chats/chat_room_1/messages');
       const newMessage = {
         senderId: user.uid,
-        username: user.displayName || 'Anonymous',
+        username,
         message,
         timestamp: Date.now(),
       };
