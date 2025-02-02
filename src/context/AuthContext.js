@@ -18,6 +18,21 @@ export function AuthProvider({ children }) {
     .then((userCredential) => {
       const user = userCredential.user;
       
+      const initialAnalytics = {
+        views: Array(7).fill().map((_, i) => ({
+          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          count: 0
+        })).reverse(),
+        likes: Array(7).fill().map((_, i) => ({
+          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          count: 0
+        })).reverse(),
+        interactions: Array(7).fill().map((_, i) => ({
+          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          count: 0
+        })).reverse()
+      };
+
       // Save user data including role to database
       return database.ref(`Users/${user.uid}`).set({
         username: username,
@@ -26,7 +41,8 @@ export function AuthProvider({ children }) {
         stats: {
           rating: 0,
           totalLikes: 0
-        }
+        },
+        analytics: initialAnalytics
       }).then(() => {
         console.log('User data saved with role:', role); // Debug log
         return userCredential;
