@@ -1,131 +1,177 @@
-/* Navbar Profile Section */
+.navbar {
+  background: #242424;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  height: 80px;
+  width: 100%;
+  max-width: 1800px;
+  padding: 0;
+  position: relative;
+}
+
+/* Profile section */
 .profile-section {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   cursor: pointer;
   position: absolute;
-  left: 20px;
-  top: 15px;
+  left: 0;
+  padding-left: 30px;
 }
 
 .profile-icon {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  object-fit: cover;
   border: 2px solid white;
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease;
 }
 
 .profile-icon:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .profile-name {
   color: white;
   font-size: 1rem;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* Logo section */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-size: 2.2rem;
+  margin-left: 280px;
   font-weight: bold;
 }
 
-/* Profile Dropdown */
-.profile-dropdown {
-  position: absolute;
-  top: 60px;
-  left: 10px;
-  background: white;
-  width: 160px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  padding: 10px 0;
-  display: flex;
-  flex-direction: column;
-  z-index: 1000;
+.navbar-logo-image {
+  height: 55px;
+  margin-left: 0.8rem;
+  transition: transform 0.2s ease;
 }
 
-.profile-dropdown-item {
-  display: block;
-  padding: 10px 15px;
-  color: #333;
-  text-decoration: none;
-  transition: background-color 0.2s;
-  width: 100%;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: inherit;
+.navbar-logo:hover .navbar-logo-image {
+  transform: scale(1.05);
 }
 
-.profile-dropdown-item:hover {
-  background-color: #f5f5f5;
-}
-
-/* Add these styles for the nav-menu */
+/* Navigation menu */
 .nav-menu {
   display: flex;
   align-items: center;
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 20px; /* Adds consistent spacing between nav items */
+  margin-left: auto;
+  padding-right: 50px;
+  gap: 3rem;
 }
 
 .nav-item {
+  height: 80px;
   display: flex;
   align-items: center;
-  height: 100%;
 }
 
 .nav-links {
   color: #fff;
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  height: 100%;
+  padding: 0.6rem 1.2rem;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-radius: 4px;
 }
 
-/* Update the dashboard link styles */
-.nav-item .nav-links[href="/seller-dashboard"] {
-  color: #2E7D32;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  margin: 0;
-  height: 100%;
-  display: flex;
-  align-items: center;
+.nav-links:hover {
+  color: #4CAF50;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Update the navbar container */
-.navbar-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80px;
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: 0 20px;
+/* Colors with slightly adjusted shades */
+.green {
+  color: #45b649;
 }
 
-/* Ensure all nav items are centered vertically */
-.nav-menu {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  margin-left: auto;
+.orange {
+  color: #ff9f43;
+}
+
+/* Dashboard link */
+.nav-links[href="/seller-dashboard"] {
+  color: #45b649;
+  font-weight: 600;
+  background-color: rgba(69, 182, 73, 0.1);
+}
+
+.nav-links[href="/seller-dashboard"]:hover {
+  background-color: rgba(69, 182, 73, 0.2);
+}
+
+/* Dropdown styles */
+.profile-dropdown {
+  position: absolute;
+  top: 75px;
+  left: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  min-width: 220px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.profile-dropdown-item {
+  display: block;
+  padding: 12px 24px;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.profile-dropdown-item:hover {
+  background-color: #f5f5f5;
+  color: #45b649;
 }
 
 .logout-button {
+  width: 100%;
+  text-align: left;
   background: none;
   border: none;
+  padding: 12px 24px;
   color: #ff4b5c;
   cursor: pointer;
-  text-align: left;
-  width: 100%;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
 }
 
 .logout-button:hover {
-  color: #d43f4b;
+  background-color: #fff1f3;
+}
+
+/* Footer section */
+.footer-section {
+  margin-top: auto;
+  padding: 2rem 0;
+  background: #242424;
+  color: white;
 }

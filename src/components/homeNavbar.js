@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { auth, database } from '../firebase';
 import { ref, get } from 'firebase/database';
@@ -10,7 +10,6 @@ function Navbar() {
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
   const profileRef = useRef(null);
-  const navigate = useNavigate();
   const { logout } = useAuth();
 
   useEffect(() => {
@@ -53,7 +52,6 @@ function Navbar() {
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/');
     } catch (error) {
       console.error('Failed to log out:', error);
     }
@@ -63,6 +61,7 @@ function Navbar() {
     <>
       <nav className='navbar'>
         <div className='navbar-container'>
+          {/* Profile Section */}
           <div className="profile-section" ref={profileRef} onClick={toggleProfile}>
             <img 
               src="./pfp.png" 
@@ -70,7 +69,6 @@ function Navbar() {
               className="profile-icon" 
             />
             <span className="profile-name">{username}</span>
-
             {profileOpen && (
               <div className="profile-dropdown">
                 <Link to="/profile" className="profile-dropdown-item">View Profile</Link>
@@ -80,30 +78,46 @@ function Navbar() {
                   </Link>
                 )}
                 <Link to="/settings" className="profile-dropdown-item">Settings</Link>
-                <button className="profile-dropdown-item logout-button" onClick={handleLogout}>Logout</button>
+                <button className="profile-dropdown-item logout-button" onClick={handleLogout}>
+                  Logout
+                </button>
               </div>
             )}
           </div>
 
+          {/* Logo */}
           <Link to='/homePage' className='navbar-logo'>
-            <span className='green'>Harvest</span><span className='orange'>Hub</span>
+            <span className='green'>Harvest</span>
+            <span className='orange'>Hub</span>
             <img 
               src='/images/harvest.png' 
               alt='HarvestHub Logo' 
-              className='navbar-logo-image' 
-              style={{ height: '100px', width: 'auto' }} 
+              className='navbar-logo-image'
             />
           </Link>
 
+          {/* Navigation Menu */}
           <ul className="nav-menu">
-            <li className='nav-item'><Link to="/map" className="nav-links">Map</Link></li>
             <li className='nav-item'>
-              <Link to={role === 'Seller' ? "/bannoun" : "/uannouncements"} className="nav-links">
+              <Link to="/map" className="nav-links">Map</Link>
+            </li>
+            <li className='nav-item'>
+              <Link 
+                to={role === 'Seller' ? "/bannoun" : "/uannouncements"} 
+                className="nav-links"
+              >
                 Announcements
               </Link>
             </li>
-            <li className='nav-item'><Link to="/calendar" className="nav-links">Calendar</Link></li>
-            <li className='nav-item'><Link to="/socials" className="nav-links">Socials</Link></li>
+            <li className='nav-item'>
+              <Link to="/calendar" className="nav-links">Calendar</Link>
+            </li>
+            <li className='nav-item'>
+              <Link to="/forums" className="nav-links">Forums</Link>
+            </li>
+            <li className='nav-item'>
+              <Link to="/socials" className="nav-links">Socials</Link>
+            </li>
             {role === 'Seller' && (
               <li className='nav-item'>
                 <Link to="/seller-dashboard" className="nav-links">Dashboard</Link>
@@ -112,6 +126,9 @@ function Navbar() {
           </ul>
         </div>
       </nav>
+      
+      {/* Add placeholders for spacing */}
+      <div className="nav-placeholder"></div>
     </>
   );
 }

@@ -1,0 +1,41 @@
+.swiper-container {
+  width: 80%;
+  margin: 2rem auto;
+  
+}
+
+.app{
+
+  background-color: rgba(255, 253, 253, 0.7); 
+  
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5rem; /* Make the text larger */
+  margin-bottom: 1.5rem; /* Add spacing below the text */
+  font-weight: bold;
+  color: #333; /* Adjust color for better visibility */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a subtle shadow */
+}
+
+
+.slider-image {
+  width: 80%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: black;
+}
+
+.swiper-pagination-bullet {
+  background: black;
+}
+
+.swiper-pagination-bullet-active {
+  background: gray;
+}
