@@ -1,0 +1,88 @@
+/* Import existing hero styles */
+.content-section {
+  padding: 4rem 0;
+  background: #f9f9f9;
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.section-container h2 {
+  color: #2E7D32;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.food-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.food-card:hover {
+  transform: translateY(-5px);
+}
+
+.food-card h3 {
+  color: #2E7D32;
+  margin-bottom: 0.5rem;
+}
+
+.food-card p {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.location {
+  display: inline-block;
+  background: #C9680D;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+}
+
+/* Add custom button styles */
+.btn {
+  padding: 12px 24px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 25px;
+  background: #2E7D32;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background: #1B5E20;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .section-container {
+    padding: 0 1rem;
+  }
+  
+  .section-container h2 {
+    font-size: 2rem;
+  }
+  
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+} 

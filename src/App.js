@@ -1,27 +1,18 @@
-import React from 'react';
-import Navbar from './components/Navbar';
-import './App.css';
-import Home from './components/pages/Home';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Use Routes instead of Switch
-import Services from './components/pages/Services';
-import Products from './components/pages/Products';
-import SignUp from './components/pages/SignUp';
+import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import HomePage from './components/HomePage';
+import Home from './components/Home';
 
 function App() {
   return (
-    <>
-      <Router>
-        <Navbar/>
-        <Routes>
-          {/* Use element prop with JSX */}
-          <Route path="/" element={<Home />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/sign-up" element={<SignUp />} />
-        </Routes>
-      </Router>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/homePage" element={<HomePage />} />
+        {/* Other routes */}
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-export default App;
+export default App; 
