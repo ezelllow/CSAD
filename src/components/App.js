@@ -5,7 +5,9 @@ import HomeNavbar from './homeNavbar'; // Navbar for all other pages
 import Home from './pages/Home';
 import HomePage from './pages/homePage';
 import Services from './pages/Services';
-import Products from './pages/Products';    
+import Products from './pages/Products'; 
+import Bannoun from './pages/Bannoun'; 
+import Uannouncements from './pages/Uannouncements';           
 import PrivateRoute from './PrivateRoute';  
 import ForgotPassword from './ForgotPassword';  
 import SignUp from './pages/SignUp'; 
@@ -17,6 +19,7 @@ import Punggol from './pages/locations/Punggol';
 import Bedok from './pages/locations/Bedok';
 import Woodlands from './pages/locations/Woodlands';
 import TeckWhye from './pages/locations/TeckWhye';
+
 
 function ConditionalNavbar() {
   const location = useLocation();
@@ -45,6 +48,9 @@ function App() {
             <Route path="/bedok" element={<Bedok />} />
             <Route path="/woodlands" element={<Woodlands />} />
             <Route path="/teckwhye" element={<TeckWhye />} />
+            <Route path="/uannouncements" element={<Uannouncements />} />
+            <Route path="/bannoun" element={<Bannoun />} />
+
           </Route>
           
           <Route path="/sign-up" element={<SignUp />} />

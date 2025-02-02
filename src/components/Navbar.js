@@ -20,6 +20,13 @@ function Navbar() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [username, setUsername] = useState('');
+  const [role, setRole] = useState('User');  // Default role is User
+
+
+  // Handle the role selection change
+  const handleRoleChange = (e) => {
+    setRole(e.target.value);
+  };
 
 
   const openLogin = () => {
@@ -116,11 +123,10 @@ function Navbar() {
 
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);  //new
       const user = userCredential.user; //new
-      //await createUserWithEmailAndPassword(auth, email, password);
        // Save username to Realtime Database
        await set(ref(database, "Users/" + user.uid), {
         email: email,
-        role: "Seller", // Adjust based on logic if needed
+        role: role, // Store the selected role here
         username: username
       });
 
@@ -267,6 +273,13 @@ function Navbar() {
                 <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+
+                {/* Add Role selection */}
+                <label>Select Role:</label>
+                <select value={role} onChange={handleRoleChange} required>
+                  <option value="User">User</option>
+                  <option value="Seller">Seller</option>
+                </select>
                 <button type="submit">Sign Up</button>
               </form>
               <p>Already have an account? <span onClick={openLogin} className="popup-link">Login</span></p>

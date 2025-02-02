@@ -7,10 +7,11 @@ import './homeNavbar.css';
 function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [username, setUsername] = useState(''); // State to store username
+  const [role, setRole] = useState(''); // State to store user role
   const profileRef = useRef(null); // Reference for dropdown
   const navigate = useNavigate();
 
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchUsername = async () => {
       const user = auth.currentUser;
       if (user) {
@@ -25,6 +26,23 @@ function Navbar() {
     };
 
     fetchUsername();
+  }, []); */
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = ref(database, `Users/${user.uid}`);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          setUsername(userData.username || 'User');
+          setRole(userData.role || 'User'); // Default role as 'user'
+        }
+      }
+    };
+
+    fetchUserData();
   }, []);
 
   const toggleProfile = () => {
@@ -90,7 +108,11 @@ function Navbar() {
 
           <ul className="nav-menu">
             <li className='nav-item'><Link to="/map" className="nav-links">Map</Link></li>
-            <li className='nav-item'><Link to="/announcements" className="nav-links">Announcements</Link></li>
+            <li className='nav-item'>
+              <Link to={role === 'Seller' ? "/bannoun" : "/uannouncements"} className="nav-links">
+                Announcements
+              </Link>
+            </li>
             <li className='nav-item'><Link to="/calendar" className="nav-links">Calendar</Link></li>
             <li className='nav-item'><Link to="/socials" className="nav-links">Socials</Link></li>
           </ul>
