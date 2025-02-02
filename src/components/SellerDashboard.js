@@ -14,6 +14,10 @@ export default function SellerDashboard() {
     location: '',
     expiryDate: ''
   });
+  const [stats, setStats] = useState({
+    rating: 0,
+    totalLikes: 0
+  });
 
   useEffect(() => {
     // Fetch seller's listings
@@ -28,7 +32,25 @@ export default function SellerDashboard() {
       }
     });
 
-    return () => listingsRef.off();
+    // Fetch seller stats
+    const statsRef = database.ref(`Users/${currentUser.uid}/stats`);
+    statsRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setStats(data);
+      } else {
+        // Initialize stats if they don't exist
+        database.ref(`Users/${currentUser.uid}/stats`).set({
+          rating: 0,
+          totalLikes: 0
+        });
+      }
+    });
+
+    return () => {
+      listingsRef.off();
+      database.ref(`Users/${currentUser.uid}/stats`).off();
+    };
   }, [currentUser]);
 
   const handleEdit = (listingId) => {
@@ -94,8 +116,18 @@ export default function SellerDashboard() {
             <p>{listings.filter(l => l.status === 'available').length}</p>
           </div>
           <div className="stat-card">
-            <h3>Total Rescued</h3>
-            <p>{listings.filter(l => l.status === 'claimed').length}</p>
+            <h3>Rating</h3>
+            <p>
+              <span className="rating-stars">{'★'.repeat(Math.round(stats.rating))}</span>
+              <span className="rating-number">({stats.rating.toFixed(1)})</span>
+            </p>
+          </div>
+          <div className="stat-card">
+            <h3>Total Likes</h3>
+            <p>
+              <span className="likes-icon">♥</span>
+              <span className="likes-number">{stats.totalLikes}</span>
+            </p>
           </div>
         </div>
       </div>

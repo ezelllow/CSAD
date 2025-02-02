@@ -12,7 +12,8 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  function signup(email, password, username) {
+  function signup(email, password, username, role) {
+    console.log('Signing up with role:', role); // Debug log
     return auth.createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
       const user = userCredential.user;
@@ -21,7 +22,14 @@ export function AuthProvider({ children }) {
       return database.ref(`Users/${user.uid}`).set({
         username: username,
         email: email,
-        role: 'user' // Default role
+        role: role,
+        stats: {
+          rating: 0,
+          totalLikes: 0
+        }
+      }).then(() => {
+        console.log('User data saved with role:', role); // Debug log
+        return userCredential;
       });
     });
   }
@@ -49,7 +57,7 @@ export function AuthProvider({ children }) {
   // Add function to check if user is a seller
   function checkIsSeller() {
     return database.ref(`Users/${currentUser.uid}/role`).once('value')
-      .then(snapshot => snapshot.val() === 'seller');
+      .then(snapshot => snapshot.val() === 'Seller');
   }
 
   useEffect(() => {

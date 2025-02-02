@@ -39,6 +39,25 @@
   font-weight: bold;
 }
 
+.rating-stars {
+  color: #FFD700;
+  margin-right: 8px;
+}
+
+.rating-number {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.likes-icon {
+  color: #FF4081;
+  margin-right: 8px;
+}
+
+.likes-number {
+  color: #2E7D32;
+}
+
 .new-listing-section {
   background: white;
   padding: 2rem;
