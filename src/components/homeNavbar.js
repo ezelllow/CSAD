@@ -9,6 +9,7 @@ function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
+  const [profilePicture, setProfilePicture] = useState('./pfp.png'); // Default Profile Picture
   const profileRef = useRef(null);
   const { logout } = useAuth();
 
@@ -16,16 +17,19 @@ function Navbar() {
     const fetchUserData = async () => {
       const user = auth.currentUser;
       if (user) {
-        const unsubscribe = database.ref(`Users/${user.uid}`).on('value', (snapshot) => {
+        const userRef = ref(database, `Users/${user.uid}`);
+        get(userRef).then((snapshot) => {
           if (snapshot.exists()) {
             const userData = snapshot.val();
-            console.log('User Data:', userData);
             setUsername(userData.username || 'User');
             setRole(userData.role || 'user');
-            console.log('Current Role:', userData.role);
+            if (userData.profilePicture) {
+              setProfilePicture(userData.profilePicture); // Set profile pic if exists
+            }
           }
+        }).catch((error) => {
+          console.error("Error fetching user data:", error);
         });
-        return () => database.ref(`Users/${user.uid}`).off();
       }
     };
 
@@ -64,7 +68,7 @@ function Navbar() {
           {/* Profile Section */}
           <div className="profile-section" ref={profileRef} onClick={toggleProfile}>
             <img 
-              src="./pfp.png" 
+              src={profilePicture} 
               alt="Profile" 
               className="profile-icon" 
             />
@@ -77,7 +81,6 @@ function Navbar() {
                     Seller Dashboard
                   </Link>
                 )}
-                <Link to="/settings" className="profile-dropdown-item">Settings</Link>
                 <button className="profile-dropdown-item logout-button" onClick={handleLogout}>
                   Logout
                 </button>
