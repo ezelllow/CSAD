@@ -1,0 +1,103 @@
+.swiper-container {
+  width: 80%;
+  margin: 2rem auto;
+}
+
+.app {
+  background-color: rgba(255, 253, 253, 0.7); 
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5rem; /* Make the text larger */
+  margin-bottom: 1.5rem; /* Add spacing below the text */
+  font-weight: bold;
+  color: #333; /* Adjust color for better visibility */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a subtle shadow */
+}
+
+.event-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.event-content-wrapper {
+  display: flex;
+  flex-direction: column; /* Stack image and content vertically */
+  align-items: center; /* Center align the content */
+  text-align: center;
+  width: 100%;
+}
+
+.event-image {
+  width: 50%; /* Adjust size if needed */
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px; /* Space between image and text */
+}
+
+.image-text {
+  width: 100%;
+  height: 150px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #333;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  word-wrap: break-word;
+}
+
+.event-content {
+  width: 100%;
+}
+
+.event-details p {
+  margin: 5px 0;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: black;
+}
+
+.swiper-pagination-bullet {
+  background: black;
+}
+
+.swiper-pagination-bullet-active {
+  background: gray;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.section-divider {
+  width: 80%;
+  margin: 10px auto;
+  border: 1px solid #ccc;
+}
+
+/* Community Cooking Events - Dark Green */
+.cooking-title {
+  color: darkgreen;
+}
+
+
+/* Food Donation Drives - Dark Orange */
+.donation-title {
+  color: darkorange;
+}
+

@@ -1,0 +1,171 @@
+.swiper-container {
+    width: 80%;
+    margin: 2rem auto;
+  }
+  
+  .app {
+    background-color: rgba(255, 253, 253, 0.7); 
+  }
+  
+  h1 {
+    text-align: center;
+    font-size: 2.5rem; /* Make the text larger */
+    margin-bottom: 1.5rem; /* Add spacing below the text */
+    font-weight: bold;
+    color: #333; /* Adjust color for better visibility */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a subtle shadow */
+  }
+  
+  .event-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .event-content-wrapper {
+    display: flex;
+    flex-direction: column; /* Stack image and content vertically */
+    align-items: center; /* Center align the content */
+    text-align: center;
+    width: 100%;
+  }
+  
+  .event-image {
+    width: 50%; /* Adjust size if needed */
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px; /* Space between image and text */
+  }
+  
+  .image-text {
+    width: 100%;
+    height: 150px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #333;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    word-wrap: break-word;
+  }
+  
+  .event-content {
+    width: 100%;
+  }
+  
+  .event-details p {
+    margin: 5px 0;
+  }
+  
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: black;
+  }
+  
+  .swiper-pagination-bullet {
+    background: black;
+  }
+  
+  .swiper-pagination-bullet-active {
+    background: gray;
+  }
+  
+  .section-title {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  .section-divider {
+    width: 80%;
+    margin: 10px auto;
+    border: 1px solid #ccc;
+  }
+ 
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .add-event-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+  }
+  
+  .add-event-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  
+  .green-btn {
+    background-color: darkgreen;
+  }
+  
+  .orange-btn {
+    background-color: darkorange;
+  }
+  
+
+  /* Community Cooking Events */
+.cooking-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 30px;
+  color: darkgreen; /* Dark green for cooking events */
+}
+
+.cooking-btn {
+  background-color: darkgreen;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.cooking-btn:hover {
+  background-color: #006400; /* Slightly darker green on hover */
+}
+
+/* Food Donation Drives */
+.donation-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 30px;
+  color: darkorange; /* Dark orange for donation drives */
+}
+
+.donation-btn {
+  background-color: darkorange;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.donation-btn:hover {
+  background-color: #d2691e; /* Slightly darker orange on hover */
+}
