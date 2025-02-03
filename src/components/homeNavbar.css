@@ -16,25 +16,24 @@
   align-items: center;
   height: 80px;
   width: 100%;
-  max-width: 1800px;
-  padding: 0;
+  max-width: 1500px;
+  padding: 0 40px;
   position: relative;
 }
 
-/* Profile section */
+/* Profile section - Far left */
 .profile-section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
   position: absolute;
-  left: 0;
-  padding-left: 30px;
+  left: 40px;
 }
 
 .profile-icon {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   border: 2px solid white;
   transition: transform 0.2s ease;
@@ -46,7 +45,7 @@
 
 .profile-name {
   color: white;
-  font-size: 1rem;
+  font-size: 0.9rem;
   white-space: nowrap;
   font-weight: 500;
 }
@@ -56,14 +55,14 @@
   display: flex;
   align-items: center;
   text-decoration: none;
-  font-size: 2.2rem;
-  margin-left: 280px;
+  font-size: 2rem;
+  margin-left: 250px;
   font-weight: bold;
 }
 
 .navbar-logo-image {
-  height: 55px;
-  margin-left: 0.8rem;
+  height: 50px;
+  margin-left: 0.5rem;
   transition: transform 0.2s ease;
 }
 
@@ -79,8 +78,7 @@
   margin: 0;
   padding: 0;
   margin-left: auto;
-  padding-right: 50px;
-  gap: 3rem;
+  gap: 2.5rem;
 }
 
 .nav-item {
@@ -92,8 +90,8 @@
 .nav-links {
   color: #fff;
   text-decoration: none;
-  padding: 0.6rem 1.2rem;
-  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
   white-space: nowrap;
   font-weight: 500;
   transition: all 0.2s ease;
