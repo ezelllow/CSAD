@@ -1,0 +1,488 @@
+.forums-container {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  gap: 2rem;
+  max-width: 1600px;
+  margin: 120px auto 0;
+  padding: 2rem;
+  min-height: calc(100vh - 120px);
+  background-color: #f5f5f5;
+  position: relative;
+}
+
+.forums-sidebar {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  height: fit-content;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+.forums-main {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  overflow-y: auto;
+  height: auto;
+  min-height: calc(100vh - 140px);
+  max-height: calc(100vh - 140px);
+}
+
+.forums-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  
+  top: 0;
+  background: white;
+  z-index: 10;
+  padding: 1rem 0;
+}
+
+.forums-header h1 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.forums-header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.posts-section {
+  margin-top: 2rem;
+}
+
+.posts-section h2 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.post-card {
+  background: white;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.post-card h3 {
+  color: #2E7D32;
+  margin: 0.5rem 0;
+  font-size: 1.5rem;
+  word-break: break-word;
+}
+
+.post-card p {
+  color: #333;
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  word-break: break-word;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.forums-sidebar {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.sidebar-section {
+  margin-bottom: 2rem;
+}
+
+.sidebar-section h3 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.filter-item {
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-item:hover {
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.filter-item.active {
+  background: #4CAF50;
+  color: white;
+}
+
+.forums-tabs {
+  display: flex;
+  gap: 1rem;
+}
+
+.forums-tabs button {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.forums-tabs button:hover {
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.forums-tabs button.active {
+  background: #4CAF50;
+  color: white;
+}
+
+.create-post-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.posts-grid {
+  display: grid;
+  gap: 1.5rem;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.post-image {
+  width: 100%;
+  max-height: 400px;
+  overflow: hidden;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  position: relative;
+}
+
+.post-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-height: 400px;
+}
+
+.post-content {
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+  width: 100%;
+}
+
+.post-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee;
+}
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.author-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.post-community {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.user-flair {
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  background-color: #4CAF50;
+  color: white;
+  margin-left: auto;
+}
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.post-time {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid #eee;
+  width: 100%;
+}
+
+.post-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.post-stats span {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.post-stats span:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.forums-right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  height: fit-content;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+.create-section,
+.trending-communities {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.create-section button {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.create-section button:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
+
+.create-thread-btn {
+  background: #2196F3;
+  color: white;
+}
+
+.ask-question-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.share-media-btn {
+  background: #FF4081;
+  color: white;
+}
+
+.share-status-btn {
+  background: #FFA000;
+  color: white;
+}
+
+.community-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.community-item:hover {
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.community-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.community-info h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.community-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1200px) {
+  .forums-container {
+    grid-template-columns: 200px 1fr 250px;
+  }
+}
+
+@media (max-width: 992px) {
+  .forums-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .forums-sidebar,
+  .forums-right-sidebar {
+    display: none;
+  }
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  padding: 20px;
+  background: #ffebee;
+  color: #c62828;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Reset styles for the forums page */
+.forums-page-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  z-index: 0;
+}
+
+/* Ensure text is visible */
+h1, h2, h3, p {
+  position: relative;
+  z-index: 3;
+}
+
+.like-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.like-button:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.like-button.active {
+  color: #e91e63;
+}
+
+.like-button.active:hover {
+  background-color: rgba(233, 30, 99, 0.1);
+}
+
+/* Add scrollbar styling */
+.posts-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.posts-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.posts-grid::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.posts-grid::-webkit-scrollbar-thumb:hover {
+  background: #555;
+} 

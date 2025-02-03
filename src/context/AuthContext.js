@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase';
+import { database } from '../firebase';
 
 const AuthContext = React.createContext();
 
@@ -11,15 +12,41 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  function signup(email, password, username) {
-    return auth.createUserWithEmailAndPassword(email, password)  //creates user with the parameters
+  function signup(email, password, username, role) {
+    console.log('Signing up with role:', role); // Debug log
+    return auth.createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
       const user = userCredential.user;
-
-      // Capture username but don't save it to Firebase yet
-      console.log(username); // Just log for now, to confirm it's working
       
-      return userCredential;
+      const initialAnalytics = {
+        views: Array(7).fill().map((_, i) => ({
+          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          count: 0
+        })).reverse(),
+        likes: Array(7).fill().map((_, i) => ({
+          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          count: 0
+        })).reverse(),
+        interactions: Array(7).fill().map((_, i) => ({
+          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          count: 0
+        })).reverse()
+      };
+
+      // Save user data including role to database
+      return database.ref(`Users/${user.uid}`).set({
+        username: username,
+        email: email,
+        role: role,
+        stats: {
+          rating: 0,
+          totalLikes: 0
+        },
+        analytics: initialAnalytics
+      }).then(() => {
+        console.log('User data saved with role:', role); // Debug log
+        return userCredential;
+      });
     });
   }
 
@@ -43,6 +70,12 @@ export function AuthProvider({ children }) {
     return currentUser.updatePassword(password);
   }
 
+  // Add function to check if user is a seller
+  function checkIsSeller() {
+    return database.ref(`Users/${currentUser.uid}/role`).once('value')
+      .then(snapshot => snapshot.val() === 'Seller');
+  }
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
@@ -60,6 +93,7 @@ export function AuthProvider({ children }) {
     resetPassword,
     updateEmail,
     updatePassword,
+    checkIsSeller
   };
 
   return (
