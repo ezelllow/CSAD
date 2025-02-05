@@ -30,11 +30,9 @@ const ChatbotButton = () => {
 
     try {
       const response = await axios.post('http://localhost:5000/api/chat', {
-        message: userMessage,
-        model: 'gemini-pro' // Specify we're using Gemini
+        message: userMessage
       });
       
-      // Add bot response
       setMessages(prev => [...prev, { 
         type: 'bot', 
         content: response.data.message 

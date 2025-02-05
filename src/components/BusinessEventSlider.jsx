@@ -94,7 +94,7 @@ function BusinessEventSlider() {
         navigation
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000 }}
-        loop={true}
+        loop={false}
         spaceBetween={30}
         slidesPerView={3}
         onSlideChange={handleCookingSlideChange} // Reset flipped cards when sliding
@@ -106,7 +106,7 @@ function BusinessEventSlider() {
                 <div className="event-card-inner">
                   {/* Front Side */}
                   <div className="event-card-front">
-                    <img src={event.image} alt={event.title} className="event-image" />
+                    <img src={event.image} alt={event.title} className="event-image" style={{width:"100%",height:"100%"}} />
                     <div className="event-details">
                       <h3 className="event-title">{event.title}</h3>
                       <p className="event-location">📍 {event.location}</p>
@@ -144,7 +144,7 @@ function BusinessEventSlider() {
         navigation
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000 }}
-        loop={true}
+        loop={false}
         spaceBetween={30}
         slidesPerView={3}
         onSlideChange={handleDonationSlideChange} // Reset flipped cards when sliding
@@ -156,7 +156,7 @@ function BusinessEventSlider() {
                 <div className="event-card-inner">
                   {/* Front Side */}
                   <div className="event-card-front">
-                    <img src={event.image} alt={event.title} className="event-image" />
+                    <img src={event.image} alt={event.title} className="event-image" style={{width:"100%",height:"100%"}} />
                     <div className="event-details">
                       <h3 className="event-title">{event.title}</h3>
                       <p className="event-location">📍 {event.location}</p>

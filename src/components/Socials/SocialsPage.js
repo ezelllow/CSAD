@@ -1,14 +1,10 @@
 import React from 'react';
+import Chat from '../Chat/Chat';
 
 export default function SocialsPage() {
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      backgroundColor: '#f5f5f5',
-      marginTop: '80px',
-      padding: '20px'
-    }}>
-      {/* Empty for now */}
+    <div className="socials-page">
+      <Chat />
     </div>
   );
 } 
