@@ -13,6 +13,7 @@ export default function Forums() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [usersData, setUsersData] = useState({});
+  const [userProfilePic, setUserProfilePic] = useState('../pfp.png'); // Default profile pic
 
   // Define communities
   const communities = [
@@ -58,6 +59,19 @@ export default function Forums() {
 
     return () => postsRef.off();
   }, [sortBy, selectedCategory]);
+  
+    // Fetch current user's profile picture
+    useEffect(() => {
+      if (currentUser) {
+        const userRef = database.ref(`Users/${currentUser.uid}/profilePicture`);
+        userRef.on('value', (snapshot) => {
+          const profilePic = snapshot.val();
+          setUserProfilePic(profilePic || '/pfp.png'); // Use default if no profile pic exists
+        });
+  
+        return () => userRef.off();
+      }
+    }, [currentUser]);
 
   // Add this useEffect to fetch user data
   useEffect(() => {
@@ -186,10 +200,10 @@ export default function Forums() {
               <div className="post-content">
                 <div className="post-header">
                   <div className="post-author">
-                    <img 
-                      src={usersData[post.authorId]?.profilePicture || "/pfp.png"} 
-                      alt="Profile" 
-                      className="author-avatar"
+                    <img
+                      src={userProfilePic}
+                      alt="Profile"
+                      className="profile-icon"
                     />
                     <div className="author-info">
                       <span className="author-name">{usersData[post.authorId]?.username || 'Anonymous'}</span>
