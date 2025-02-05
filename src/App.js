@@ -6,6 +6,7 @@ import Home from './components/pages/Home';
 import HomePage from './components/pages/homePage';
 import Services from './components/pages/Services';
 import Products from './components/pages/Products';
+import Calendar from './components/pages/Calendar';
 import Bannoun from './components/pages/Bannoun';
 import Uannouncements from './components/pages/Uannouncements';
 import PrivateRoute from './components/PrivateRoute';
@@ -26,6 +27,7 @@ import ForumsPage from "./components/Forums/ForumsPage";
 import PostDetail from "./components/Forums/PostDetail";
 import SocialsPage from "./components/Socials/SocialsPage";
 import Footer from './components/Footer';
+
 
 function ConditionalNavbar() {
   const location = useLocation();
@@ -59,6 +61,8 @@ function App() {
           <Route path="/forums" element={<ForumsPage />} />
           <Route path="/forums/post/:postId" element={<PostDetail />} />
           <Route path="/socials" element={<SocialsPage />} />
+          <Route path="/calendar" element={<Calendar />} />
+
         </Route>
 
         {/* Seller Routes */}
