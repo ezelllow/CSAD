@@ -62,7 +62,11 @@ function UserEventSlider() {
             <SwiperSlide key={index} className="event-slide">
               <div className="event-content-center">
                 <div className="event-image">
-                  <p className="image-text">{event.image}</p>
+                  {event.image ? (
+                    <img src={event.image} alt="Event" className="event-img" />
+                  ) : (
+                    <p>No Image Available</p>
+                  )}
                 </div>
                 <div className="event-content">
                   <h2>{event.title}</h2>
