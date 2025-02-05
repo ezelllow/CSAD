@@ -8,12 +8,14 @@ import { database } from "../firebase"; // Firebase setup
 import { ref, onValue } from "firebase/database";
 import PopupForm from "./PopUpForm"; // Import the popup form component
 import "./BusinessEventSlider.css"; // Ensure styling for the slider
+import { useNavigate } from "react-router-dom"; 
 
 function BusinessEventSlider() {
   const [cooking, setCooking] = useState([]);
   const [donationDrive, setDonationDrive] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [formCategory, setFormCategory] = useState(""); // To store the category
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch Business Cooking Events (Announcements)
@@ -41,6 +43,11 @@ function BusinessEventSlider() {
     setShowPopup(true);
   };
 
+  const handleEventClick = (event) => {
+    // Navigate to the calendar page and pass event data through state
+    navigate("/calendar", { state: { selectedEvent: event } });
+  };
+
   return (
     <div className="swiper-container">
       <h1 className="app" id="slider-section">Upcoming Events</h1>
@@ -60,7 +67,7 @@ function BusinessEventSlider() {
         autoplay={{ delay: 5000 }}
         loop={true}
         spaceBetween={30}
-        slidesPerView={1}
+        slidesPerView={3}
       >
         {cooking.length > 0 ? (
           cooking.map((event, index) => (
@@ -76,6 +83,9 @@ function BusinessEventSlider() {
                     <p><strong>Details:</strong> {event.details}</p>
                     <p><strong>Location:</strong> {event.location}</p>
                   </div>
+                  <button className="remind-me-button" onClick={() => handleEventClick(event)}>
+                    Remind Me
+                  </button>
                 </div>
               </div>
             </SwiperSlide>
@@ -100,7 +110,7 @@ function BusinessEventSlider() {
         autoplay={{ delay: 5000 }}
         loop={true}
         spaceBetween={30}
-        slidesPerView={1}
+        slidesPerView={3}
       >
         {donationDrive.length > 0 ? (
           donationDrive.map((event, index) => (
@@ -116,6 +126,9 @@ function BusinessEventSlider() {
                     <p><strong>Details:</strong> {event.details}</p>
                     <p><strong>Location:</strong> {event.location}</p>
                   </div>
+                  <button className="remind-me-button" onClick={() => handleEventClick(event)}>
+                    Remind Me
+                  </button>
                 </div>
               </div>
             </SwiperSlide>

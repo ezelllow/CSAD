@@ -40,8 +40,15 @@ function PopupForm({ category, onClose }) {
       });
   };
 
+  // Close the popup if the overlay (background) is clicked
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose(); // Close the form when the background is clicked
+    }
+  };
+
   return (
-    <div className="popup-overlay">
+    <div className="popup-overlay" onClick={handleOverlayClick}>
       <div className="popup-container">
         {successMessage && <p className="success-message">{successMessage}</p>}
         <h2>Add New Event</h2>
@@ -52,7 +59,6 @@ function PopupForm({ category, onClose }) {
           <input type="text" name="details" placeholder="Details" value={formData.details} onChange={handleChange} required />
           <input type="text" name="location" placeholder="Location" value={formData.location} onChange={handleChange} required />
           <button type="submit" className="submit-btn">Submit</button>
-          <button type="button" className="close-btn" onClick={onClose}>Close</button>
         </form>
       </div>
     </div>

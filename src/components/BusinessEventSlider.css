@@ -10,10 +10,11 @@
   h1 {
     text-align: center;
     font-size: 2.5rem; /* Make the text larger */
-    margin-bottom: 1.5rem; /* Add spacing below the text */
+    margin-bottom: 80px; /* Add spacing below the text */
     font-weight: bold;
     color: #333; /* Adjust color for better visibility */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a subtle shadow */
+    margin-top: 80px;
   }
   
   .event-slide {
@@ -169,3 +170,44 @@
 .donation-btn:hover {
   background-color: #d2691e; /* Slightly darker orange on hover */
 }
+
+.remind-me-button {
+  background-color: #2ecc71; /* Green color */
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+  transition: background 0.3s;
+}
+
+.remind-me-button:hover {
+  background-color: #27ae60; /* Darker green */
+}
+
+/* Popup Overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Popup Content */
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 600px;
+}
+

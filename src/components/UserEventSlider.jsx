@@ -55,7 +55,7 @@ function UserEventSlider() {
         autoplay={{ delay: 5000 }}
         loop={true}
         spaceBetween={30}
-        slidesPerView={1}
+        slidesPerView={3}
       >
         {cooking.length > 0 ? (
           cooking.map((event, index) => (
@@ -93,7 +93,7 @@ function UserEventSlider() {
         autoplay={{ delay: 5000 }}
         loop={true}
         spaceBetween={30}
-        slidesPerView={1}
+        slidesPerView={3}
       >
         {donationDrive.length > 0 ? (
           donationDrive.map((event, index) => (
