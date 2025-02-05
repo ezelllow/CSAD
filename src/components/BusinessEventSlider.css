@@ -138,3 +138,11 @@ h1 {
 .cooking-btn:hover, .donation-btn:hover {
   background-color: #006400;
 }
+
+.donation-btn:hover{
+  background-color:#C9680D;
+}
+
+.donation-btn{
+  background-color:#C9680D;
+}

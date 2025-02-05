@@ -12,6 +12,8 @@ import "./UserEventSlider.css"; // Ensure styling for the slider
 function UserEventSlider() {
   const [cooking, setCooking] = useState([]);
   const [donationDrive, setDonationDrive] = useState([]);
+  const [flippedCookingCards, setFlippedCookingCards] = useState({});
+  const [flippedDonationCards, setFlippedDonationCards] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,15 +36,35 @@ function UserEventSlider() {
     });
   }, []);
 
-  const handleEventClick = (event) => {
-    // Navigate to the calendar page and pass event data through state
-    navigate("/calendar", { state: { selectedEvent: event } });
+  const handleReminderClick = (event) => {
+    event.stopPropagation(); // Prevent flipping
+    navigate("/calendar");
   };
 
+  const toggleFlipCooking = (index) => {
+    setFlippedCookingCards((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
+  };
+
+  const toggleFlipDonation = (index) => {
+    setFlippedDonationCards((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
+  };
+
+  const handleCookingSlideChange = () => {
+    setFlippedCookingCards({});
+  };
+
+  const handleDonationSlideChange = () => {
+    setFlippedDonationCards({});
+  };
 
   return (
     <div className="swiper-container">
-      {/* "Upcoming Events" Heading */}
       <h1 className="app" id="slider-section">Upcoming Events</h1>
 
       {/* Community Cooking Events Slider */}
@@ -53,31 +75,34 @@ function UserEventSlider() {
         navigation
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000 }}
-        loop={true}
+        loop={false}
         spaceBetween={30}
-        slidesPerView={1}
+        slidesPerView={3}
+        onSlideChange={handleCookingSlideChange}
       >
         {cooking.length > 0 ? (
           cooking.map((event, index) => (
             <SwiperSlide key={index} className="event-slide">
-              <div className="event-content-center">
-                <div className="event-image">
-                  {event.image ? (
-                    <img src={event.image} alt="Event" className="event-img" />
-                  ) : (
-                    <p>No Image Available</p>
-                  )}
-                </div>
-                <div className="event-content">
-                  <h2>{event.title}</h2>
-                  <p>{event.description}</p>
-                  <div className="event-details">
-                    <p><strong>Details:</strong> {event.details}</p>
-                    <p><strong>Location:</strong> {event.location}</p>
+              <div className={`event-card ${flippedCookingCards[index] ? "flipped" : ""}`} onClick={() => toggleFlipCooking(index)}>
+                <div className="event-card-inner">
+                  {/* Front Side */}
+                  <div className="event-card-front">
+                    <img src={event.image} alt={event.title} className="event-image" />
+                    <div className="event-details">
+                      <h3 className="event-title">{event.title}</h3>
+                      <p className="event-location">📍 {event.location}</p>
+                      <div className="event-meta">
+                        <p>📅 Date: {event.date}</p>
+                        <p>⏰ Time: {event.time}</p>
+                      </div>
+                      <button className="reminder-button" onClick={handleReminderClick}>📅 Remind me</button>
+                    </div>
                   </div>
-                  <button className="remind-me-button" onClick={() => handleEventClick(event)}>
-                    Remind Me
-                  </button>
+                  {/* Back Side */}
+                  <div className="event-card-back">
+                    <strong>Details:</strong>
+                    <p>{event.description}</p>
+                  </div>
                 </div>
               </div>
             </SwiperSlide>
@@ -95,27 +120,34 @@ function UserEventSlider() {
         navigation
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000 }}
-        loop={true}
+        loop={false}
         spaceBetween={30}
-        slidesPerView={1}
+        slidesPerView={3}
+        onSlideChange={handleDonationSlideChange}
       >
         {donationDrive.length > 0 ? (
           donationDrive.map((event, index) => (
             <SwiperSlide key={index} className="event-slide">
-              <div className="event-content-center">
-                <div className="event-image">
-                  <p className="image-text">{event.image}</p>
-                </div>
-                <div className="event-content">
-                  <h2>{event.title}</h2>
-                  <p>{event.description}</p>
-                  <div className="event-details">
-                    <p><strong>Details:</strong> {event.details}</p>
-                    <p><strong>Location:</strong> {event.location}</p>
+              <div className={`event-card ${flippedDonationCards[index] ? "flipped" : ""}`} onClick={() => toggleFlipDonation(index)}>
+                <div className="event-card-inner">
+                  {/* Front Side */}
+                  <div className="event-card-front">
+                    <img src={event.image} alt={event.title} className="event-image" />
+                    <div className="event-details">
+                      <h3 className="event-title">{event.title}</h3>
+                      <p className="event-location">📍 {event.location}</p>
+                      <div className="event-meta">
+                        <p>📅 Date: {event.date}</p>
+                        <p>⏰ Time: {event.time}</p>
+                      </div>
+                      <button className="reminder-button" onClick={handleReminderClick}>📅 Remind me</button>
+                    </div>
                   </div>
-                  <button className="remind-me-button" onClick={() => handleEventClick(event)}>
-                    Remind Me
-                  </button>
+                  {/* Back Side */}
+                  <div className="event-card-back">
+                    <strong>Details:</strong>
+                    <p>{event.description}</p>
+                  </div>
                 </div>
               </div>
             </SwiperSlide>

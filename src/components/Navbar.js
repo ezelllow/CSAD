@@ -242,7 +242,6 @@ function Navbar() {
         {showLogin && (
           <div className="popup" onClick={closePopup}>
             <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-              <span className="close-btn" onClick={closePopup}>&times;</span>
               {!isResettingPassword &&<h2>Login</h2>}
               {error && <p className="error">{error}</p>}
               <form onSubmit={handleLogin}>
@@ -265,7 +264,6 @@ function Navbar() {
         {showSignUp && (
           <div className="popup" onClick={closePopup}>
             <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-              <span className="close-btn" onClick={closePopup}>&times;</span>
               <h2>Sign Up</h2>
               {error && <p className="error">{error}</p>}
               <form onSubmit={handleSignUp}>
