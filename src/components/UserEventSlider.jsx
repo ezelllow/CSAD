@@ -6,11 +6,13 @@ import "swiper/css/pagination";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { database } from "../firebase"; // Firebase setup
 import { ref, onValue } from "firebase/database";
+import { useNavigate } from "react-router-dom"; 
 import "./UserEventSlider.css"; // Ensure styling for the slider
 
 function UserEventSlider() {
   const [cooking, setCooking] = useState([]);
   const [donationDrive, setDonationDrive] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch Community Cooking Events
@@ -31,6 +33,12 @@ function UserEventSlider() {
       }
     });
   }, []);
+
+  const handleEventClick = (event) => {
+    // Navigate to the calendar page and pass event data through state
+    navigate("/calendar", { state: { selectedEvent: event } });
+  };
+
 
   return (
     <div className="swiper-container">
@@ -63,6 +71,9 @@ function UserEventSlider() {
                     <p><strong>Details:</strong> {event.details}</p>
                     <p><strong>Location:</strong> {event.location}</p>
                   </div>
+                  <button className="remind-me-button" onClick={() => handleEventClick(event)}>
+                    Remind Me
+                  </button>
                 </div>
               </div>
             </SwiperSlide>
@@ -98,6 +109,9 @@ function UserEventSlider() {
                     <p><strong>Details:</strong> {event.details}</p>
                     <p><strong>Location:</strong> {event.location}</p>
                   </div>
+                  <button className="remind-me-button" onClick={() => handleEventClick(event)}>
+                    Remind Me
+                  </button>
                 </div>
               </div>
             </SwiperSlide>

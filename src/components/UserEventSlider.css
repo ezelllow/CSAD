@@ -101,3 +101,19 @@ h1 {
   color: darkorange;
 }
 
+.remind-me-button {
+  background-color: #2ecc71; /* Green color */
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+  transition: background 0.3s;
+}
+
+.remind-me-button:hover {
+  background-color: #27ae60; /* Darker green */
+}
+
