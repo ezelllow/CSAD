@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { database, storage } from "../firebase"; 
 import { ref, push } from "firebase/database";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -15,6 +15,27 @@ function PopupForm({ category, onClose }) {
   });
   const [imageFile, setImageFile] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+
+  // Close popup when ESC key is pressed
+  useEffect(() => {
+    const handleEscClose = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscClose);
+    return () => {
+      document.removeEventListener("keydown", handleEscClose);
+    };
+  }, [onClose]);
+
+  // Close popup when clicking outside the form
+  const handleOutsideClick = (event) => {
+    if (event.target.classList.contains("popup-overlay")) {
+      onClose();
+    }
+  };
 
   // Handle text input change
   const handleChange = (e) => {
@@ -43,7 +64,7 @@ function PopupForm({ category, onClose }) {
       // Prepare data for Firebase Realtime Database
       const eventData = {
         ...formData,
-        image: imageUrl || formData.image, // Use the uploaded image URL or fallback to existing input
+        image: imageUrl || formData.image, // Use uploaded image URL or fallback to existing input
       };
 
       // Push event data to Firebase Realtime Database
@@ -71,29 +92,29 @@ function PopupForm({ category, onClose }) {
   };
 
   return (
-    <div className="popup-overlay">
+    <div className="popup-overlay" onClick={handleOutsideClick}>
       <div className="popup-container">
         {successMessage && <p className="success-message">{successMessage}</p>}
         <form onSubmit={handleSubmit}>
-        <label>Event Image:</label>
-        <input type="file" accept="image/*" onChange={handleImageChange} />
+          <label>Event Image:</label>
+          <input type="file" accept="image/*" onChange={handleImageChange} />
 
-        <label>Title:</label>
-        <input type="text" name="title" value={formData.title} onChange={handleChange} required />
+          <label>Title:</label>
+          <input type="text" name="title" value={formData.title} onChange={handleChange} required />
 
-        <label>Description:</label>
-        <textarea name="description" value={formData.description} onChange={handleChange} required />
+          <label>Description:</label>
+          <textarea name="description" value={formData.description} onChange={handleChange} required />
 
-        <label>Date:</label>
-        <input type="date" name="date" value={formData.date} onChange={handleChange} required />
+          <label>Date:</label>
+          <input type="date" name="date" value={formData.date} onChange={handleChange} required />
 
-        <label>Time:</label>
-        <input type="time" name="time" value={formData.time} onChange={handleChange} required />
+          <label>Time:</label>
+          <input type="time" name="time" value={formData.time} onChange={handleChange} required />
 
-        <label>Location:</label>
-        <input type="text" name="location" value={formData.location} onChange={handleChange} required />
+          <label>Location:</label>
+          <input type="text" name="location" value={formData.location} onChange={handleChange} required />
+
           <button type="submit" className="submit-btn">Submit</button>
-          <button type="button" className="close-btn" onClick={onClose}>Close</button>
         </form>
       </div>
     </div>

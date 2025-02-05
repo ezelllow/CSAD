@@ -87,7 +87,7 @@ function UserEventSlider() {
                 <div className="event-card-inner">
                   {/* Front Side */}
                   <div className="event-card-front">
-                    <img src={event.image} alt={event.title} className="event-image" />
+                    <img src={event.image} alt={event.title} className="event-image"  />
                     <div className="event-details">
                       <h3 className="event-title">{event.title}</h3>
                       <p className="event-location">📍 {event.location}</p>
