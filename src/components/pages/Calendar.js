@@ -100,7 +100,7 @@ const Calendar = () => {
 
   return (
     <div className="calendar-container">
-      <h2>Event Calendar</h2>
+      <h1>CALENDAR</h1>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
