@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ref, push } from "firebase/database";
 import { database } from "../firebase";
 import "./PopUpForm.css"; // Reuse existing pop-up styles
@@ -11,7 +11,23 @@ function CalendarPopupForm({ date, userId, onClose, onAddEvent }) {
   const handleChange = (e) => {
     setEventTitle(e.target.value);
   };
+  useEffect(() => {
+    const handleEscClose = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
 
+    document.addEventListener("keydown", handleEscClose);
+    return () => {
+      document.removeEventListener("keydown", handleEscClose);
+    };
+  }, [onClose]);
+  const handleOutsideClick = (event) => {
+    if (event.target.classList.contains("popup-overlay")) {
+      onClose();
+    }
+  };
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,7 +51,7 @@ function CalendarPopupForm({ date, userId, onClose, onAddEvent }) {
   };
 
   return (
-    <div className="popup-overlay">
+    <div className="popup-overlay" onClick={handleOutsideClick}>
       <div className="popup-container">
         {successMessage && <p className="success-message">{successMessage}</p>}
         <h2>Add Event for {date}</h2>
@@ -49,7 +65,6 @@ function CalendarPopupForm({ date, userId, onClose, onAddEvent }) {
             required
           />
           <button type="submit" className="submit-btn">Save</button>
-          <button type="button" className="close-btn" onClick={onClose}>Cancel</button>
         </form>
       </div>
     </div>
