@@ -1,43 +1,94 @@
-import React, { useState } from "react";
-import { database } from "../firebase";
+import React, { useState, useEffect } from "react";
+import { database, storage } from "../firebase"; 
 import { ref, push } from "firebase/database";
-import "./PopUpForm.css"; // Ensure styles for the pop-up form
+import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import "./PopUpForm.css"; 
 
 function PopupForm({ category, onClose }) {
   const [formData, setFormData] = useState({
     image: "",
     title: "",
     description: "",
-    details: "",
-    location: ""
+    date: "",
+    time: "",
+    location: "",
   });
+  const [imageFile, setImageFile] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Handle input change
+  // Close popup when ESC key is pressed
+  useEffect(() => {
+    const handleEscClose = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscClose);
+    return () => {
+      document.removeEventListener("keydown", handleEscClose);
+    };
+  }, [onClose]);
+
+  // Close popup when clicking outside the form
+  const handleOutsideClick = (event) => {
+    if (event.target.classList.contains("popup-overlay")) {
+      onClose();
+    }
+  };
+
+  // Handle text input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle image file selection
+  const handleImageChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
+
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Reference the correct Firebase node based on category
-    const eventRef = ref(database, category);
-    push(eventRef, formData)
-      .then(() => {
-        setSuccessMessage("Event added successfully!");
-        setFormData({ image: "", title: "", description: "", details: "", location: "" });
+    try {
+      let imageUrl = "";
 
-        // Hide success message after 2 seconds and close form
-        setTimeout(() => {
-          setSuccessMessage("");
-          onClose();
-        }, 2000);
-      })
-      .catch((error) => {
-        console.error("Error adding event: ", error);
+      // If an image file is selected, upload it to Firebase Storage
+      if (imageFile) {
+        const imageStorageRef = storageRef(storage, `event_images/${imageFile.name}`);
+        await uploadBytes(imageStorageRef, imageFile);
+        imageUrl = await getDownloadURL(imageStorageRef);
+      }
+
+      // Prepare data for Firebase Realtime Database
+      const eventData = {
+        ...formData,
+        image: imageUrl || formData.image, // Use uploaded image URL or fallback to existing input
+      };
+
+      // Push event data to Firebase Realtime Database
+      const eventRef = ref(database, category);
+      await push(eventRef, eventData);
+
+      setSuccessMessage("Event added successfully!");
+      setFormData({
+        image: "",
+        title: "",
+        description: "",
+        date: "",
+        time: "",
+        location: "",
       });
+      setImageFile(null);
+
+      setTimeout(() => {
+        setSuccessMessage("");
+        onClose();
+      }, 2000);
+    } catch (error) {
+      console.error("Error adding event: ", error);
+    }
   };
 
   // Close the popup if the overlay (background) is clicked
@@ -48,16 +99,28 @@ function PopupForm({ category, onClose }) {
   };
 
   return (
-    <div className="popup-overlay" onClick={handleOverlayClick}>
+    <div className="popup-overlay" onClick={handleOutsideClick}>
       <div className="popup-container">
         {successMessage && <p className="success-message">{successMessage}</p>}
-        <h2>Add New Event</h2>
         <form onSubmit={handleSubmit}>
-          <input type="text" name="image" placeholder="Image URL" value={formData.image} onChange={handleChange} required />
-          <input type="text" name="title" placeholder="Title" value={formData.title} onChange={handleChange} required />
-          <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} required />
-          <input type="text" name="details" placeholder="Details" value={formData.details} onChange={handleChange} required />
-          <input type="text" name="location" placeholder="Location" value={formData.location} onChange={handleChange} required />
+          <label>Event Image:</label>
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+
+          <label>Title:</label>
+          <input type="text" name="title" value={formData.title} onChange={handleChange} required />
+
+          <label>Description:</label>
+          <textarea name="description" value={formData.description} onChange={handleChange} required />
+
+          <label>Date:</label>
+          <input type="date" name="date" value={formData.date} onChange={handleChange} required />
+
+          <label>Time:</label>
+          <input type="time" name="time" value={formData.time} onChange={handleChange} required />
+
+          <label>Location:</label>
+          <input type="text" name="location" value={formData.location} onChange={handleChange} required />
+
           <button type="submit" className="submit-btn">Submit</button>
         </form>
       </div>

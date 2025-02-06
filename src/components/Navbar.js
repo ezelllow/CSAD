@@ -233,13 +233,12 @@ function Navbar() {
         </div>  
       </nav>
 
-      {/* Login Pop-up */}
-      {showLogin && (
-        <div className="popup" onClick={closePopup}>
-          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-            {!isResettingPassword && <h2>Login</h2>}
-            {error && <p className="error">{error}</p>}
-            <form onSubmit={handleLogin}>
+        {showLogin && (
+          <div className="popup" onClick={closePopup}>
+            <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+              {!isResettingPassword &&<h2>Login</h2>}
+              {error && <p className="error">{error}</p>}
+              <form onSubmit={handleLogin}>
               <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
               {!isResettingPassword && (
                 <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />

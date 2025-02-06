@@ -10,12 +10,15 @@ import PopupForm from "./PopUpForm"; // Import the popup form component
 import "./BusinessEventSlider.css"; // Ensure styling for the slider
 import { useNavigate } from "react-router-dom"; 
 
+
 function BusinessEventSlider() {
   const [cooking, setCooking] = useState([]);
   const [donationDrive, setDonationDrive] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [formCategory, setFormCategory] = useState(""); // To store the category
-  const navigate = useNavigate();
+  const [flippedCookingCards, setFlippedCookingCards] = useState({});
+  const [flippedDonationCards, setFlippedDonationCards] = useState({});
+  const navigate = useNavigate(); // Hook to navigate to other pages
 
   useEffect(() => {
     // Fetch Business Cooking Events (Announcements)
@@ -43,10 +46,43 @@ function BusinessEventSlider() {
     setShowPopup(true);
   };
 
-  const handleEventClick = (event) => {
-    // Navigate to the calendar page and pass event data through state
-    navigate("/calendar", { state: { selectedEvent: event } });
+  // Toggle flip for cooking event cards
+  const toggleFlipCooking = (index) => {
+    setFlippedCookingCards((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
   };
+
+  // Toggle flip for donation drive event cards
+  const toggleFlipDonation = (index) => {
+    setFlippedDonationCards((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
+  };
+
+  // Function to handle "Remind me" button click
+  const handleReminderClick = (event) => {
+    event.stopPropagation(); // Prevent card from flipping
+    navigate("/calendar"); // Redirect to calendar page
+  };
+
+  // Reset flipped cards when slider changes for Community Cooking Events
+  const handleCookingSlideChange = () => {
+    setFlippedCookingCards({});
+  };
+
+  // Reset flipped cards when slider changes for Food Donation Drives
+  const handleDonationSlideChange = () => {
+    setFlippedDonationCards({});
+  };
+
+  const handleEventClick = (event) => {
+    event.stopPropagation(); // Prevent card from flipping
+    navigate("/calendar"); // Redirect to calendar page
+  };
+  
 
   return (
     <div className="swiper-container">
@@ -65,23 +101,33 @@ function BusinessEventSlider() {
         navigation
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000 }}
-        loop={true}
+        loop={false}
         spaceBetween={30}
         slidesPerView={3}
+        onSlideChange={handleCookingSlideChange} // Reset flipped cards when sliding
       >
         {cooking.length > 0 ? (
           cooking.map((event, index) => (
             <SwiperSlide key={index} className="event-slide">
-              <div className="event-content-center">
-                <div className="event-image">
-                  <p className="image-text">{event.image}</p>
-                </div>
-                <div className="event-content">
-                  <h2>{event.title}</h2>
-                  <p>{event.description}</p>
-                  <div className="event-details">
-                    <p><strong>Details:</strong> {event.details}</p>
-                    <p><strong>Location:</strong> {event.location}</p>
+              <div className={`event-card ${flippedCookingCards[index] ? "flipped" : ""}`} onClick={() => toggleFlipCooking(index)}>
+                <div className="event-card-inner">
+                  {/* Front Side */}
+                  <div className="event-card-front">
+                    <img src={event.image} alt={event.title} className="event-image" style={{width:"100%",height:"100%"}} />
+                    <div className="event-details">
+                      <h3 className="event-title">{event.title}</h3>
+                      <p className="event-location">📍 {event.location}</p>
+                      <div className="event-meta">
+                        <p>📅 Date: {event.date}</p>
+                        <p>⏰ Time: {event.time}</p>
+                      </div>
+                      <button className="reminder-button" onClick={handleReminderClick}>📅 Remind me</button>
+                    </div>
+                  </div>
+                  {/* Back Side */}
+                  <div className="event-card-back">
+                    <strong>Details:</strong>
+                    <p> {event.description}</p>
                   </div>
                   <button className="remind-me-button" onClick={() => handleEventClick(event)}>
                     Remind Me
@@ -108,23 +154,33 @@ function BusinessEventSlider() {
         navigation
         pagination={{ clickable: true }}
         autoplay={{ delay: 5000 }}
-        loop={true}
+        loop={false}
         spaceBetween={30}
         slidesPerView={3}
+        onSlideChange={handleDonationSlideChange} // Reset flipped cards when sliding
       >
         {donationDrive.length > 0 ? (
           donationDrive.map((event, index) => (
             <SwiperSlide key={index} className="event-slide">
-              <div className="event-content-center">
-                <div className="event-image">
-                  <p className="image-text">{event.image}</p>
-                </div>
-                <div className="event-content">
-                  <h2>{event.title}</h2>
-                  <p>{event.description}</p>
-                  <div className="event-details">
-                    <p><strong>Details:</strong> {event.details}</p>
-                    <p><strong>Location:</strong> {event.location}</p>
+              <div className={`event-card ${flippedDonationCards[index] ? "flipped" : ""}`} onClick={() => toggleFlipDonation(index)}>
+                <div className="event-card-inner">
+                  {/* Front Side */}
+                  <div className="event-card-front">
+                    <img src={event.image} alt={event.title} className="event-image" style={{width:"100%",height:"100%"}} />
+                    <div className="event-details">
+                      <h3 className="event-title">{event.title}</h3>
+                      <p className="event-location">📍 {event.location}</p>
+                      <div className="event-meta">
+                        <p>📅 Date: {event.date}</p>
+                        <p>⏰ Time: {event.time}</p>
+                      </div>
+                      <button className="reminder-button" onClick={handleReminderClick}>📅 Remind me</button>
+                    </div>
+                  </div>
+                  {/* Back Side */}
+                  <div className="event-card-back">
+                    <strong>Details:</strong>
+                    <p> {event.description}</p>
                   </div>
                   <button className="remind-me-button" onClick={() => handleEventClick(event)}>
                     Remind Me

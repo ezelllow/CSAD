@@ -3,118 +3,69 @@
   margin: 2rem auto;
 }
 
-.app {
-  background-color: rgba(255, 253, 253, 0.7); 
+.event-card {
+  width: 320px;
+  height: 420px;
+  perspective: 1000px;
+  cursor: pointer;
 }
 
-h1 {
-  text-align: center;
-  font-size: 2.5rem; /* Make the text larger */
-  margin-bottom: 80px; /* Add spacing below the text */
-  font-weight: bold;
-  color: #333; /* Adjust color for better visibility */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a subtle shadow */
-  margin-top: 80px;
-}
-
-.event-slide {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.event-content-wrapper {
-  display: flex;
-  flex-direction: column; /* Stack image and content vertically */
-  align-items: center; /* Center align the content */
-  text-align: center;
+/* Front & Back Styles */
+.event-card-front, .event-card-back {
   width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
 }
 
 .event-image {
-  width: 50%; /* Adjust size if needed */
-  height: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 15px; /* Space between image and text */
-}
-
-.image-text {
   width: 100%;
-  height: 150px;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  text-align: center;
-  font-size: 1.2rem;
-  color: #333;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  word-wrap: break-word;
+  height: 33%;
+  object-fit: cover;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 
-.event-content {
-  width: 100%;
+.event-details {
+  padding: 15px;
 }
 
-.event-details p {
-  margin: 5px 0;
-}
-
-.swiper-button-next,
-.swiper-button-prev {
-  color: black;
-}
-
-.swiper-pagination-bullet {
-  background: black;
-}
-
-.swiper-pagination-bullet-active {
-  background: gray;
-}
-
-.section-title {
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 100px;
-}
-
-.section-divider {
-  width: 80%;
-  margin: 10px auto;
-  border: 1px solid #ccc;
-}
-
-/* Community Cooking Events - Dark Green */
-.cooking-title {
-  color: darkgreen;
-}
-
-
-/* Food Donation Drives - Dark Orange */
-.donation-title {
-  color: darkorange;
-}
-
-.remind-me-button {
-  background-color: #2ecc71; /* Green color */
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
+.reminder-button {
   margin-top: 10px;
-  transition: background 0.3s;
+  padding: 10px;
+  background: #1d4ed8;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 90%;
 }
 
-.remind-me-button:hover {
-  background-color: #27ae60; /* Darker green */
+.reminder-button:hover {
+  background: #173cb1;
 }
 
+.event-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.event-card.flipped .event-card-inner {
+  transform: rotateY(180deg);
+}
+
+.event-card-back {
+  transform: rotateY(180deg);
+  padding: 20px;
+}
