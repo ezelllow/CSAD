@@ -3,7 +3,7 @@ import { database } from '../../firebase';
 import { useAuth } from '../../context/AuthContext';
 import './Chat.css';
 
-function Chat() {
+function Chat({ chatId, isDM, otherUser }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const { currentUser } = useAuth();
@@ -32,75 +32,67 @@ function Chat() {
   };
 
   useEffect(() => {
-    const messagesRef = database.ref('Servers/ServerID/channels/ChannelID/messages');
-    
-    messagesRef.on('value', async (snapshot) => {
-      const messagesData = snapshot.val();
-      if (messagesData) {
-        const messagesList = Object.entries(messagesData).map(([id, message]) => ({
+    if (!currentUser) return;
+
+    const messagesRef = isDM 
+      ? database.ref(`directMessages/${chatId}/messages`)
+      : database.ref('chats/messages');
+
+    messagesRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const messagesList = Object.entries(data).map(([id, message]) => ({
           id,
           ...message
         }));
+        setMessages(messagesList.sort((a, b) => a.timestamp - b.timestamp));
+      } else {
+        setMessages([]);
+      }
+    });
 
-        // Fetch user data for each unique sender
-        const uniqueSenderIds = [...new Set(messagesList.map(msg => msg.senderId))];
-        const userPromises = uniqueSenderIds.map(userId => 
-          database.ref(`Users/${userId}`).once('value')
-        );
+    return () => messagesRef.off();
+  }, [currentUser, chatId, isDM]);
 
-        const userSnapshots = await Promise.all(userPromises);
-        const userData = {};
-        userSnapshots.forEach((snapshot, index) => {
-          if (snapshot.exists()) {
-            userData[uniqueSenderIds[index]] = snapshot.val();
-          }
+  const handleSendMessage = async (message) => {
+    if (!message.trim()) return;
+
+    try {
+      const messagesRef = isDM 
+        ? database.ref(`directMessages/${chatId}/messages`)
+        : database.ref('chats/messages');
+
+      await messagesRef.push({
+        content: message,
+        senderId: currentUser.uid,
+        timestamp: Date.now()
+      });
+
+      // Update lastUpdated for DMs
+      if (isDM) {
+        await database.ref(`directMessages/${chatId}`).update({
+          lastUpdated: Date.now()
         });
-
-        setUsersData(userData);
-        setMessages(messagesList);
-        scrollToBottom();
       }
-    });
-
-    const container = messagesContainerRef.current;
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
+    } catch (error) {
+      console.error('Error sending message:', error);
     }
-
-    return () => {
-      messagesRef.off();
-      if (container) {
-        container.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, []);
-
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
-
-    const messagesRef = database.ref('Servers/ServerID/channels/ChannelID/messages');
-    await messagesRef.push({
-      message: newMessage,
-      timestamp: Date.now(),
-      senderId: currentUser.uid,
-      username: usersData[currentUser.uid]?.username || currentUser.displayName || 'Anonymous'
-    });
-
-    setNewMessage('');
-    setAutoScroll(true);
   };
 
   return (
     <div className="chat-container">
       <div className="channels-sidebar">
-        <h3>Channels</h3>
+        <h3>CHANNELS</h3>
         <div className="channel-item active">
           # General
         </div>
       </div>
 
       <div className="chat-main">
+        <div className="chat-header">
+          <h3># General</h3>
+        </div>
+        
         <div 
           className="messages-container" 
           ref={messagesContainerRef}
@@ -118,7 +110,9 @@ function Chat() {
                     alt="Profile" 
                     className="message-profile-pic"
                   />
-                  <span className="username">{usersData[msg.senderId]?.username || 'Anonymous'}</span>
+                  <span className="username">
+                    {usersData[msg.senderId]?.username || 'Anonymous'}
+                  </span>
                 </div>
                 <span className="timestamp">
                   {new Date(msg.timestamp).toLocaleTimeString()}

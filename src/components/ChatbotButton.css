@@ -62,12 +62,14 @@
 .chat-header h3 {
   margin: 0;
   font-size: 18px;
+  color: white;
 }
 
 .chat-header p {
   margin: 5px 0 0;
   font-size: 14px;
   opacity: 0.9;
+  color: white;
 }
 
 .chat-messages {
@@ -82,11 +84,13 @@
   border-radius: 15px;
   max-width: 80%;
   word-wrap: break-word;
+  color: #333;
 }
 
 .message.bot {
   background: #f0f0f0;
   margin-right: auto;
+  color: #333;
 }
 
 .message.user {

@@ -1,45 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { database } from "../firebase";
 import { ref, push } from "firebase/database";
+import { database } from "../firebase";
 import "./PopUpForm.css"; // Reuse existing pop-up styles
 
 function CalendarPopupForm({ date, userId, onClose, onAddEvent }) {
-  const [formData, setFormData] = useState({
-    title: "",
-    time: "",
-    location: "",
-  });
-
+  const [eventTitle, setEventTitle] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Handle form input changes
+  // Handle title change
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setEventTitle(e.target.value);
   };
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (!formData.title.trim()) return; // Prevent empty event titles
+    if (!eventTitle.trim()) return; // Prevent empty event titles
 
-    // Create event object with all details
-    const event = {
-      title: formData.title,
-      time: formData.time,
-      location: formData.location,
-    };
+    // Create event data
+    const event = { title: eventTitle };
 
     // Save event to Firebase
     onAddEvent(event);
 
-    // Show success message and reset the input fields
-    setSuccessMessage(`Event "${formData.title}" added successfully!`);
-    setFormData({
-      title: "",
-      time: "",
-      location: "",
-    });
+    // Set success message and reset the input
+    setSuccessMessage(`Event "${eventTitle}" added successfully!`);
+    setEventTitle(""); // Clear the input field
 
     // Hide success message and close form after 2 seconds
     setTimeout(() => {
@@ -58,7 +44,7 @@ function CalendarPopupForm({ date, userId, onClose, onAddEvent }) {
   useEffect(() => {
     // Add event listener to close the pop-up when clicking outside
     document.addEventListener("mousedown", handleOutsideClick);
-
+    
     // Cleanup event listener when the component unmounts
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
@@ -71,35 +57,14 @@ function CalendarPopupForm({ date, userId, onClose, onAddEvent }) {
         {successMessage && <p className="success-message">{successMessage}</p>}
         <h2>Add Event for {date}</h2>
         <form onSubmit={handleSubmit}>
-          <label>Title:</label>
           <input
             type="text"
-            name="title"
+            name="eventTitle"
             placeholder="Enter event title"
-            value={formData.title}
+            value={eventTitle}
             onChange={handleChange}
             required
           />
-
-          <label>Time:</label>
-          <input
-            type="time"
-            name="time"
-            value={formData.time}
-            onChange={handleChange}
-            required
-          />
-
-          <label>Location:</label>
-          <input
-            type="text"
-            name="location"
-            placeholder="Enter event location"
-            value={formData.location}
-            onChange={handleChange}
-            required
-          />
-
           <button type="submit" className="submit-btn">Save</button>
         </form>
       </div>

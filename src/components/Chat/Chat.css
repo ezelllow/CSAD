@@ -1,77 +1,95 @@
 .chat-container {
   display: flex;
   height: calc(100vh - 80px);
-  margin-top: 80px;
-  background-color: #242424;
-  padding-bottom: 100px;
+  background-color: #36393f;
+  position: relative;
+  z-index: 1; /* Ensure chat stays above footer */
 }
 
 .channels-sidebar {
   width: 240px;
   background-color: #2c2f33;
-  color: white;
+  color: #dcddde;
   padding: 20px;
   overflow-y: auto;
 }
 
 .channels-sidebar h3 {
-  color: #fff;
+  color: #8e9297;
   margin-bottom: 16px;
-  font-size: 16px;
-  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .channel-item {
-  padding: 8px 12px;
-  margin: 4px 0;
+  padding: 6px 8px;
+  margin: 2px 0;
   cursor: pointer;
   border-radius: 4px;
   transition: background-color 0.2s;
-  color: #dcddde;
+  color: #8e9297;
   font-size: 16px;
 }
 
 .channel-item:hover {
   background-color: #383b40;
+  color: #dcddde;
 }
 
 .channel-item.active {
   background-color: #404449;
+  color: #fff;
 }
 
 .chat-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  background-color: #36393f;
+  position: relative;
+  overflow: hidden; /* Prevent content from showing outside */
+}
+
+.chat-header {
+  padding: 16px;
+  border-bottom: 1px solid #2c2f33;
+}
+
+.chat-header h3 {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .messages-container {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background-color: #fff;
+  background-color: #36393f;
+  position: relative;
+  z-index: 1;
 }
 
 .message {
   margin-bottom: 16px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background-color: #f0f2f5;
-  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 4px;
+  background-color: #40444b; /* Dark grey background for chat bubbles */
+  color: #dcddde;
+  max-width: 80%;
 }
 
 .message.own-message {
   margin-left: auto;
-  background-color: #2E7D32;
-  color: white;
+  background-color: #2E7D32; /* Green background for own messages */
 }
 
 .message-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .message-user-info {
@@ -81,46 +99,56 @@
 }
 
 .message-profile-pic {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .username {
-  font-weight: bold;
-  color: #2E7D32;
-}
-
-.timestamp {
-  font-size: 0.8em;
-  color: #666;
+  font-weight: 500;
+  color: #fff;
 }
 
 .own-message .username {
   color: #fff;
 }
 
-.own-message .timestamp {
-  color: rgba(255, 255, 255, 0.8);
+.timestamp {
+  font-size: 0.75rem;
+  color: #8e9297;
+}
+
+.message-content {
+  color: #dcddde;
+  font-size: 1rem;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 .message-input-form {
   display: flex;
-  padding: 20px;
-  background-color: #fff;
-  border-top: 1px solid #eee;
-  position: relative;
-  z-index: 99;
+  padding: 16px;
+  background-color: #36393f;
+  border-top: 1px solid #2c2f33;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
 }
 
 .message-input {
   flex: 1;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-right: 12px;
-  font-size: 14px;
+  padding: 10px 16px;
+  background-color: #40444b;
+  border: none;
+  border-radius: 8px;
+  color: #dcddde;
+  font-size: 16px;
+  margin-right: 16px;
+}
+
+.message-input::placeholder {
+  color: #72767d;
 }
 
 .send-button {
@@ -131,9 +159,61 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-right: 100px;
 }
 
 .send-button:hover {
   background-color: #1B5E20;
+}
+
+/* Scrollbar styling */
+.messages-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: #2c2f33;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #202225;
+  border-radius: 4px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #2E7D32;
+}
+
+/* Add these new styles for better scrolling and footer handling */
+.messages-container::after {
+  content: '';
+  display: block;
+  height: 20px;
+}
+
+/* Ensure the chat container stays above the footer */
+.socials-main {
+  position: relative;
+  z-index: 2;
+}
+
+/* Add padding at the bottom of messages to prevent overlap with input */
+.messages-container::after {
+  content: '';
+  display: block;
+  height: 20px;
+}
+
+/* Remove any potential floating elements */
+.chat-main::after {
+  content: none;
+}
+
+/* Ensure messages container takes full available space */
+.messages-container {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #36393f;
+  position: relative;
+  z-index: 1;
 } 

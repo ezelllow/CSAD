@@ -27,6 +27,7 @@ import ForumsPage from "./components/Forums/ForumsPage";
 import PostDetail from "./components/Forums/PostDetail";
 import SocialsPage from "./components/Socials/SocialsPage";
 import Footer from './components/Footer';
+import './utils/fontawesome';
 
 
 function ConditionalNavbar() {

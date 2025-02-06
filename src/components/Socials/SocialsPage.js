@@ -1,10 +1,10 @@
 import React from 'react';
-import Chat from '../Chat/Chat';
+import SocialsMain from './SocialsMain';
 
 export default function SocialsPage() {
   return (
     <div className="socials-page">
-      <Chat />
+      <SocialsMain />
     </div>
   );
 } 
