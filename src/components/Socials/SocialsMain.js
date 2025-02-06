@@ -11,12 +11,15 @@ import {
   faSearch,
   faEllipsisV,
   faMessage,
+  faCompass,
+  faServer,
 } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import DirectMessageChat from '../Chat/DirectMessageChat';
+import ServerChat from '../Chat/ServerChat';
 
 // Add icons to library
-library.add(faUserFriends, faCommentAlt, faSearch, faEllipsisV, faMessage);
+library.add(faUserFriends, faCommentAlt, faSearch, faEllipsisV, faMessage, faCompass, faServer);
 
 function SocialsMain() {
   const [activeTab, setActiveTab] = useState('servers');
@@ -34,9 +37,13 @@ function SocialsMain() {
   const [activeMenu, setActiveMenu] = useState(null);
   const [directMessages, setDirectMessages] = useState([]);
   const [selectedDM, setSelectedDM] = useState(null);
-
-  // Memoize the Chat component
-  const ServerChat = useMemo(() => <Chat />, []);
+  const [servers, setServers] = useState([]);
+  const [selectedServer, setSelectedServer] = useState(null);
+  const [showExplore, setShowExplore] = useState(false);
+  const [serverSearch, setServerSearch] = useState('');
+  const [friendsView, setFriendsView] = useState('all'); // 'all', 'pending', 'blocked'
+  const [pendingFriends, setPendingFriends] = useState([]);
+  const [blockedUsers, setBlockedUsers] = useState([]);
 
   // Separate useEffect for cleanup on unmount
   useEffect(() => {
@@ -238,18 +245,36 @@ function SocialsMain() {
     handleStartChat(userId);
   }, [handleStartChat]);
 
+  // Add this useEffect to fetch pending and blocked users
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const userRef = database.ref(`Users/${currentUser.uid}`);
+    
+    userRef.child('pendingFriends').on('value', (snapshot) => {
+      const pendingData = snapshot.val() || [];
+      setPendingFriends(pendingData);
+    });
+
+    userRef.child('blockedUsers').on('value', (snapshot) => {
+      const blockedData = snapshot.val() || [];
+      setBlockedUsers(blockedData);
+    });
+
+    return () => userRef.off();
+  }, [currentUser]);
+
+  // Update handleAddFriend to send a friend request instead of directly adding
   const handleAddFriend = async (e) => {
     e.preventDefault();
     setAddFriendError('');
     setAddFriendSuccess('');
 
     try {
-      // First, get all users and find by username
       const usersRef = database.ref('Users');
       const snapshot = await usersRef.once('value');
       const allUsers = snapshot.val();
       
-      // Find user with matching username (case insensitive)
       const targetUser = Object.entries(allUsers).find(([_, user]) => 
         user.username?.toLowerCase() === friendUsername.toLowerCase()
       );
@@ -261,60 +286,36 @@ function SocialsMain() {
 
       const [targetUserId, targetUserData] = targetUser;
 
-      // Don't allow adding yourself
       if (targetUserId === currentUser.uid) {
         setAddFriendError("You can't add yourself as a friend");
         return;
       }
 
-      try {
-        // Get current user's data
-        const currentUserRef = database.ref(`Users/${currentUser.uid}`);
-        const currentUserSnapshot = await currentUserRef.once('value');
-        const currentUserData = currentUserSnapshot.val() || {};
-        
-        // Initialize friends array if it doesn't exist
-        if (!currentUserData.friends) {
-          currentUserData.friends = [];
-        }
-
-        // Check if already friends
-        if (currentUserData.friends.includes(targetUserId)) {
-          setAddFriendError('You are already friends with this user');
-          return;
-        }
-
-        // Update current user's friends list
-        await currentUserRef.update({
-          friends: [...currentUserData.friends, targetUserId]
-        });
-
-        // Get target user's data
-        const targetUserRef = database.ref(`Users/${targetUserId}`);
-        const targetUserSnapshot = await targetUserRef.once('value');
-        const targetUserFullData = targetUserSnapshot.val() || {};
-        
-        // Initialize friends array if it doesn't exist
-        if (!targetUserFullData.friends) {
-          targetUserFullData.friends = [];
-        }
-
-        // Update target user's friends list
-        await targetUserRef.update({
-          friends: [...targetUserFullData.friends, currentUser.uid]
-        });
-
-        setAddFriendSuccess(`Successfully added ${targetUserData.username} as a friend!`);
-        setFriendUsername('');
-        setTimeout(() => setShowAddFriend(false), 2000);
-
-      } catch (error) {
-        console.error('Error updating friends lists:', error);
-        setAddFriendError('Error updating friends lists. Please try again.');
+      // Check if user is blocked
+      if (blockedUsers.includes(targetUserId)) {
+        setAddFriendError("You have blocked this user");
+        return;
       }
 
+      // Get target user's blocked list
+      const targetBlockedSnapshot = await database.ref(`Users/${targetUserId}/blockedUsers`).once('value');
+      const targetBlockedUsers = targetBlockedSnapshot.val() || [];
+      
+      if (targetBlockedUsers.includes(currentUser.uid)) {
+        setAddFriendError("You cannot send a friend request to this user");
+        return;
+      }
+
+      const updates = {};
+      updates[`Users/${targetUserId}/pendingFriends`] = [...(targetUserData.pendingFriends || []), currentUser.uid];
+      
+      await database.ref().update(updates);
+      setAddFriendSuccess(`Friend request sent to ${targetUserData.username}!`);
+      setFriendUsername('');
+      setTimeout(() => setShowAddFriend(false), 2000);
+
     } catch (error) {
-      console.error('Error adding friend:', error);
+      console.error('Error sending friend request:', error);
       setAddFriendError('Something went wrong. Please try again.');
     }
   };
@@ -353,6 +354,150 @@ function SocialsMain() {
     }
   }, [currentUser]);
 
+  // Add effect to fetch servers
+  useEffect(() => {
+    if (!currentUser || activeTab !== 'servers') return;
+
+    const serversRef = database.ref('Servers');
+    serversRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const serversArray = Object.entries(data).map(([id, server]) => ({
+          id,
+          ...server
+        }));
+        setServers(serversArray);
+      }
+    });
+
+    return () => serversRef.off();
+  }, [currentUser, activeTab]);
+
+  // Add server join/leave handler
+  const handleJoinServer = async (serverId) => {
+    try {
+      // First check if the server exists and has channels
+      const serverRef = database.ref(`Servers/${serverId}`);
+      const serverSnapshot = await serverRef.once('value');
+      const serverData = serverSnapshot.val();
+
+      if (!serverData.channels) {
+        // Initialize channels if they don't exist
+        await serverRef.child('channels').set({
+          general: {
+            id: 'general',
+            name: 'general',
+            createdAt: Date.now(),
+            type: 'text'
+          }
+        });
+      }
+
+      // Add user to members
+      await serverRef.child(`members/${currentUser.uid}`).set({
+        joinedAt: Date.now(),
+        role: 'member'
+      });
+
+      setSelectedServer(serverId);
+      setShowExplore(false);
+    } catch (error) {
+      console.error('Error joining server:', error);
+    }
+  };
+
+  // Add search filter function
+  const filteredServers = servers.filter(server => 
+    server.name.toLowerCase().includes(serverSearch.toLowerCase()) ||
+    server.description?.toLowerCase().includes(serverSearch.toLowerCase())
+  );
+
+  // Add function to handle blocking users
+  const handleBlockUser = async (userId) => {
+    try {
+      const userRef = database.ref(`Users/${currentUser.uid}`);
+      const targetUserRef = database.ref(`Users/${userId}`);
+      
+      // Get current data
+      const [userSnapshot, targetSnapshot] = await Promise.all([
+        userRef.once('value'),
+        targetUserRef.once('value')
+      ]);
+      
+      const userData = userSnapshot.val() || {};
+      const targetUserData = targetSnapshot.val() || {};
+      
+      // Remove from friends lists if they are friends
+      const updatedUserFriends = (userData.friends || []).filter(id => id !== userId);
+      const updatedTargetFriends = (targetUserData.friends || []).filter(id => id !== currentUser.uid);
+      
+      // Add to blocked list
+      const updatedBlockedUsers = [...(userData.blockedUsers || []), userId];
+      
+      // Update database
+      const updates = {};
+      updates[`Users/${currentUser.uid}/friends`] = updatedUserFriends;
+      updates[`Users/${currentUser.uid}/blockedUsers`] = updatedBlockedUsers;
+      updates[`Users/${userId}/friends`] = updatedTargetFriends;
+      
+      await database.ref().update(updates);
+    } catch (error) {
+      console.error('Error blocking user:', error);
+    }
+  };
+
+  // Add function to handle accepting friend requests
+  const handleAcceptFriend = async (userId) => {
+    try {
+      const userRef = database.ref(`Users/${currentUser.uid}`);
+      const targetUserRef = database.ref(`Users/${userId}`);
+      
+      const [userSnapshot, targetSnapshot] = await Promise.all([
+        userRef.once('value'),
+        targetUserRef.once('value')
+      ]);
+      
+      const userData = userSnapshot.val() || {};
+      const targetUserData = targetSnapshot.val() || {};
+      
+      // Remove from pending and add to friends
+      const updatedPending = (userData.pendingFriends || []).filter(id => id !== userId);
+      const updatedFriends = [...(userData.friends || []), userId];
+      const updatedTargetFriends = [...(targetUserData.friends || []), currentUser.uid];
+      
+      const updates = {};
+      updates[`Users/${currentUser.uid}/pendingFriends`] = updatedPending;
+      updates[`Users/${currentUser.uid}/friends`] = updatedFriends;
+      updates[`Users/${userId}/friends`] = updatedTargetFriends;
+      
+      await database.ref().update(updates);
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+    }
+  };
+
+  // Add function to handle rejecting friend requests
+  const handleRejectFriend = async (userId) => {
+    try {
+      const userRef = database.ref(`Users/${currentUser.uid}`);
+      const updatedPending = pendingFriends.filter(id => id !== userId);
+      await userRef.update({ pendingFriends: updatedPending });
+    } catch (error) {
+      console.error('Error rejecting friend request:', error);
+    }
+  };
+
+  // Add function to handle unblocking users
+  const handleUnblockUser = async (userId) => {
+    try {
+      const userRef = database.ref(`Users/${currentUser.uid}`);
+      const updatedBlocked = blockedUsers.filter(id => id !== userId);
+      await userRef.update({ blockedUsers: updatedBlocked });
+    } catch (error) {
+      console.error('Error unblocking user:', error);
+    }
+  };
+
   return (
     <div className="socials-main">
       <div className="socials-content">
@@ -379,7 +524,98 @@ function SocialsMain() {
 
         <div className="content-area">
           {activeTab === 'servers' ? (
-            ServerChat
+            <div className="servers-container">
+              <div className="servers-sidebar">
+                <div className="servers-header">
+                  <h3>SERVERS</h3>
+                  <button 
+                    className="explore-button"
+                    onClick={() => setShowExplore(true)}
+                  >
+                    <FontAwesomeIcon icon={faCompass} /> Explore
+                  </button>
+                </div>
+                
+                <div className="servers-list">
+                  {servers
+                    .filter(server => server.members?.[currentUser.uid])
+                    .map(server => (
+                      <div 
+                        key={server.id}
+                        className={`server-item ${selectedServer === server.id ? 'active' : ''}`}
+                        onClick={() => setSelectedServer(server.id)}
+                      >
+                        <img 
+                          src={server.icon || "/server-icon.png"} 
+                          alt={server.name} 
+                          className="server-icon"
+                        />
+                        <div className="server-info">
+                          <span className="server-name">{server.name}</span>
+                          <span className="server-member-count">
+                            {Object.keys(server.members || {}).length} members
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {showExplore ? (
+                <div className="explore-servers">
+                  <div className="explore-header">
+                    <h2>Explore Servers</h2>
+                    <div className="search-container">
+                      <div className="search-input-wrapper">
+                        <FontAwesomeIcon icon={faSearch} className="search-icon" />
+                        <input 
+                          type="text" 
+                          value={serverSearch}
+                          onChange={(e) => setServerSearch(e.target.value)}
+                          placeholder="Search servers..."
+                          className="server-search"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="servers-grid">
+                    {filteredServers.map(server => (
+                      <div key={server.id} className="server-card">
+                        <img 
+                          src={server.icon || "/server-icon.png"} 
+                          alt={server.name} 
+                          className="server-card-icon"
+                        />
+                        <div className="server-card-info">
+                          <h3>{server.name}</h3>
+                          <p>{server.description}</p>
+                          <div className="server-card-stats">
+                            <span>{Object.keys(server.members || {}).length} members</span>
+                            <span>{Object.keys(server.channels || {}).length} channels</span>
+                          </div>
+                        </div>
+                        <button 
+                          className={`join-button ${server.members?.[currentUser.uid] ? 'joined' : ''}`}
+                          onClick={() => handleJoinServer(server.id)}
+                          disabled={server.members?.[currentUser.uid]}
+                        >
+                          {server.members?.[currentUser.uid] ? 'Joined' : 'Join'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : selectedServer ? (
+                <ServerChat serverId={selectedServer} />
+              ) : (
+                <div className="select-server-placeholder">
+                  <FontAwesomeIcon icon={faServer} size="2x" />
+                  <h3>Select a Server</h3>
+                  <p>Choose a server to start chatting</p>
+                </div>
+              )}
+            </div>
           ) : activeTab === 'dms' ? (
             <div className="direct-messages-container">
               <div className="dm-sidebar">
@@ -442,9 +678,24 @@ function SocialsMain() {
                   <button className="friends-nav-button active">
                     <FontAwesomeIcon icon={faUserFriends} /> Online
                   </button>
-                  <button className="friends-nav-button">All</button>
-                  <button className="friends-nav-button">Pending</button>
-                  <button className="friends-nav-button">Blocked</button>
+                  <button 
+                    className={`friends-nav-button ${friendsView === 'all' ? 'active' : ''}`}
+                    onClick={() => setFriendsView('all')}
+                  >
+                    All
+                  </button>
+                  <button 
+                    className={`friends-nav-button ${friendsView === 'pending' ? 'active' : ''}`}
+                    onClick={() => setFriendsView('pending')}
+                  >
+                    Pending ({pendingFriends.length})
+                  </button>
+                  <button 
+                    className={`friends-nav-button ${friendsView === 'blocked' ? 'active' : ''}`}
+                    onClick={() => setFriendsView('blocked')}
+                  >
+                    Blocked ({blockedUsers.length})
+                  </button>
                   <button 
                     className="friends-nav-button add-friend"
                     onClick={() => setShowAddFriend(true)}
@@ -455,104 +706,111 @@ function SocialsMain() {
               </div>
 
               <div className="friends-content">
-                <div className="search-container">
-                  <div className="search-input-wrapper">
-                    <FontAwesomeIcon icon={faSearch} className="search-icon" />
-                    <input
-                      type="text"
-                      placeholder="Search"
-                      className="friends-search-input"
-                    />
-                  </div>
-                </div>
-
-                <div className="friends-list">
-                  {/* Recent Direct Messages Section */}
-                  {directMessages.length > 0 && (
-                    <div className="section">
-                      <h3 className="section-header">
-                        <FontAwesomeIcon icon={faCommentAlt} /> RECENT MESSAGES
-                      </h3>
-                      {directMessages.map(chat => {
-                        const otherUser = userData[chat.otherUserId] || {};
-                        return (
-                          <div 
-                            key={chat.id} 
-                            className={`friend-item ${selectedChat === chat.id ? 'active' : ''}`}
-                            onClick={() => handleChatSelect(chat.id)}
-                          >
-                            <div className="friend-info-container">
-                              <img 
-                                src={otherUser.profilePicture || "/pfp.png"} 
-                                alt={otherUser.username} 
-                                className="friend-avatar"
-                              />
-                              <div className="friend-info">
-                                <span className="friend-name">{otherUser.username}</span>
-                                <span className="friend-status">{otherUser.role || 'User'}</span>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* All Users Section */}
+                {friendsView === 'all' && (
                   <div className="section">
                     <h3 className="section-header">
-                      <FontAwesomeIcon icon={faUserFriends} /> ALL USERS
+                      <FontAwesomeIcon icon={faCommentAlt} /> ALL USERS
                     </h3>
-                    {users.map(user => (
-                      <div 
-                        key={user.id} 
-                        className={`friend-item ${selectedChat === user.id ? 'active' : ''}`}
-                        onClick={() => handleChatSelect(user.id)}
-                      >
-                        <div className="friend-info-container">
-                          <img 
-                            src={user.profilePicture || "/pfp.png"} 
-                            alt={user.username} 
-                            className="friend-avatar"
-                          />
-                          <div className="friend-info">
-                            <span className="friend-name">{user.username}</span>
-                            <span className="friend-status">{user.role || 'User'}</span>
+                    {users.map(user => {
+                      if (user.id === currentUser.uid) return null;
+                      const isFriend = user.friends?.includes(currentUser.uid);
+                      
+                      return (
+                        <div key={user.id} className="friend-item">
+                          <div className="friend-info-container">
+                            <img 
+                              src={user.profilePicture || "/pfp.png"} 
+                              alt={user.username} 
+                              className="friend-avatar"
+                            />
+                            <div className="friend-info">
+                              <span className="friend-name">{user.username}</span>
+                              <span className="friend-status">{user.role || 'User'}</span>
+                            </div>
+                          </div>
+                          <div className="friend-actions">
+                            <button 
+                              className="action-button message"
+                              onClick={() => handleStartChat(user.id)}
+                            >
+                              <FontAwesomeIcon icon={faMessage} />
+                            </button>
+                            <div className="menu-container">
+                              <button 
+                                className="action-button menu"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActiveMenu(activeMenu === user.id ? null : user.id);
+                                }}
+                              >
+                                <FontAwesomeIcon icon={faEllipsisV} />
+                              </button>
+                              {activeMenu === user.id && (
+                                <div className="menu-dropdown">
+                                  <button 
+                                    onClick={() => handleFriendAction(user.id, isFriend)}
+                                    className={isFriend ? 'unfriend' : ''}
+                                  >
+                                    {isFriend ? 'Remove Friend' : 'Add Friend'}
+                                  </button>
+                                  <button 
+                                    onClick={() => handleBlockUser(user.id)}
+                                    className="block"
+                                  >
+                                    Block
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        
-                        <div className="friend-actions">
-                          <button 
-                            className="action-button chat"
-                            onClick={(e) => handleChatButtonClick(e, user.id)}
-                            title="Start Chat"
-                          >
-                            <FontAwesomeIcon icon={faMessage} />
+                      );
+                    })}
+                  </div>
+                )}
+
+                {friendsView === 'pending' && (
+                  <div className="section">
+                    <h3 className="section-header">
+                      <FontAwesomeIcon icon={faUserFriends} /> PENDING FRIENDS
+                    </h3>
+                    {pendingFriends.map(userId => (
+                      <div key={userId} className="friend-request">
+                        <div className="friend-info">
+                          <img src={userData[userId]?.profilePicture || "/pfp.png"} alt={userData[userId]?.username} />
+                          <span>{userData[userId]?.username}</span>
+                        </div>
+                        <div className="request-actions">
+                          <button onClick={() => handleAcceptFriend(userId)} className="accept-button">
+                            Accept
                           </button>
-                          <div className="menu-container">
-                            <button 
-                              className="action-button menu"
-                              onClick={(e) => handleMenuClick(e, user.id)}
-                              title="More Actions"
-                            >
-                              <FontAwesomeIcon icon={faEllipsisV} />
-                            </button>
-                            {activeMenu === user.id && (
-                              <div className="menu-dropdown">
-                                <button 
-                                  onClick={() => handleFriendAction(user.id, user.isFriend)}
-                                  className={user.isFriend ? 'unfriend' : 'add-friend'}
-                                >
-                                  {user.isFriend ? 'Unfriend' : 'Add Friend'}
-                                </button>
-                              </div>
-                            )}
-                          </div>
+                          <button onClick={() => handleRejectFriend(userId)} className="reject-button">
+                            Reject
+                          </button>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
+                )}
+
+                {friendsView === 'blocked' && (
+                  <div className="section">
+                    <h3 className="section-header">
+                      <FontAwesomeIcon icon={faUserFriends} /> BLOCKED USERS
+                    </h3>
+                    {blockedUsers.map(userId => (
+                      <div key={userId} className="blocked-user">
+                        <div className="friend-info">
+                          <img src={userData[userId]?.profilePicture || "/pfp.png"} alt={userData[userId]?.username} />
+                          <span>{userData[userId]?.username}</span>
+                        </div>
+                        <button onClick={() => handleUnblockUser(userId)} className="unblock-button">
+                          Unblock
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}

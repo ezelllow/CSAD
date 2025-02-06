@@ -1,0 +1,153 @@
+.server-chat-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.channels-sidebar {
+  width: 240px;
+  background: #2f3136;
+  border-right: 1px solid #202225;
+  display: flex;
+  flex-direction: column;
+}
+
+.channels-header {
+  padding: 16px;
+  border-bottom: 1px solid #202225;
+}
+
+.channels-header h3 {
+  color: #8e9297;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.channels-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.channel-item {
+  padding: 6px 8px;
+  margin: 1px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8e9297;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.channel-item:hover {
+  color: #dcddde;
+  background: rgba(79, 84, 92, 0.16);
+}
+
+.channel-item.active {
+  background: rgba(79, 84, 92, 0.32);
+  color: #fff;
+}
+
+.channel-hash {
+  color: #8e9297;
+  font-size: 20px;
+}
+
+.channel-name {
+  font-size: 16px;
+}
+
+.server-chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.server-chat-header {
+  padding: 16px;
+  background: #36393f;
+  border-bottom: 1px solid #202225;
+}
+
+.server-chat-header h3 {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.server-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.server-message {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 70%;
+}
+
+.server-message.own-message {
+  align-self: flex-end;
+}
+
+.server-message-header {
+  margin-bottom: 4px;
+}
+
+.server-message-username {
+  font-size: 14px;
+  font-weight: 500;
+  color: #dcddde;
+}
+
+.server-message-content {
+  background: #40444b;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #dcddde;
+}
+
+.own-message .server-message-content {
+  background: #3ba55c;
+  color: white;
+}
+
+.server-message-timestamp {
+  font-size: 11px;
+  color: #72767d;
+  align-self: flex-end;
+}
+
+.server-chat-input-form {
+  padding: 16px;
+  background: #36393f;
+  border-top: 1px solid #202225;
+}
+
+.server-chat-input {
+  width: 100%;
+  padding: 12px;
+  background: #40444b;
+  border: none;
+  border-radius: 8px;
+  color: #dcddde;
+  font-size: 14px;
+}
+
+.server-chat-input:focus {
+  outline: none;
+}
+
+.server-chat-input::placeholder {
+  color: #72767d;
+} 

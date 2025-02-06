@@ -20,7 +20,10 @@
             "messages": {
               ".read": true,
               ".write": true,
-              ".indexOn": ["timestamp"]
+              ".indexOn": ["timestamp"],
+              "$messageId": {
+                ".validate": "newData.hasChildren(['content', 'senderId', 'timestamp', 'username'])"
+              }
             }
           }
         }
@@ -44,7 +47,7 @@
       ".write": "auth != null",
       "$uid": {
         ".read": "auth != null",
-        ".write": "auth != null && ($uid === auth.uid || root.child('Users').child(auth.uid).exists())",
+        ".write": "auth != null",
         "email": {
           ".validate": "newData.isString()"
         },
@@ -56,10 +59,18 @@
         },
         "friends": {
           ".read": "auth != null",
-          ".write": "auth != null && ($uid === auth.uid || root.child('Users').child(auth.uid).exists())",
-          "$friendId": {
-            ".validate": "auth != null && root.child('Users').child($friendId).exists()"
-          }
+          ".write": "auth != null"
+        },
+        "pendingFriends": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        },
+        "blockedUsers": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        },
+        "username": {
+          ".validate": "newData.isString()"
         },
         "calendar": {
           "$date": {
@@ -144,6 +155,7 @@
         "messages": {
           ".read": "auth != null && root.child('directMessages').child($chatId).child('participants').child(auth.uid).exists()",
           ".write": "auth != null && root.child('directMessages').child($chatId).child('participants').child(auth.uid).exists()",
+          ".indexOn": ["timestamp"],
           "$messageId": {
             ".validate": "newData.hasChildren(['content', 'senderId', 'timestamp'])"
           }

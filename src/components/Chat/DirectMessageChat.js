@@ -13,20 +13,28 @@ function DirectMessageChat({ chatId, otherUser }) {
     if (!currentUser || !chatId || !otherUser) return;
 
     const messagesRef = database.ref(`directMessages/${chatId}/messages`);
-    messagesRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const messagesList = Object.entries(data)
-          .map(([id, message]) => ({
-            id,
-            ...message,
-            isOwn: message.senderId === currentUser.uid
-          }))
-          .sort((a, b) => a.timestamp - b.timestamp);
-        setMessages(messagesList);
-        scrollToBottom();
-      }
-    });
+    
+    messagesRef
+      .orderByChild('timestamp')
+      .on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const messagesList = Object.entries(data)
+            .map(([id, message]) => ({
+              id,
+              ...message,
+              content: message.content || '',
+              timestamp: message.timestamp || Date.now(),
+              isOwn: message.senderId === currentUser.uid
+            }))
+            .sort((a, b) => a.timestamp - b.timestamp);
+
+          setMessages(messagesList);
+          scrollToBottom();
+        } else {
+          setMessages([]);
+        }
+      });
 
     return () => messagesRef.off();
   }, [currentUser, chatId, otherUser]);
