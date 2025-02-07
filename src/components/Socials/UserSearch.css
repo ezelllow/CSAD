@@ -99,41 +99,70 @@
   font-size: 12px;
 }
 
-.user-actions {
+.friend-item {
+  position: relative;
   display: flex;
-  gap: 8px;
-  opacity: 0;
-  transition: opacity 0.2s;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  width: 100%;
+  z-index: 1;
 }
 
-.user-result:hover .user-actions {
-  opacity: 1;
+.friend-info-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.friend-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  position: static;
 }
 
 .action-button {
-  padding: 6px 12px;
+  padding: 6px;
   border: none;
   border-radius: 4px;
-  font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.action-button.add-friend {
-  background: #36393f;
-  color: #dcddde;
-}
-
-.action-button.remove-friend {
-  background: #f04747;
-  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  position: static;
 }
 
 .action-button.message {
-  background: #2E7D32;
+  background-color: #2E7D32;
   color: white;
 }
 
+.action-button.menu {
+  background-color: #36393f;
+  color: #dcddde;
+}
+
 .action-button:hover {
-  filter: brightness(1.1);
+  background-color: #40444b;
+}
+
+.menu-container {
+  position: absolute;
+  top: 100%;
+  right: 16px;
+  z-index: 100;
+}
+
+.friends-section {
+  overflow-y: auto;
+}
+
+.section {
+  height: 100%;
+  padding: 0 8px;
 } 

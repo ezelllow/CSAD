@@ -17,6 +17,7 @@ import {
 import { library } from '@fortawesome/fontawesome-svg-core';
 import DirectMessageChat from '../Chat/DirectMessageChat';
 import ServerChat from '../Chat/ServerChat';
+import firebase from 'firebase/compat/app';
 
 // Add icons to library
 library.add(faUserFriends, faCommentAlt, faSearch, faEllipsisV, faMessage, faCompass, faServer);
@@ -44,6 +45,7 @@ function SocialsMain() {
   const [friendsView, setFriendsView] = useState('all'); // 'all', 'pending', 'blocked'
   const [pendingFriends, setPendingFriends] = useState([]);
   const [blockedUsers, setBlockedUsers] = useState([]);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   // Separate useEffect for cleanup on unmount
   useEffect(() => {
@@ -74,15 +76,19 @@ function SocialsMain() {
         // Only set up relevant listeners based on active tab
         if (activeTab === 'friends') {
           const usersRef = database.ref('Users');
-          usersRef.on('value', (snapshot) => {
+          usersRef.on('value', async (snapshot) => {
             const data = snapshot.val();
             if (data) {
-              setUserData(data);
+              // Get current user's friends list
+              const currentUserData = data[currentUser.uid];
+              const friendsList = currentUserData?.friends || [];
+
               const usersArray = Object.entries(data)
                 .filter(([id]) => id !== currentUser.uid)
                 .map(([id, user]) => ({
                   id,
-                  ...user
+                  ...user,
+                  isFriend: friendsList.includes(id)
                 }));
               setUsers(usersArray);
             }
@@ -320,39 +326,179 @@ function SocialsMain() {
     }
   };
 
-  // Add menu handler
-  const handleMenuClick = useCallback((e, userId) => {
-    e.stopPropagation(); // Prevent chat selection when clicking menu
-    setActiveMenu(activeMenu === userId ? null : userId);
-  }, [activeMenu]);
+  // Update the handleMenuClick function
+  const handleMenuClick = (e, userId) => {
+    e.stopPropagation(); // Prevent event bubbling
+    
+    // If clicking the same menu, close it
+    if (activeMenu === userId) {
+      setActiveMenu(null);
+      return;
+    }
 
-  // Add friend/unfriend handler
-  const handleFriendAction = useCallback(async (userId, isFriend) => {
+    const buttonRect = e.currentTarget.getBoundingClientRect();
+    setMenuPosition({
+      top: buttonRect.top - 100, // Position above the button
+      left: buttonRect.right - 150 // Align with right edge of button
+    });
+    setActiveMenu(userId);
+  };
+
+  // Update the handleAddFriendFromMenu function
+  const handleAddFriendFromMenu = async (userId) => {
     try {
+      // Get current user's data
+      const userRef = database.ref(`Users/${currentUser.uid}`);
+      const targetUserRef = database.ref(`Users/${userId}`);
+
+      const [userSnapshot, targetSnapshot] = await Promise.all([
+        userRef.once('value'),
+        targetUserRef.once('value')
+      ]);
+
+      const userData = userSnapshot.val();
+      const targetUserData = targetSnapshot.val();
+
+      if (!targetUserData) {
+        console.error("Couldn't find user");
+        return;
+      }
+
+      // Check if already friends
+      const currentFriends = userData.friends || [];
+      if (currentFriends.includes(userId)) {
+        console.error("Already friends with this user");
+        return;
+      }
+
+      // Check if already pending
+      const pendingFriends = targetUserData.pendingFriends || [];
+      if (pendingFriends.includes(currentUser.uid)) {
+        console.error("Friend request already sent");
+        return;
+      }
+
+      // Add to target user's pending friends
+      await targetUserRef.update({
+        pendingFriends: [...pendingFriends, currentUser.uid]
+      });
+
+      // Add to current user's sent requests
+      const currentSentRequests = userData.sentFriendRequests || [];
+      await userRef.update({
+        sentFriendRequests: [...currentSentRequests, userId]
+      });
+
+      // Close menu after sending request
+      setActiveMenu(null);
+
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+    }
+  };
+
+  // Add useEffect to fetch pending friends
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const userRef = database.ref(`Users/${currentUser.uid}`);
+    userRef.on('value', (snapshot) => {
+      const userData = snapshot.val();
+      if (userData) {
+        // Get incoming friend requests
+        setPendingFriends(userData.pendingFriends || []);
+      }
+    });
+
+    return () => userRef.off();
+  }, [currentUser]);
+
+  // Update the handleAcceptFriend function
+  const handleAcceptFriend = async (userId) => {
+    try {
+      const updates = {};
+      
+      // Add to current user's friends list
       const currentUserRef = database.ref(`Users/${currentUser.uid}`);
       const targetUserRef = database.ref(`Users/${userId}`);
 
-      if (isFriend) {
-        // Unfriend
-        await currentUserRef.child('friends').transaction(friends => 
-          (friends || []).filter(id => id !== userId)
-        );
-        await targetUserRef.child('friends').transaction(friends => 
-          (friends || []).filter(id => id !== currentUser.uid)
-        );
-      } else {
-        // Add friend
-        await currentUserRef.child('friends').transaction(friends => 
-          [...(friends || []), userId]
-        );
-        await targetUserRef.child('friends').transaction(friends => 
-          [...(friends || []), currentUser.uid]
+      const [currentUserSnapshot, targetUserSnapshot] = await Promise.all([
+        currentUserRef.once('value'),
+        targetUserRef.once('value')
+      ]);
+
+      const currentUserData = currentUserSnapshot.val() || {};
+      const targetUserData = targetUserSnapshot.val() || {};
+
+      // Create new friends arrays
+      const updatedCurrentFriends = [...(currentUserData.friends || []), userId];
+      const updatedTargetFriends = [...(targetUserData.friends || []), currentUser.uid];
+
+      // Update friends lists
+      updates[`Users/${currentUser.uid}/friends`] = updatedCurrentFriends;
+      updates[`Users/${userId}/friends`] = updatedTargetFriends;
+      
+      // Remove from pending lists
+      updates[`Users/${currentUser.uid}/pendingFriends`] = pendingFriends.filter(id => id !== userId);
+      
+      // Remove from sent requests if exists
+      if (targetUserData.sentFriendRequests) {
+        updates[`Users/${userId}/sentFriendRequests`] = targetUserData.sentFriendRequests.filter(
+          id => id !== currentUser.uid
         );
       }
+
+      await database.ref().update(updates);
     } catch (error) {
-      console.error('Error updating friend status:', error);
+      console.error('Error accepting friend request:', error);
     }
-  }, [currentUser]);
+  };
+
+  // Add friend/unfriend handler
+  const handleFriendAction = async (userId) => {
+    try {
+      // Remove friend logic
+      const userRef = database.ref(`Users/${currentUser.uid}/friends`);
+      const targetUserRef = database.ref(`Users/${userId}/friends`);
+      
+      await userRef.transaction(friends => {
+        if (friends) {
+          return friends.filter(id => id !== userId);
+        }
+        return friends;
+      });
+      
+      await targetUserRef.transaction(friends => {
+        if (friends) {
+          return friends.filter(id => id !== currentUser.uid);
+        }
+        return friends;
+      });
+      
+      setActiveMenu(null); // Close menu after action
+    } catch (error) {
+      console.error('Error removing friend:', error);
+    }
+  };
+
+  // Add function to handle blocking users
+  const handleBlockUser = async (userId) => {
+    try {
+      // Block user logic
+      const blockedRef = database.ref(`Users/${currentUser.uid}/blocked`);
+      await blockedRef.transaction(blocked => {
+        if (!blocked) return [userId];
+        if (!blocked.includes(userId)) {
+          return [...blocked, userId];
+        }
+        return blocked;
+      });
+      
+      setActiveMenu(null); // Close menu after action
+    } catch (error) {
+      console.error('Error blocking user:', error);
+    }
+  };
 
   // Add effect to fetch servers
   useEffect(() => {
@@ -412,70 +558,6 @@ function SocialsMain() {
     server.description?.toLowerCase().includes(serverSearch.toLowerCase())
   );
 
-  // Add function to handle blocking users
-  const handleBlockUser = async (userId) => {
-    try {
-      const userRef = database.ref(`Users/${currentUser.uid}`);
-      const targetUserRef = database.ref(`Users/${userId}`);
-      
-      // Get current data
-      const [userSnapshot, targetSnapshot] = await Promise.all([
-        userRef.once('value'),
-        targetUserRef.once('value')
-      ]);
-      
-      const userData = userSnapshot.val() || {};
-      const targetUserData = targetSnapshot.val() || {};
-      
-      // Remove from friends lists if they are friends
-      const updatedUserFriends = (userData.friends || []).filter(id => id !== userId);
-      const updatedTargetFriends = (targetUserData.friends || []).filter(id => id !== currentUser.uid);
-      
-      // Add to blocked list
-      const updatedBlockedUsers = [...(userData.blockedUsers || []), userId];
-      
-      // Update database
-      const updates = {};
-      updates[`Users/${currentUser.uid}/friends`] = updatedUserFriends;
-      updates[`Users/${currentUser.uid}/blockedUsers`] = updatedBlockedUsers;
-      updates[`Users/${userId}/friends`] = updatedTargetFriends;
-      
-      await database.ref().update(updates);
-    } catch (error) {
-      console.error('Error blocking user:', error);
-    }
-  };
-
-  // Add function to handle accepting friend requests
-  const handleAcceptFriend = async (userId) => {
-    try {
-      const userRef = database.ref(`Users/${currentUser.uid}`);
-      const targetUserRef = database.ref(`Users/${userId}`);
-      
-      const [userSnapshot, targetSnapshot] = await Promise.all([
-        userRef.once('value'),
-        targetUserRef.once('value')
-      ]);
-      
-      const userData = userSnapshot.val() || {};
-      const targetUserData = targetSnapshot.val() || {};
-      
-      // Remove from pending and add to friends
-      const updatedPending = (userData.pendingFriends || []).filter(id => id !== userId);
-      const updatedFriends = [...(userData.friends || []), userId];
-      const updatedTargetFriends = [...(targetUserData.friends || []), currentUser.uid];
-      
-      const updates = {};
-      updates[`Users/${currentUser.uid}/pendingFriends`] = updatedPending;
-      updates[`Users/${currentUser.uid}/friends`] = updatedFriends;
-      updates[`Users/${userId}/friends`] = updatedTargetFriends;
-      
-      await database.ref().update(updates);
-    } catch (error) {
-      console.error('Error accepting friend request:', error);
-    }
-  };
-
   // Add function to handle rejecting friend requests
   const handleRejectFriend = async (userId) => {
     try {
@@ -497,6 +579,8 @@ function SocialsMain() {
       console.error('Error unblocking user:', error);
     }
   };
+
+
 
   return (
     <div className="socials-main">
@@ -712,8 +796,7 @@ function SocialsMain() {
                       <FontAwesomeIcon icon={faCommentAlt} /> ALL USERS
                     </h3>
                     {users.map(user => {
-                      if (user.id === currentUser.uid) return null;
-                      const isFriend = user.friends?.includes(currentUser.uid);
+                      if (user.id === currentUser.uid) return null; // Don't show current user
                       
                       return (
                         <div key={user.id} className="friend-item">
@@ -735,34 +818,73 @@ function SocialsMain() {
                             >
                               <FontAwesomeIcon icon={faMessage} />
                             </button>
-                            <div className="menu-container">
-                              <button 
-                                className="action-button menu"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setActiveMenu(activeMenu === user.id ? null : user.id);
+                            <button 
+                              className="action-button menu"
+                              onClick={(e) => handleMenuClick(e, user.id)}
+                            >
+                              <FontAwesomeIcon icon={faEllipsisV} />
+                            </button>
+                          </div>
+                          {activeMenu === user.id && (
+                            <>
+                              <div 
+                                className="menu-backdrop" 
+                                onClick={() => setActiveMenu(null)}
+                              />
+                              <div 
+                                className="menu-dropdown"
+                                style={{
+                                  position: 'fixed',
+                                  top: menuPosition.top,
+                                  left: menuPosition.left
                                 }}
                               >
-                                <FontAwesomeIcon icon={faEllipsisV} />
-                              </button>
-                              {activeMenu === user.id && (
-                                <div className="menu-dropdown">
-                                  <button 
-                                    onClick={() => handleFriendAction(user.id, isFriend)}
-                                    className={isFriend ? 'unfriend' : ''}
-                                  >
-                                    {isFriend ? 'Remove Friend' : 'Add Friend'}
-                                  </button>
-                                  <button 
-                                    onClick={() => handleBlockUser(user.id)}
-                                    className="block"
-                                  >
-                                    Block
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
+                                {user.isFriend ? (
+                                  <>
+                                    <button 
+                                      onClick={() => {
+                                        handleFriendAction(user.id);
+                                        setActiveMenu(null);
+                                      }}
+                                      className="unfriend"
+                                    >
+                                      Remove Friend
+                                    </button>
+                                    <button 
+                                      onClick={() => {
+                                        handleBlockUser(user.id);
+                                        setActiveMenu(null);
+                                      }}
+                                      className="block"
+                                    >
+                                      Block
+                                    </button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <button 
+                                      onClick={() => {
+                                        handleAddFriendFromMenu(user.id);
+                                        setActiveMenu(null);
+                                      }}
+                                      className="add-friend"
+                                    >
+                                      Add Friend
+                                    </button>
+                                    <button 
+                                      onClick={() => {
+                                        handleBlockUser(user.id);
+                                        setActiveMenu(null);
+                                      }}
+                                      className="block"
+                                    >
+                                      Block
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            </>
+                          )}
                         </div>
                       );
                     })}
