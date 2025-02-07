@@ -1,10 +1,62 @@
 .announcements-page {
     padding: 2rem;
     text-align: center;
+    margin-top: 80px; /* Add space for navbar */
   }
   
   h1 {
     font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 2rem;
+  }
+
+  /* Add new styles for the section headers */
+  .community-events-header,
+  .donation-drives-header {
+    background: transparent; /* Make background transparent */
+    color: #2E7D32; /* Use green color for text */
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  /* Style for the section titles */
+  .community-events-header h2,
+  .donation-drives-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* Style for the add event buttons */
+  .add-event-btn {
+    background-color: #2E7D32;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .add-event-btn:hover {
+    background-color: #1B5E20;
+  }
+
+  /* Add these specific overrides */
+  .COMMUNITY.COOKING.EVENTS,
+  .FOOD.DONATION.DRIVES,
+  .community-cooking-events,
+  .food-donation-drives {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* Target any dark backgrounds in the announcements page */
+  .announcements-page [class*="events"],
+  .announcements-page [class*="drives"] {
+    background: transparent !important;
+    background-color: transparent !important;
   }
