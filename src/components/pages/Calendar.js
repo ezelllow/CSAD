@@ -7,6 +7,7 @@ import { database } from "../../firebase"; // Import your Firebase instance
 import { getAuth } from "firebase/auth";
 import "./Calendar.css"; // Import the CSS file
 import CalendarPopupForm from "../CalendarPopUpForm"; // Import pop-up form
+import { Colors } from "chart.js";
 
 const Calendar = () => {
   const [events, setEvents] = useState([]);
@@ -100,7 +101,7 @@ const Calendar = () => {
 
   return (
     <div className="calendar-container">
-      <h1>CALENDAR</h1>
+      <h1 className="colors">CALENDAR</h1>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
