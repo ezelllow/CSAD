@@ -62,11 +62,12 @@ function BusinessEventSlider() {
     }));
   };
 
-  // Function to handle "Remind me" button click
-  const handleReminderClick = (event) => {
-    event.stopPropagation(); // Prevent card from flipping
-    navigate("/calendar"); // Redirect to calendar page
-  };
+// Function to handle "Remind me" button click
+const handleReminderClick = (e) => {
+  e.stopPropagation(); // ✅ This will now work correctly
+  navigate("/calendar"); // Redirect to calendar page
+};
+
 
   // Reset flipped cards when slider changes for Community Cooking Events
   const handleCookingSlideChange = () => {
@@ -95,7 +96,7 @@ function BusinessEventSlider() {
             + ADD EVENT
           </button>
         </div>
-        
+        <hr className="section-divider" />
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
           navigation
@@ -121,7 +122,7 @@ function BusinessEventSlider() {
                         <p>📅 Date: {event.date}</p>
                         <p>⏰ Time: {event.time}</p>
                       </div>
-                      <button className="reminder-button" onClick={() => handleReminderClick(event)}>📅 Remind me</button>
+                      <button className="reminder-button" onClick={(e) => handleReminderClick(e)}>📅 Remind me</button>
                       {/* Pass setSelectedEvent to the popup or other child components */}
                       
                     </div>
@@ -142,7 +143,8 @@ function BusinessEventSlider() {
       </Swiper>
   
       {/* Food Donation Drives Slider */}
-      
+      <h2 className="section-title donation-title">Food Donation Drives</h2>
+      <hr className="section-divider" />
       <div className="section-header">
         <h2 className="donation-title">Food Donation Drives</h2>
         <button className="donation-btn" onClick={() => handleOpenPopup("DonationDrives")}>
@@ -174,7 +176,7 @@ function BusinessEventSlider() {
                         <p>📅 Date: {event.date}</p>
                         <p>⏰ Time: {event.time}</p>
                       </div>
-                      <button className="reminder-button" onClick={(e) => handleReminderClick(event)}>📅 Remind me</button>
+                      <button className="reminder-button" onClick={(e) => handleReminderClick(e)}>📅 Remind me</button>
                      
                     </div>
                   </div>
