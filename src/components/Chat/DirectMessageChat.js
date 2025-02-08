@@ -1,43 +1,62 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { database } from '../../firebase';
+import { 
+  getDatabase, 
+  ref, 
+  onValue, 
+  push, 
+  update, 
+  off 
+} from 'firebase/database';
 import { useAuth } from '../../context/AuthContext';
 import './DirectMessageChat.css';
 
-function DirectMessageChat({ chatId, otherUser }) {
+function DirectMessageChat({ dmId, otherUserId, onClose }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const { currentUser } = useAuth();
   const messagesContainerRef = useRef(null);
+  const [chatPartner, setChatPartner] = useState(null);
 
+  // Fetch chat partner's data
   useEffect(() => {
-    if (!currentUser || !chatId || !otherUser) return;
+    if (!dmId) return;
 
-    const messagesRef = database.ref(`directMessages/${chatId}/messages`);
+    const db = getDatabase();
+    const participantsRef = ref(db, `directMessages/${dmId}/participants`);
     
-    messagesRef
-      .orderByChild('timestamp')
-      .on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          const messagesList = Object.entries(data)
-            .map(([id, message]) => ({
-              id,
-              ...message,
-              content: message.content || '',
-              timestamp: message.timestamp || Date.now(),
-              isOwn: message.senderId === currentUser.uid
-            }))
-            .sort((a, b) => a.timestamp - b.timestamp);
+    const unsubscribe = onValue(participantsRef, (snapshot) => {
+      const participants = snapshot.val();
+      if (participants) {
+        const partner = Object.values(participants).find(p => p.id !== currentUser.uid);
+        setChatPartner(partner);
+      }
+    });
 
-          setMessages(messagesList);
-          scrollToBottom();
-        } else {
-          setMessages([]);
-        }
-      });
+    return () => off(participantsRef);
+  }, [dmId, currentUser]);
 
-    return () => messagesRef.off();
-  }, [currentUser, chatId, otherUser]);
+  // Fetch messages
+  useEffect(() => {
+    if (!dmId) return;
+
+    const db = getDatabase();
+    const messagesRef = ref(db, `directMessages/${dmId}/messages`);
+    
+    const unsubscribe = onValue(messagesRef, (snapshot) => {
+      const messagesData = snapshot.val() || {};
+      const messagesArray = Object.entries(messagesData)
+        .map(([id, message]) => ({
+          id,
+          ...message
+        }))
+        .sort((a, b) => a.timestamp - b.timestamp);
+      
+      setMessages(messagesArray);
+      scrollToBottom();
+    });
+
+    return () => off(messagesRef);
+  }, [dmId]);
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
@@ -45,26 +64,26 @@ function DirectMessageChat({ chatId, otherUser }) {
     }
   };
 
-  const handleSendMessage = async (e) => {
+  const sendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
 
     try {
+      const db = getDatabase();
       const messageData = {
         content: newMessage,
         senderId: currentUser.uid,
         timestamp: Date.now()
       };
 
-      const messagesRef = database.ref(`directMessages/${chatId}/messages`);
-      await messagesRef.push(messageData);
+      // Add new message
+      const messagesRef = ref(db, `directMessages/${dmId}/messages`);
+      await push(messagesRef, messageData);
 
-      await database.ref(`directMessages/${chatId}`).update({
-        lastMessage: {
-          content: newMessage,
-          timestamp: Date.now(),
-          senderId: currentUser.uid
-        },
+      // Update chat metadata
+      const chatRef = ref(db, `directMessages/${dmId}`);
+      await update(chatRef, {
+        lastMessage: messageData,
         lastUpdated: Date.now()
       });
 
@@ -79,13 +98,12 @@ function DirectMessageChat({ chatId, otherUser }) {
     <div className="dm-chat-container">
       <div className="dm-chat-header">
         <img 
-          src={otherUser?.profilePicture || "/pfp.png"} 
-          alt={otherUser?.username} 
+          src={chatPartner?.profilePicture || "/pfp.png"} 
+          alt={chatPartner?.username} 
           className="dm-chat-avatar"
         />
         <div className="dm-chat-user-info">
-          <span className="dm-chat-username">{otherUser?.username}</span>
-          <span className="dm-chat-status">{otherUser?.role || 'User'}</span>
+          <span className="dm-chat-username">{chatPartner?.username}</span>
         </div>
       </div>
 
@@ -93,11 +111,11 @@ function DirectMessageChat({ chatId, otherUser }) {
         {messages.map(message => (
           <div 
             key={message.id}
-            className={`dm-message ${message.isOwn ? 'own-message' : ''}`}
+            className={`dm-message ${message.senderId === currentUser.uid ? 'own-message' : ''}`}
           >
             <div className="dm-message-header">
               <span className="dm-message-username">
-                {message.isOwn ? 'You' : otherUser?.username}
+                {message.senderId === currentUser.uid ? 'You' : chatPartner?.username}
               </span>
             </div>
             <div className="dm-message-content">
@@ -113,12 +131,12 @@ function DirectMessageChat({ chatId, otherUser }) {
         ))}
       </div>
 
-      <form onSubmit={handleSendMessage} className="dm-chat-input-form">
+      <form onSubmit={sendMessage} className="dm-chat-input-form">
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          placeholder={`Message @${otherUser?.username}`}
+          placeholder={`Message @${chatPartner?.username || 'User'}`}
           className="dm-chat-input"
           autoFocus
         />
