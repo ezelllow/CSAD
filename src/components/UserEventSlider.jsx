@@ -8,12 +8,16 @@ import { database } from "../firebase"; // Firebase setup
 import { ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom"; 
 import "./UserEventSlider.css"; // Ensure styling for the slider
+import CalendarPopUpForm from './CalendarPopUpForm'; // Corrected the filename case
+
+
 
 function UserEventSlider() {
   const [cooking, setCooking] = useState([]);
   const [donationDrive, setDonationDrive] = useState([]);
   const [flippedCookingCards, setFlippedCookingCards] = useState({});
   const [flippedDonationCards, setFlippedDonationCards] = useState({});
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +41,8 @@ function UserEventSlider() {
   }, []);
 
   const handleReminderClick = (event) => {
-    event.stopPropagation(); // Prevent flipping
+    //event.stopPropagation(); // Prevent flipping
+    setSelectedEvent(event);
     navigate("/calendar");
   };
 
@@ -95,12 +100,15 @@ function UserEventSlider() {
                         <p>📅 Date: {event.date}</p>
                         <p>⏰ Time: {event.time}</p>
                       </div>
-                      <button className="reminder-button" onClick={handleReminderClick}>📅 Remind me</button>
+                      <button className="reminder-button" onClick={() => handleReminderClick(event)}>📅 Remind me</button>
+                      {/* Pass setSelectedEvent to the popup or other child components */}
+                      
                     </div>
                   </div>
                   {/* Back Side */}
                   <div className="event-card-back">
-                    <strong>Details:</strong>
+                    <strong>✍️ Details:</strong>
+                    <div className="details-line"></div>
                     <p>{event.description}</p>
                   </div>
                 </div>
@@ -140,12 +148,14 @@ function UserEventSlider() {
                         <p>📅 Date: {event.date}</p>
                         <p>⏰ Time: {event.time}</p>
                       </div>
-                      <button className="reminder-button" onClick={handleReminderClick}>📅 Remind me</button>
+                      <button className="reminder-button" onClick={(e) => handleReminderClick(event)}>📅 Remind me</button>
+                     
                     </div>
                   </div>
                   {/* Back Side */}
-                  <div className="event-card-back">
-                    <strong>Details:</strong>
+                  <div className="event-card-back2">
+                    <strong>✍️ Details:</strong>
+                    <div className="details-line"></div>
                     <p>{event.description}</p>
                   </div>
                 </div>

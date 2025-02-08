@@ -3,29 +3,40 @@ import { ref, push } from "firebase/database";
 import { database } from "../firebase";
 import "./PopUpForm.css"; // Reuse existing pop-up styles
 
-function CalendarPopupForm({ date, userId, onClose, onAddEvent }) {
-  const [eventTitle, setEventTitle] = useState("");
+function CalendarPopupForm({ date, userId, selectedEvent, onClose, onAddEvent }) {
+  const [eventDetails, setEventDetails] = useState({ title: "", location: "", date: "", time: "" });
   const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    console.log(selectedEvent); // Add this line to check the event data
+    if (selectedEvent) {
+      setEventDetails({
+        title: selectedEvent.title || "",
+        location: selectedEvent.location || "",
+        date: selectedEvent.date || "",
+        time: selectedEvent.time || ""
+      });
+    }
+  }, [selectedEvent]);
 
   // Handle title change
   const handleChange = (e) => {
-    setEventTitle(e.target.value);
+    setEventDetails({ ...eventDetails, [e.target.name]: e.target.value });
   };
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!eventTitle.trim()) return; // Prevent empty event titles
-
+    if (!eventDetails.title.trim()) return;
     // Create event data
-    const event = { title: eventTitle };
+    //const event = { title: eventTitle };
 
     // Save event to Firebase
-    onAddEvent(event);
+    onAddEvent(eventDetails);
 
     // Set success message and reset the input
-    setSuccessMessage(`Event "${eventTitle}" added successfully!`);
-    setEventTitle(""); // Clear the input field
+    setSuccessMessage(`Event "${eventDetails}" added successfully!`);
+    setEventDetails(""); // Clear the input field
 
     // Hide success message and close form after 2 seconds
     setTimeout(() => {
@@ -57,14 +68,10 @@ function CalendarPopupForm({ date, userId, onClose, onAddEvent }) {
         {successMessage && <p className="success-message">{successMessage}</p>}
         <h2>Add Event for {date}</h2>
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="eventTitle"
-            placeholder="Enter event title"
-            value={eventTitle}
-            onChange={handleChange}
-            required
-          />
+        <input type="text" name="title" placeholder="Event Title" value={eventDetails.title} onChange={handleChange} required />
+          <input type="text" name="location" placeholder="Location" value={eventDetails.location} onChange={handleChange} />
+          <input type="text" name="date" placeholder="Date" value={eventDetails.date} onChange={handleChange} />
+          <input type="text" name="time" placeholder="Time" value={eventDetails.time} onChange={handleChange} />
           <button type="submit" className="submit-btn">Save</button>
         </form>
       </div>
