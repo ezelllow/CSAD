@@ -83,10 +83,10 @@
 
 .dm-chat-input {
   width: 100%;
-  padding: 12px;
-  background: #40444b;
-  border: none;
+  padding: 10px;
   border-radius: 8px;
+  border: none;
+  background: #40444b;
   color: #dcddde;
   font-size: 14px;
 }
@@ -97,6 +97,11 @@
 
 .dm-chat-input::placeholder {
   color: #72767d;
+}
+
+/* Remove any existing button styles */
+.dm-chat-input-form button {
+  display: none;
 }
 
 .dm-message-header {
