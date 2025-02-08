@@ -86,6 +86,13 @@ function PopupForm({ category, onClose }) {
     }
   };
 
+  // Close the popup if the overlay (background) is clicked
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose(); // Close the form when the background is clicked
+    }
+  };
+
   return (
     <div className="popup-overlay"  onClick={handleOutsideClick}>
       <div className="popup-container">

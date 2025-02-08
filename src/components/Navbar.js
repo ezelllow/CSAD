@@ -3,10 +3,9 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import './Navbar.css';
 import { Button } from './Button';
-import { Link as ScrollLink,scroller } from 'react-scroll'; // Correct alias to avoid conflict
+import { Link as ScrollLink, scroller } from 'react-scroll'; // Correct alias to avoid conflict
 import { database } from '../firebase';
 import { set, ref } from "firebase/database";  //new
-
 
 function Navbar() {
   const navigate = useNavigate();
@@ -22,12 +21,10 @@ function Navbar() {
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('User');  // Default role is User
 
-
   // Handle the role selection change
   const handleRoleChange = (e) => {
     setRole(e.target.value);
   };
-
 
   const openLogin = () => {
     setShowLogin(true);
@@ -65,12 +62,11 @@ function Navbar() {
     };
   }, []);
 
-
   const handleScrollToSection = (section) => {
     if (location.pathname !== '/') {
       navigate('/');
       scroller.scrollTo(section, { smooth: true, duration: 800 });
-    } 
+    }
   };
 
   const [click, setClick] = useState(false);
@@ -91,11 +87,10 @@ function Navbar() {
     showButton();
   }, []);
 
-  //window.addEventListener('resize', showButton);
   useEffect(() => {
     const handleResize = () => showButton();
     window.addEventListener('resize', handleResize);
-    
+
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -120,11 +115,10 @@ function Navbar() {
       return;
     }
     try {
-
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);  //new
       const user = userCredential.user; //new
-       // Save username to Realtime Database
-       await set(ref(database, "Users/" + user.uid), {
+      // Save username to Realtime Database
+      await set(ref(database, "Users/" + user.uid), {
         email: email,
         role: role, // Store the selected role here
         username: username
@@ -154,21 +148,21 @@ function Navbar() {
 
   return (
     <>
-    <nav className="navbar">
-      <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
-          <span className="green">Harvest</span><span className="orange">Hub</span>
-          <img 
+      <nav className="navbar">
+        <div className="navbar-container">
+          <Link to="/" className="navbar-logo">
+            <span className="green">Harvest</span><span className="orange">Hub</span>
+            <img 
               src='/images/harvest.png' 
               alt='HarvestHub Logo' 
               className='navbar-logo-image' 
               style={{ height: '100px', width: 'auto' }} // Adjust size as needed
             />
-        </Link>
+          </Link>
 
-        <div className='menu-icon' onClick={handleClick}>
+          <div className='menu-icon' onClick={handleClick}>
             <i className={click ? 'fas fa-times' : 'fas fa-bars'} />
-        </div>
+          </div>
           <ul className={click ? 'nav-menu active' : 'nav-menu'}>
             <li className='nav-item'>
               <ScrollLink
@@ -236,8 +230,8 @@ function Navbar() {
           </ul>
           {button && !isResettingPassword && <Button buttonStyle='btn--outline' onClick={openSignUp}>SIGN UP</Button>}
           {button && !isResettingPassword && <Button buttonStyle='btn--outline' onClick={openLogin}>LOGIN</Button>}
-      </div>  
-    </nav>
+        </div>  
+      </nav>
 
         {showLogin && (
           <div className="popup" onClick={closePopup}>
@@ -250,7 +244,7 @@ function Navbar() {
                 <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
               )}
               {!isResettingPassword && <button type="submit">Login</button>}
-              </form>
+            </form>
             {!isResettingPassword ? (
               <p><span onClick={() => setIsResettingPassword(true)} className="popup-link">Forgot Password?</span></p>
             ) : (
@@ -261,32 +255,30 @@ function Navbar() {
         </div>
       )}
 
-        {showSignUp && (
-          <div className="popup" onClick={closePopup}>
-            <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-              <h2>Sign Up</h2>
-              {error && <p className="error">{error}</p>}
-              <form onSubmit={handleSignUp}>
-                <input type="text" placeholder="Enter username" value={username} onChange={(e) => setUsername(e.target.value)} required/>
-                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-
-                {/* Add Role selection */}
-                <label>Select Role:</label>
-                <select value={role} onChange={handleRoleChange} required>
-                  <option value="User">User</option>
-                  <option value="Seller">Seller</option>
-                </select>
-                <button type="submit">Sign Up</button>
-              </form>
-              <p>Already have an account? <span onClick={openLogin} className="popup-link">Login</span></p>
-            </div>
+      {/* Sign Up Pop-up */}
+      {showSignUp && (
+        <div className="popup" onClick={closePopup}>
+          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Sign Up</h2>
+            {error && <p className="error">{error}</p>}
+            <form onSubmit={handleSignUp}>
+              <input type="text" placeholder="Enter username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+              <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+              <label>Select Role:</label>
+              <select value={role} onChange={handleRoleChange} required>
+                <option value="User">User</option>
+                <option value="Seller">Seller</option>
+              </select>
+              <button type="submit">Sign Up</button>
+            </form>
+            <p>Already have an account? <span onClick={openLogin} className="popup-link">Login</span></p>
           </div>
-        )}
+        </div>
+      )}
 
-    </>  
-      
+    </>
   );
 }
 

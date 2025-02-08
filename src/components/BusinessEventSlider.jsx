@@ -8,7 +8,8 @@ import { database } from "../firebase"; // Firebase setup
 import { ref, onValue } from "firebase/database";
 import PopupForm from "./PopUpForm"; // Import the popup form component
 import "./BusinessEventSlider.css"; // Ensure styling for the slider
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
+
 
 function BusinessEventSlider() {
   const [cooking, setCooking] = useState([]);
@@ -77,28 +78,34 @@ function BusinessEventSlider() {
     setFlippedDonationCards({});
   };
 
+  const handleEventClick = (event) => {
+    event.stopPropagation(); // Prevent card from flipping
+    navigate("/calendar"); // Redirect to calendar page
+  };
+  
+
+
   return (
     <div className="swiper-container">
       <h1 className="app" id="slider-section">Upcoming Events</h1>
-
-      {/* Business Cooking Events Slider */}
-      <div className="section-header">
-        <h2 className="cooking-title">Community Cooking Events</h2>
-        <button className="cooking-btn" onClick={() => handleOpenPopup("Announcements")}>
-          + ADD EVENT
-        </button>
-      </div>
-      <hr className="section-divider" />
-      <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
-        navigation
-        pagination={{ clickable: true }}
-        autoplay={{ delay: 5000 }}
-        loop={false}
-        spaceBetween={30}
-        slidesPerView={3}
-        onSlideChange={handleCookingSlideChange} // Reset flipped cards when sliding
-      >
+        {/* Business Cooking Events Slider */}
+        <div className="section-header">
+          <h2 className="cooking-title">Community Cooking Events</h2>
+          <button className="cooking-btn" onClick={() => handleOpenPopup("Announcements")}>
+            + ADD EVENT
+          </button>
+        </div>
+        <hr className="section-divider" />
+        <Swiper
+          modules={[Navigation, Pagination, Autoplay]}
+          navigation
+          pagination={{ clickable: true }}
+          autoplay={{ delay: 5000 }}
+          loop={false}
+          spaceBetween={30}
+          slidesPerView={3}
+          onSlideChange={handleCookingSlideChange} // Reset flipped cards when sliding
+        >
         {cooking.length > 0 ? (
           cooking.map((event, index) => (
             <SwiperSlide key={index} className="event-slide">
@@ -106,7 +113,7 @@ function BusinessEventSlider() {
                 <div className="event-card-inner">
                   {/* Front Side */}
                   <div className="event-card-front">
-                    <img src={event.image} alt={event.title} className="event-image" style={{width:"100%",height:"100%"}} />
+                    <img src={event.image} alt={event.title} className="event-image"  />
                     <div className="event-details">
                       <h3 className="event-title">{event.title}</h3>
                       <p className="event-location">📍 {event.location}</p>
@@ -114,13 +121,16 @@ function BusinessEventSlider() {
                         <p>📅 Date: {event.date}</p>
                         <p>⏰ Time: {event.time}</p>
                       </div>
-                      <button className="reminder-button" onClick={handleReminderClick}>📅 Remind me</button>
+                      <button className="reminder-button" onClick={() => handleReminderClick(event)}>📅 Remind me</button>
+                      {/* Pass setSelectedEvent to the popup or other child components */}
+                      
                     </div>
                   </div>
                   {/* Back Side */}
                   <div className="event-card-back">
-                    <strong>Details:</strong>
-                    <p> {event.description}</p>
+                    <strong>✍️ Details:</strong>
+                    <div className="details-line"></div>
+                    <p>{event.description}</p>
                   </div>
                 </div>
               </div>
@@ -130,15 +140,16 @@ function BusinessEventSlider() {
           <p>No events available</p>
         )}
       </Swiper>
-
-      {/* Business Food Donation Drives Slider */}
+  
+      {/* Food Donation Drives Slider */}
+      <h2 className="section-title donation-title">Food Donation Drives</h2>
+      <hr className="section-divider" />
       <div className="section-header">
         <h2 className="donation-title">Food Donation Drives</h2>
         <button className="donation-btn" onClick={() => handleOpenPopup("DonationDrives")}>
           + ADD EVENT
         </button>
       </div>
-      <hr className="section-divider" />
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         navigation
@@ -147,7 +158,7 @@ function BusinessEventSlider() {
         loop={false}
         spaceBetween={30}
         slidesPerView={3}
-        onSlideChange={handleDonationSlideChange} // Reset flipped cards when sliding
+        onSlideChange={handleDonationSlideChange}
       >
         {donationDrive.length > 0 ? (
           donationDrive.map((event, index) => (
@@ -156,7 +167,7 @@ function BusinessEventSlider() {
                 <div className="event-card-inner">
                   {/* Front Side */}
                   <div className="event-card-front">
-                    <img src={event.image} alt={event.title} className="event-image" style={{width:"100%",height:"100%"}} />
+                    <img src={event.image} alt={event.title} className="event-image" />
                     <div className="event-details">
                       <h3 className="event-title">{event.title}</h3>
                       <p className="event-location">📍 {event.location}</p>
@@ -164,13 +175,15 @@ function BusinessEventSlider() {
                         <p>📅 Date: {event.date}</p>
                         <p>⏰ Time: {event.time}</p>
                       </div>
-                      <button className="reminder-button" onClick={handleReminderClick}>📅 Remind me</button>
+                      <button className="reminder-button" onClick={(e) => handleReminderClick(event)}>📅 Remind me</button>
+                     
                     </div>
                   </div>
                   {/* Back Side */}
-                  <div className="event-card-back">
-                    <strong>Details:</strong>
-                    <p> {event.description}</p>
+                  <div className="event-card-back2">
+                    <strong>✍️ Details:</strong>
+                    <div className="details-line"></div>
+                    <p>{event.description}</p>
                   </div>
                 </div>
               </div>
@@ -180,11 +193,11 @@ function BusinessEventSlider() {
           <p>No donation drives available</p>
         )}
       </Swiper>
-
       {/* Popup Form Component */}
       {showPopup && <PopupForm category={formCategory} onClose={() => setShowPopup(false)} />}
     </div>
   );
-}
-
-export default BusinessEventSlider;
+  }
+  
+  export default BusinessEventSlider;
+  

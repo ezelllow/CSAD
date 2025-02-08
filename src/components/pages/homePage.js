@@ -83,62 +83,70 @@ function HomePage() {
 
   return (
     <div className="menu-container">
-      <h1>Food Listings</h1>
-
-      <input
-        type="text"
-        placeholder="Search listings..."
-        className="search-bar"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-
-      <div className="filter-buttons">
-        {filterOptions.map((filter) => (
-          <button
-            key={filter}
-            className={selectedFilters.includes(filter) ? "active" : ""}
-            onClick={() => toggleFilter(filter)}
-          >
-            {filter} {selectedFilters.includes(filter) && "✔"} {/* ✅ Shows checkmark on selected filters */}
-          </button>
-        ))}
+      <div className="search-section">
+        <h1>Available Food Items</h1>
+        <input
+          type="text"
+          placeholder="Search food items..."
+          className="search-bar"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <div className="filter-buttons">
+          {filterOptions.map((filter) => (
+            <button
+              key={filter}
+              className={selectedFilters.includes(filter) ? "active" : ""}
+              onClick={() => toggleFilter(filter)}
+            >
+              {filter} {selectedFilters.includes(filter) && "✔"} {/* ✅ Shows checkmark on selected filters */}
+            </button>
+          ))}
+        </div>
       </div>
-
-      {loading ? (
-        <p>Loading listings...</p>
-      ) : filteredListings.length > 0 ? (
+      
+      <div className="menu-grid-container">
         <div className="menu-grid">
-          {filteredListings.map((listing) => (
-            <div key={listing.id} className="menu-card">
-              {listing.imageUrl && (
-                <img 
-                  src={listing.imageUrl} 
-                  alt={listing.title} 
-                  className="menu-image"
-                />
-              )}
-              <div className="menu-details">
-                <h3>{listing.title}</h3>
-                <p>{listing.description || "No description available"}</p>
-                <div className="listing-meta">
-                  <span className="location">📍 {listing.location || "Unknown"}</span>
-                  <span className="expiry">⏰ Expires: {listing.expiryDate ? new Date(listing.expiryDate).toLocaleDateString() : "N/A"}</span>
-                  
-                  {/* 🔥 Display Halal, Spicy, and Location tags properly */}
-                  <div className="tags">
-                    {listing.halal && <span className="tag halal">Halal</span>}
-                    {listing.spicy && <span className="tag spicy">Spicy</span>}
-                    {listing.location?.toLowerCase() === "dover" && <span className="tag location">Dover</span>} {/* ✅ Added location tag */}
+          {loading ? (
+            <p>Loading listings...</p>
+          ) : filteredListings.length > 0 ? (
+            filteredListings.map((listing) => (
+              <div key={listing.id} className="menu-card">
+                {listing.imageUrl && (
+                  <img 
+                    src={listing.imageUrl} 
+                    alt={listing.title} 
+                    className="menu-image"
+                  />
+                )}
+                <div className="menu-details">
+                  <h3>{listing.title}</h3>
+                  <p>{listing.description || "No description available"}</p>
+                  <div className="listing-meta">
+                    <div className="listing-info">
+                      <span className="location">📍 {listing.location || "Unknown"}</span>
+                      <span className="expiry">⏰ Expires: {listing.expiryDate ? new Date(listing.expiryDate).toLocaleDateString() : "N/A"}</span>
+                      <span className="quantity">📦 Quantity: {listing.quantity || "N/A"}</span>
+                      <span className="ingredients">🥗 Ingredients: {listing.ingredients || "Not specified"}</span>
+                      <span className="status" data-status={listing.status || "available"}>
+                        Status: {listing.status || "Available"}
+                      </span>
+                    </div>
+                    
+                    <div className="tags">
+                      {listing.halal && <span className="tag halal">Halal</span>}
+                      {listing.spicy && <span className="tag spicy">Spicy</span>}
+                      {listing.location?.toLowerCase() === "dover" && <span className="tag dover">Dover</span>}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p>No listings found</p>
+          )}
         </div>
-      ) : (
-        <p>No listings found</p>
-      )}
+      </div>
     </div>
   );
 }

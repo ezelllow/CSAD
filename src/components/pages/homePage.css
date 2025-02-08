@@ -2,24 +2,47 @@
   max-width: 1200px;
   margin: 80px auto 0;
   padding: 20px;
-  min-height: 100vh;
+  height: calc(100vh - 80px);
   position: relative;
-  padding-bottom: 400px;
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  overflow: hidden;
+}
+
+/* Search section styling */
+.search-section {
+  position: sticky;
+  top: 20px;
+  width: 100%;
+  background: #242424;
+  padding: 20px;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  border-radius: 15px;
+  height: auto;
+  margin-bottom: 20px;
 }
 
 h1 {
   text-align: left;
   font-size: 24px;
+  margin-bottom: 15px;
+  color: white;
 }
 
 .search-bar {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #333;
+  color: white;
+}
+
+.search-bar::placeholder {
+  color: #999;
 }
 
 .filter-buttons {
@@ -29,27 +52,61 @@ h1 {
 }
 
 .filter-buttons button {
-  padding: 8px 12px;
+  padding: 8px 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
   background-color: #f97316;
   color: white;
   font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.filter-buttons button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .filter-buttons button.active {
   background-color: #16a34a;
 }
 
+/* Menu grid container */
+.menu-grid-container {
+  flex: 1;
+  margin-top: 20px;
+  padding: 1rem;
+  background: white;
+  overflow-y: auto;
+  border-radius: 15px;
+}
+
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
-  padding: 1rem;
-  margin-bottom: 120px;
+  margin-bottom: 40px;
   position: relative;
   z-index: 1;
+}
+
+/* Add custom scrollbar styling */
+.menu-grid-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.menu-grid-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.menu-grid-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.menu-grid-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .menu-card {
@@ -57,10 +114,16 @@ h1 {
   border-radius: 10px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  width: 100%;
-  height: 350px;
+  height: auto;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease;
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .menu-image {
@@ -74,9 +137,11 @@ h1 {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
-h3 {
+.menu-details h3 {
+  color: #333;
   margin: 0;
   font-size: 16px;
   font-weight: 600;
@@ -85,10 +150,10 @@ h3 {
   white-space: nowrap;
 }
 
-p {
+.menu-details p {
+  color: #666;
   margin: 5px 0;
   font-size: 14px;
-  color: #666;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -139,6 +204,37 @@ p {
 .tag.dover {
   background-color: #e3f2fd;
   color: #1565c0;
+}
+
+.listing-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.listing-info span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+.status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status[data-status="available"] {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status[data-status="claimed"] {
+  background-color: #fff3e0;
+  color: #e65100;
 }
 
 @media (max-width: 1200px) {
