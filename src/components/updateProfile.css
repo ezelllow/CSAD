@@ -1,38 +1,48 @@
+/* Center the entire page */
 .update-profile-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100vh; /* Full screen height */
+    background-color: #f8f9fa; /* Light gray background */
 }
 
+/* Style the update profile card */
 .update-profile-card {
     width: 100%;
     max-width: 400px;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     background: #fff;
+    text-align: center;
 }
 
+/* Add spacing between form groups */
 .form-group {
     margin-bottom: 15px;
 }
 
+/* Update button styling */
 .update-btn {
     background-color: #007bff;
     border: none;
     padding: 10px;
     font-size: 16px;
+    transition: background 0.3s ease;
 }
 
 .update-btn:hover {
     background-color: #0056b3;
 }
 
+/* Back link styling */
 .back-link {
     color: #007bff;
     text-decoration: none;
     font-weight: bold;
+    display: block;
+    margin-top: 10px;
 }
 
 .back-link:hover {

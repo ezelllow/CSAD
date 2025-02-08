@@ -3,6 +3,7 @@ import { Form, Button, Card, Alert } from 'react-bootstrap'
 import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from "react-router-dom"
 import { EmailAuthProvider, reauthenticateWithCredential, sendEmailVerification } from 'firebase/auth';
+import './updateProfile.css'
 
 export default function UpdateProfile() {
     const emailRef = useRef()
@@ -70,9 +71,10 @@ export default function UpdateProfile() {
             });
     }
 
+
     return (
-        <>
-            <Card>
+        <div className="update-profile-container"> {/* ✅ Centering wrapper */}
+            <Card className="update-profile-card"> {/* ✅ Applied correct class */}
                 <Card.Body>
                     <h2 className='text-center mb-4'>Update Profile</h2>
                     {error && <Alert variant="danger">{error}</Alert>}
@@ -83,36 +85,23 @@ export default function UpdateProfile() {
                         </Form.Group>
                         <Form.Group id="password">
                             <Form.Label>Current Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                ref={currentPasswordRef}
-                                required
-                                placeholder="Enter your current password" />
+                            <Form.Control type="password" ref={currentPasswordRef} required placeholder="Enter current password" />
                         </Form.Group>
                         <Form.Group id="password">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                ref={passwordRef}
-                                required
-                                placeholder="Leave blank to keep the same" />
+                            <Form.Label>New Password</Form.Label>
+                            <Form.Control type="password" ref={passwordRef} placeholder="Leave blank to keep the same" />
                         </Form.Group>
                         <Form.Group id="password-confirm">
-                            <Form.Label>Confirm Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                ref={passwordConfirmRef}
-                                required
-                                placeholder="Leave blank to keep the same" />
+                            <Form.Label>Confirm New Password</Form.Label>
+                            <Form.Control type="password" ref={passwordConfirmRef} placeholder="Leave blank to keep the same" />
                         </Form.Group>
-                        <Button disabled={loading} className="w-100" type="submit">Update</Button>
+                        <Button disabled={loading} className="update-btn w-100" type="submit">Update</Button>
                     </Form>
                 </Card.Body>
             </Card>
             <div className='w-100 text-center mt-3'>
                 <Link to="/profile" className="back-link">Back</Link>
             </div>
-        </>
+        </div>
     )
 }
-

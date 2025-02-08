@@ -1,34 +1,47 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .menu-container {
   max-width: 1200px;
-  margin: 80px auto 0;
+  width: 100%;
+  margin: 0 auto;
   padding: 20px;
-  height: calc(100vh - 80px);
-  position: relative;
+  min-height: calc(100vh - 80px - 200px);
+  position: relative !important; /* Force position */
+  top: 0 !important; /* Force top position */
+  bottom: auto !important; /* Reset bottom */
   display: flex;
   flex-direction: column;
   gap: 20px;
-  overflow: hidden;
+  overflow: visible;
+  margin-top: 100px;
+  margin-bottom: 100px;
+  z-index: 9999; /* Lower than navbar but higher than other content */
+  transform: none !important; /* Prevent transform issues */
 }
 
 /* Search section styling */
-.search-section {
-  position: sticky;
-  top: 20px;
+.menu-container .search-section {
+  position: relative;
   width: 100%;
   background: #242424;
   padding: 20px;
-  z-index: 10;
+  z-index: 998; /* Lower than menu-container */
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   border-radius: 15px;
   height: auto;
   margin-bottom: 20px;
 }
 
-h1 {
+/* Update h1 styling to be more specific */
+.menu-container .search-section h1 {
   text-align: left;
   font-size: 24px;
   margin-bottom: 15px;
-  color: white;
+  color: white; /* Ensure text is white */
 }
 
 .search-bar {
@@ -71,14 +84,17 @@ h1 {
   background-color: #16a34a;
 }
 
-/* Menu grid container */
-.menu-grid-container {
+/* Menu grid container with scrolling */
+.menu-container .menu-grid-container {
   flex: 1;
   margin-top: 20px;
   padding: 1rem;
   background: white;
   overflow-y: auto;
   border-radius: 15px;
+  position: relative;
+  z-index: 997; /* Lower than search section */
+  max-height: calc(100vh - 400px);
 }
 
 .menu-grid {
@@ -90,22 +106,22 @@ h1 {
   z-index: 1;
 }
 
-/* Add custom scrollbar styling */
-.menu-grid-container::-webkit-scrollbar {
+/* Custom scrollbar styling */
+.menu-container .menu-grid-container::-webkit-scrollbar {
   width: 8px;
 }
 
-.menu-grid-container::-webkit-scrollbar-track {
+.menu-container .menu-grid-container::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
 }
 
-.menu-grid-container::-webkit-scrollbar-thumb {
+.menu-container .menu-grid-container::-webkit-scrollbar-thumb {
   background: #888;
   border-radius: 4px;
 }
 
-.menu-grid-container::-webkit-scrollbar-thumb:hover {
+.menu-container .menu-grid-container::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
 
