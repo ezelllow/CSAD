@@ -143,8 +143,7 @@ const handleReminderClick = (e) => {
       </Swiper>
   
       {/* Food Donation Drives Slider */}
-      <h2 className="section-title donation-title">Food Donation Drives</h2>
-      <hr className="section-divider" />
+      
       <div className="section-header">
         <h2 className="donation-title">Food Donation Drives</h2>
         <button className="donation-btn" onClick={() => handleOpenPopup("DonationDrives")}>
