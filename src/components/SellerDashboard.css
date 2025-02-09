@@ -399,4 +399,81 @@
 textarea[placeholder="Ingredients (separate with commas)"] {
   min-height: 80px;
   font-family: inherit;
+}
+
+/* Custom radio button styling */
+.custom-radio {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 35px;
+  margin-right: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+}
+
+.custom-radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.radio-checkmark {
+  position: absolute;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.custom-radio:hover input ~ .radio-checkmark {
+  border-color: #2E7D32;
+}
+
+.custom-radio input:checked ~ .radio-checkmark {
+  background-color: #2E7D32;
+  border-color: #2E7D32;
+}
+
+.radio-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 8px;
+  top: 4px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.custom-radio input:checked ~ .radio-checkmark:after {
+  display: block;
+}
+
+/* Status group specific styling */
+.status-group {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+}
+
+.status-group label:first-child {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: #333;
+}
+
+.status-group .radio-options {
+  display: flex;
+  gap: 24px;
 } 

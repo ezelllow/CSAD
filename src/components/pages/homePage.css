@@ -242,12 +242,13 @@ body {
   max-width: fit-content;
 }
 
+/* Update tags styling */
 .tags {
-  width: 100%;
   display: flex;
   gap: 6px;
+  margin-top: 4px;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  min-height: 28px; /* Maintain consistent height */
 }
 
 .tag {
@@ -257,14 +258,23 @@ body {
   font-weight: 500;
 }
 
+/* Placeholder tag styling */
+.tag.placeholder {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  background-color: transparent;
+}
+
+/* Specific tag styles */
 .tag.halal {
-  background-color: #e0fae2;
+  background-color: #e8f5e9;
   color: #2e7d32;
 }
 
 .tag.spicy {
-  background-color: #ffd7c0;
-  color: #e60000;
+  background-color: #ffebee;
+  color: #c62828;
 }
 
 .tag.available {
@@ -452,8 +462,9 @@ body {
 
 .menu-container .popup-tags {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   flex-wrap: wrap;
+  min-height: 28px;
 }
 
 /* Make menu cards clickable */
@@ -515,6 +526,7 @@ body {
 
 .like-button:hover {
   background-color: rgba(0, 0, 0, 0.05);
+  width: fit-content;
 }
 
 .like-button.active {

@@ -39,7 +39,8 @@ export default function SellerDashboard() {
     imageUrl: '',
     halal: false,
     spicy: false,
-    ingredients: []
+    ingredients: [],
+    status: 'available'
   });
   const [stats, setStats] = useState({
     rating: 0,
@@ -61,8 +62,13 @@ export default function SellerDashboard() {
   };
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      console.error('No authenticated user found');
+      return;
+    }
 
+    console.log('Current user:', currentUser.uid); // Debug log
+    
     const listingsRef = database.ref(`listings/${currentUser.uid}/items`);
     const statsRef = database.ref(`Users/${currentUser.uid}/stats`);
     const analyticsRef = database.ref(`Users/${currentUser.uid}/analytics`);
@@ -168,7 +174,8 @@ export default function SellerDashboard() {
         imageUrl: listing.imageUrl,
         halal: listing.halal,
         spicy: listing.spicy,
-        ingredients: listing.ingredients
+        ingredients: listing.ingredients,
+        status: listing.status
       });
     }
   };
@@ -247,11 +254,10 @@ export default function SellerDashboard() {
   };
 
   const handleIngredientsChange = (e) => {
-    const ingredientsArray = e.target.value.split(',').map(item => item.trim());
-    setNewListing(prev => ({
-      ...prev,
-      ingredients: ingredientsArray
-    }));
+    setNewListing({
+      ...newListing,
+      ingredients: e.target.value.split(',').map(item => item.trim()).filter(Boolean)
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -264,50 +270,45 @@ export default function SellerDashboard() {
         imageUrl = await uploadImage(imageUpload);
       }
 
-      // Clean the data before sending to Firebase
+      // Format the data to match the expected structure
       const listingData = {
-        title: newListing.title || '',
-        description: newListing.description || '',
-        quantity: newListing.quantity || '',
-        location: newListing.location || '',
-        expiryDate: newListing.expiryDate || '',
-        imageUrl: imageUrl || '',
-        status: 'available',
-        createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        sellerId: currentUser.uid,
-        // Ensure ingredients is an array and filter out empty values
-        ingredients: Array.isArray(newListing.ingredients) ? 
-          newListing.ingredients.filter(Boolean) : 
-          newListing.ingredients.split(',')
-            .map(item => item.trim())
-            .filter(Boolean),
-        // Ensure boolean values
+        expiryDate: newListing.expiryDate || '',
         halal: Boolean(newListing.halal),
         spicy: Boolean(newListing.spicy),
-        likes: newListing.likes || 0
+        imageUrl: imageUrl || '',
+        ingredients: Array.isArray(newListing.ingredients) ? 
+          newListing.ingredients : 
+          newListing.ingredients.split(',').map(item => item.trim()),
+        location: newListing.location || '',
+        quantity: newListing.quantity || '',
+        sellerId: currentUser.uid,
+        status: newListing.status || 'available',
+        title: newListing.title || '',
+        description: newListing.description || ''
       };
 
-      // Remove any undefined or null values
-      Object.keys(listingData).forEach(key => 
-        (listingData[key] === undefined || listingData[key] === null) && delete listingData[key]
-      );
-
       if (editingListing) {
-        // When updating, only send changed fields
-        const updates = {};
-        Object.keys(listingData).forEach(key => {
-          if (listingData[key] !== editingListing[key]) {
-            updates[key] = listingData[key];
-          }
-        });
-        
-        if (Object.keys(updates).length > 0) {
-          await database.ref(`listings/${currentUser.uid}/items/${editingListing.id}`).update(updates);
-        }
+        // When updating, preserve existing data that shouldn't change
+        const updateData = {
+          ...listingData,
+          likes: editingListing.likes || 0, // Preserve existing likes
+          createdAt: editingListing.createdAt // Preserve original creation date
+        };
+
+        // Update existing listing
+        await database.ref(`listings/${currentUser.uid}/items/${editingListing.id}`).update(updateData);
+        console.log('Successfully updated listing:', editingListing.id);
       } else {
-        // For new listings, push all data
-        await database.ref(`listings/${currentUser.uid}/items`).push(listingData);
+        // Create new listing
+        const newListingData = {
+          ...listingData,
+          createdAt: new Date().toISOString(),
+          likes: 0 // Initialize likes for new listing
+        };
+        
+        await database.ref(`listings/${currentUser.uid}/items`).push(newListingData);
+        console.log('Successfully created new listing');
       }
 
       // Reset form
@@ -320,12 +321,19 @@ export default function SellerDashboard() {
         imageUrl: '',
         halal: false,
         spicy: false,
-        ingredients: []
+        ingredients: [],
+        status: 'available'
       });
       setImageUpload(null);
       setEditingListing(null);
     } catch (error) {
       console.error('Error saving listing:', error);
+      if (error.code) {
+        console.error('Error code:', error.code);
+      }
+      if (error.message) {
+        console.error('Error message:', error.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -456,11 +464,41 @@ export default function SellerDashboard() {
                 </div>
               </div>
             </div>
+            <div className="form-group radio-group status-group">
+              <label>Status:</label>
+              <div className="radio-options">
+                <label className="custom-radio">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="available"
+                    checked={newListing.status === 'available'}
+                    onChange={(e) => setNewListing({...newListing, status: e.target.value})}
+                  />
+                  <span className="radio-checkmark"></span>
+                  Available
+                </label>
+                <label className="custom-radio">
+                  <input
+                    type="radio"
+                    name="status"
+                    value="claimed"
+                    checked={newListing.status === 'claimed'}
+                    onChange={(e) => setNewListing({...newListing, status: e.target.value})}
+                  />
+                  <span className="radio-checkmark"></span>
+                  Claimed
+                </label>
+              </div>
+            </div>
             <div className="form-group">
               <textarea
                 placeholder="Ingredients (separate with commas)"
                 value={newListing.ingredients.join(', ')}
-                onChange={handleIngredientsChange}
+                onChange={(e) => setNewListing({
+                  ...newListing,
+                  ingredients: e.target.value.split(',').map(item => item.trim())
+                })}
                 required
               />
             </div>
@@ -506,7 +544,8 @@ export default function SellerDashboard() {
                     imageUrl: '',
                     halal: false,
                     spicy: false,
-                    ingredients: []
+                    ingredients: [],
+                    status: 'available'
                   });
                 }}
               >
