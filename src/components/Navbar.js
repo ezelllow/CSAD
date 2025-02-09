@@ -100,7 +100,7 @@ function Navbar() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      alert('Login successful!');
+      //alert('Login successful!');
       closePopup();
       navigate('/homePage');  // Redirect to dashboard
     } catch (err) {

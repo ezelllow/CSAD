@@ -96,7 +96,7 @@ const handleReminderClick = (e) => {
             + ADD EVENT
           </button>
         </div>
-        <hr className="section-divider" />
+        
         <Swiper
           modules={[Navigation, Pagination, Autoplay]}
           navigation
