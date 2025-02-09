@@ -29,6 +29,7 @@ body {
   width: 100%;
   background: #242424;
   padding: 20px;
+  margin-top: 100px;
   z-index: 998; /* Lower than menu-container */
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   border-radius: 15px;
@@ -94,8 +95,9 @@ body {
   overflow-y: auto;
   border-radius: 15px;
   position: relative;
-  z-index: 997; /* Lower than search section */
-  max-height: calc(100vh - 400px);
+  z-index: 997;
+  max-height: calc(100vh - 250px);
+  min-height: 600px;
 }
 
 .menu-grid {
@@ -132,11 +134,12 @@ body {
   border-radius: 10px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  height: auto;
-  min-height: 400px;
+  height: 100%;
+  min-height: 350px;
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease;
+  position: relative;
 }
 
 .menu-card:hover {
@@ -156,54 +159,98 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
 }
 
 .menu-details h3 {
-  color: #333;
+  width: 100%;
+  text-align: left;
   margin: 0;
+  padding: 0;
+  color: #333;
   font-size: 16px;
   font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .menu-details p {
+  width: 100%;
+  text-align: left;
+  margin: 0;
+  padding: 0;
   color: #666;
-  margin: 5px 0;
   font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  line-height: 1.4;
 }
 
 .listing-meta {
+  width: 100%;
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  align-items: flex-start;
 }
 
-.location, .expiry {
+.listing-info {
+  width: 100%;
   display: flex;
-  align-items: center;
-  gap: 4px;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.listing-info span {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
   font-size: 13px;
   color: #666;
+  line-height: 1.4;
+}
+
+.listing-info span:before {
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.status {
+  align-self: flex-start;
+  margin-top: 4px;
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.status[data-status="available"] {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  max-width: fit-content;
+}
+
+.status[data-status="claimed"] {
+  background-color: #fff3e0;
+  color: #e65100;
+  max-width: fit-content;
 }
 
 .tags {
+  width: 100%;
   display: flex;
   gap: 6px;
-  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .tag {
-  background-color: #e8f5e9;
-  color: #2e7d32;
   padding: 4px 8px;
   font-size: 12px;
   border-radius: 4px;
@@ -225,39 +272,6 @@ body {
   color: #2e7d32;
 }
 
-.listing-info {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-
-.listing-info span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #666;
-}
-
-.status {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: 500;
-} 
-
-.status[data-status="available"] {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  max-width: fit-content;
-}
-
-.status[data-status="claimed"] {
-  background-color: #fff3e0;
-  color: #e65100;
-  max-width: fit-content;
-}
-
 @media (max-width: 1200px) {
   .menu-grid {
     grid-template-columns: repeat(4, minmax(200px, 1fr));
@@ -274,15 +288,45 @@ body {
   .menu-grid {
     grid-template-columns: repeat(2, minmax(200px, 1fr));
   }
+  .menu-container .menu-grid-container {
+    max-height: calc(100vh - 200px);
+    min-height: 500px;
+  }
+  
+  .menu-container {
+    margin-top: 80px;
+    margin-bottom: 80px;
+  }
+
+  .menu-container .search-section {
+    margin-top: 80px;
+  }
 }
 
 @media (max-width: 480px) {
   .menu-grid {
     grid-template-columns: repeat(1, minmax(200px, 1fr));
+    gap: 15px;
   }
   .menu-card {
     width: 100%;
-    max-width: 300px;
+    max-width: none;
+    min-height: 300px;
+  }
+  
+  .menu-container .menu-grid-container {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .menu-container .menu-grid-container {
+    max-height: calc(100vh - 180px);
+    min-height: 400px;
+  }
+  
+  .menu-card {
+    min-height: 280px;
   }
 }
 
@@ -466,6 +510,7 @@ body {
   border-radius: 4px;
   transition: all 0.2s ease;
   user-select: none;
+  width: fit-content;
 }
 
 .like-button:hover {
@@ -490,33 +535,69 @@ body {
   gap: 6px;
 }
 
+/* Seller info for menu cards */
+.seller-info {
+  width: 100%;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  text-align: right;
+  padding-right: 8px; /* Add right padding */
+}
+
+.seller-info span {
+  display: block;
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+  font-weight: lighter;
+}
+
+/* Seller info specific to popup */
 .popup-details .seller-info {
   margin-top: auto;
-  text-align: right;
+  width: calc(100% - 40px); /* Account for popup padding */
   padding: 8px 0;
-  font-weight: lighter;
+  border-top: 1px solid #eee;
+  text-align: right;
   position: absolute;
   bottom: 15px;
   right: 20px;
 }
 
-.seller-info {
-  margin-top: auto;
-  text-align: right;
-  padding: 8px 0;
+.popup-details .seller-info span {
+  display: block;
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
   font-weight: lighter;
 }
 
-.seller-info span {
-  font-size: 0.9rem;
-  color: #888;
-  font-style: italic;
+/* Update popup actions to not interfere with seller info */
+.popup-details .popup-actions {
+  margin-bottom: 60px; /* Give space for seller info */
 }
 
-/* Update menu-details to accommodate seller info */
-.menu-details {
-  padding: 15px;
+/* Ensure consistent text wrapping */
+.listing-info .ingredients,
+.listing-info .location,
+.listing-info .quantity,
+.listing-info .expiry {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listing-info .ingredients {
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  align-items: flex-start;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.listing-actions {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 8px;
 }
