@@ -203,7 +203,7 @@
 }
 
 .listing-details .status.claimed {
-  background: #FFA000;
+  background: #e65100;
   color: white;
   max-width: fit-content;
 }

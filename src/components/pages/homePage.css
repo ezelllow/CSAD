@@ -231,14 +231,14 @@ body {
 }
 
 .status[data-status="available"] {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: #2e7d32;
+  color: white;
   max-width: fit-content;
 }
 
 .status[data-status="claimed"] {
-  background-color: #fff3e0;
-  color: #e65100;
+  background-color: #e65100;
+  color: white;
   max-width: fit-content;
 }
 
@@ -465,6 +465,7 @@ body {
   gap: 6px;
   flex-wrap: wrap;
   min-height: 28px;
+  padding-top: 5px;
 }
 
 /* Make menu cards clickable */

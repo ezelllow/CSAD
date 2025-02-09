@@ -556,7 +556,7 @@ export default function SellerDashboard() {
         </div>
 
         <div className="listings-section">
-          <h1>Your Listings:</h1>
+          <h1 style={{color: '#2E7D32'}}>Your Listings:</h1>
           <div className="listings-grid">
             {listings.length > 0 ? listings.map(listing => (
               <div key={listing.id} className="listing-card">

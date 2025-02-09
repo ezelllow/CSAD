@@ -8,6 +8,7 @@ import ChatbotButton from '../ChatbotButton';
 import HeroSection from '../HeroSection';
 import Cards from '../Cards';
 import Slider from '../Slider';
+import SellerCards from '../SellerCards';
 
 const filterOptions = ["Available", "Halal", "Spicy", "Bedok"];
 
@@ -371,6 +372,9 @@ function HomePage() {
           )}
         </div>
       </div>
+      
+      {/* Add the seller cards section */}
+      <SellerCards />
     </div>
   );
 }
