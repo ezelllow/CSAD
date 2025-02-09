@@ -73,11 +73,7 @@ function UserEventSlider() {
 
       {/* Community Cooking Events Slider */}
       <h2>Community Cooking Events</h2>
-<<<<<<< HEAD
       <hr className="section-divider" />
-=======
-      
->>>>>>> 6754f430142615ba64d7a2c5c87799b194eb6a39
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         navigation
