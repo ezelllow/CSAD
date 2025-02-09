@@ -142,3 +142,15 @@
   line-height: 1.5;
   max-width: 90%;
 }
+
+.colors{
+  margin-top:40px;
+  margin-bottom: 40px;
+  color:black;
+}
+
+.color{
+  margin-top: 60px;
+  margin-bottom: 40px;
+  color:orange;
+}

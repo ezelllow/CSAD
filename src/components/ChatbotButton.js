@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './ChatbotButton.css';
 
 const ChatbotButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragDistance, setDragDistance] = useState(0);
   const [messages, setMessages] = useState([
     {
       type: 'bot',
@@ -18,6 +22,56 @@ const ChatbotButton = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Initialize position on mount
+  useEffect(() => {
+    const initialX = window.innerWidth - 80; // 60px button + 20px offset
+    const initialY = window.innerHeight - 80; // 60px button + 20px offset
+    setPosition({ x: initialX, y: initialY });
+  }, []);
+
+  const handleMouseDown = useCallback((e) => {
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
+    e.preventDefault();
+  }, [position.x, position.y]);
+
+  const handleMouseMove = useCallback((e) => {
+    if (isDragging) {
+      const newX = e.clientX - dragStart.x;
+      const newY = e.clientY - dragStart.y;
+      
+      // Calculate drag distance
+      const deltaX = newX - position.x;
+      const deltaY = newY - position.y;
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      setDragDistance(prev => prev + distance);
+
+      setPosition({ x: newX, y: newY });
+    }
+  }, [isDragging, dragStart.x, dragStart.y, position.x, position.y]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+    setDragDistance(0); // Reset on release
+  }, []);
+
+  useEffect(() => {
+    const handleMouseUp = () => setIsDragging(false);
+    
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, handleMouseMove]);
 
   const handleSend = async () => {
     if (!inputMessage.trim()) return;
@@ -49,10 +103,24 @@ const ChatbotButton = () => {
   };
 
   return (
-    <div className="chatbot-container">
+    <div 
+      className="chatbot-container"
+      style={{
+        left: position.x,
+        top: position.y,
+        cursor: isDragging ? 'grabbing' : 'pointer'
+      }}
+    >
       <button 
         className="chatbot-button"
-        onClick={() => setIsOpen(!isOpen)}
+        onMouseDown={handleMouseDown}
+        onClick={() => {
+          // Only toggle if minimal drag movement
+          if (dragDistance < 5) {
+            setIsOpen(!isOpen);
+          }
+          setDragDistance(0);
+        }}
       >
         {isOpen ? '✕' : '💬'}
         <span className="pulse"></span>

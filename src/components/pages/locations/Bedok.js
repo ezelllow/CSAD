@@ -1,58 +1,65 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../../context/AuthContext';
 import { database, auth } from '../../../firebase';
 import { ref, get, push, onValue } from 'firebase/database';
 import './Bedok.css';
+import '../../HeroSection.css';
+import { Link } from 'react-router-dom';
 
-const BedokFridge = () => {
+const filterOptions = ["Halal", "Spicy"];
+
+function BedokFridge() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFilters, setSelectedFilters] = useState([]);
   const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('Anonymous');
   const user = auth.currentUser;
+  const { currentUser } = useAuth();
 
   useEffect(() => {
-    const fetchUsername = async () => {
-      if (user) {
-        const userRef = ref(database, `Users/${user.uid}/username`);
-        const snapshot = await get(userRef);
+    if (user) {
+      const userRef = ref(database, `Users/${user.uid}/username`);
+      get(userRef).then((snapshot) => {
         if (snapshot.exists()) {
           setUsername(snapshot.val());
         }
-      }
-    };
-
-    fetchUsername();
+      });
+    }
   }, [user]);
 
   useEffect(() => {
     const chatRef = ref(database, 'chats/chat_room_1/messages');
-
     const unsubscribe = onValue(chatRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         setMessages(Object.values(data));
       }
     });
-
-    return () => unsubscribe(); // ✅ Correctly unsubscribes Firebase listener
+    return () => unsubscribe();
   }, []);
 
-  // ✅ Fetch only "Bedok" listings from Firebase (Fixed unsubscribe issue)
   useEffect(() => {
     const listingsRef = ref(database, 'listings');
-
     const unsubscribe = onValue(listingsRef, (snapshot) => {
-      const allListings = [];
+      if (!snapshot.exists()) {
+        console.warn("No data found in Firebase for 'listings'");
+        setListings([]);
+        setLoading(false);
+        return;
+      }
 
+      const allListings = [];
       snapshot.forEach((sellerSnapshot) => {
         const sellerId = sellerSnapshot.key;
         const items = sellerSnapshot.child('items').val();
 
         if (items) {
           Object.entries(items).forEach(([itemId, itemData]) => {
-            if (itemData.location?.toLowerCase() === "bedok") { // ✅ Filter for Bedok
+            if (itemData.location?.toLowerCase() === "bedok") {
               allListings.push({
                 id: itemId,
                 sellerId,
@@ -63,14 +70,17 @@ const BedokFridge = () => {
         }
       });
 
-      // Sort listings by createdAt date (most recent first)
       allListings.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
+      console.log("Fetched Bedok Listings:", allListings);
       setListings(allListings);
+      setLoading(false);
+    }, (error) => {
+      console.error("Firebase read error:", error);
       setLoading(false);
     });
 
-    return () => unsubscribe(); // ✅ Correctly removes Firebase listener
+    return () => unsubscribe();
   }, []);
 
   const sendMessage = () => {
@@ -88,6 +98,32 @@ const BedokFridge = () => {
     }
   };
 
+  const filteredListings = listings.filter((listing) => {
+    const matchesSearch = listing.title?.toLowerCase().includes(searchTerm.toLowerCase());
+    if (selectedFilters.length === 0) return matchesSearch;
+    return (
+      matchesSearch &&
+      selectedFilters.some((filter) => {
+        switch (filter) {
+          case "Halal":
+            return listing.halal === true;
+          case "Spicy":
+            return listing.spicy === true;
+          default:
+            return false;
+        }
+      })
+    );
+  });
+
+  const toggleFilter = (filter) => {
+    setSelectedFilters((prevFilters) =>
+      prevFilters.includes(filter)
+        ? prevFilters.filter((f) => f !== filter)
+        : [...prevFilters, filter]
+    );
+  };
+
   return (
     <div className="bedok-container">
       <div className="livestream-section">
@@ -99,15 +135,35 @@ const BedokFridge = () => {
         ></iframe>
       </div>
 
+      <div className="search-section">
+        <h1>Bedok Food Listings</h1>
+        <input
+          type="text"
+          placeholder="Search food items..."
+          className="search-bar"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <div className="filter-buttons">
+          {filterOptions.map((filter) => (
+            <button
+              key={filter}
+              className={selectedFilters.includes(filter) ? "active" : ""}
+              onClick={() => toggleFilter(filter)}
+            >
+              {filter} {selectedFilters.includes(filter) && "✔"}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="content-wrapper">
         <div className={`food-list-section ${showChat ? 'with-chat' : ''}`}>
-          <h2>Bedok Food Listings</h2>
-
           {loading ? (
-            <p>Loading food items...</p>
-          ) : listings.length > 0 ? (
+            <p>Loading listings...</p>
+          ) : filteredListings.length > 0 ? (
             <div className="menu-grid">
-              {listings.map((listing) => (
+              {filteredListings.map((listing) => (
                 <div key={listing.id} className="menu-card">
                   {listing.imageUrl && (
                     <img 
@@ -122,8 +178,6 @@ const BedokFridge = () => {
                     <div className="listing-meta">
                       <span className="location">📍 {listing.location || "Unknown"}</span>
                       <span className="expiry">⏰ Expires: {listing.expiryDate ? new Date(listing.expiryDate).toLocaleDateString() : "N/A"}</span>
-                      
-                      {/* 🔥 Display Halal, Spicy, and Status tags properly */}
                       <div className="tags">
                         {listing.halal && <span className="tag halal">Halal</span>}
                         {listing.spicy && <span className="tag spicy">Spicy</span>}
@@ -163,12 +217,11 @@ const BedokFridge = () => {
         )}
       </div>
 
-      {/* Floating chat button */}
       <button className="chat-toggle-button" onClick={() => setShowChat(!showChat)}>
         {showChat ? 'Close Chat' : 'Open Chat'}
       </button>
     </div>
   );
-};
+}
 
 export default BedokFridge;

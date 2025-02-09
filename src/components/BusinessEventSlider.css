@@ -108,7 +108,7 @@
 }
 
 
-/* Section Headers */
+
 h1 {
   text-align: center;
   font-size: 2.5rem;
@@ -119,12 +119,22 @@ h1 {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.section-header {
+/* Business Events specific header */
+.business-section-header {
+  background-color: #ffffff !important;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 40px;
-  margin-top: 40px;
+  margin: 40px 0;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.cooking-title, .donation-title {
+  color: #333;
+  font-size: 1.8rem;
+  margin: 0;
 }
 
 /* Buttons */
@@ -135,6 +145,7 @@ h1 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .cooking-btn:hover, .donation-btn:hover {
@@ -149,6 +160,8 @@ h1 {
   background-color:#C9680D;
 }
 
-.donation-title{
-  color:#C9680D;
+
+.app#slider-section {
+  background-color: transparent !important;
+  color: #333;
 }
