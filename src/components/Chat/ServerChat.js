@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { database } from '../../firebase';
+import { database, storage } from '../../firebase';
 import { useAuth } from '../../context/AuthContext';
 import './ServerChat.css';
 import firebase from 'firebase/compat/app';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 
 function ServerChat({ serverId }) {
   const [channels, setChannels] = useState([]);
@@ -11,6 +13,9 @@ function ServerChat({ serverId }) {
   const [newMessage, setNewMessage] = useState('');
   const { currentUser } = useAuth();
   const messagesContainerRef = useRef(null);
+  const [imageUpload, setImageUpload] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (!currentUser || !serverId) return;
@@ -92,6 +97,65 @@ function ServerChat({ serverId }) {
     }
   };
 
+  const handleImageUpload = async (file) => {
+    if (!file) return;
+
+    try {
+      const storageRef = storage.ref();
+      // Store all images in chat_images folder
+      const fileRef = storageRef.child(`chat_images/${Date.now()}-${file.name}`);
+      
+      // Upload the file with progress monitoring
+      const uploadTask = fileRef.put(file);
+      
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        },
+        (error) => {
+          console.error('Error uploading image:', error);
+        },
+        async () => {
+          // Get the download URL
+          const imageUrl = await uploadTask.snapshot.ref.getDownloadURL();
+          
+          // Send message with image
+          const messagesRef = database.ref(`Servers/${serverId}/channels/${selectedChannel}/messages`);
+          const userRef = database.ref(`Users/${currentUser.uid}`);
+          const userSnapshot = await userRef.once('value');
+          const userData = userSnapshot.val();
+
+          await messagesRef.push({
+            content: '',
+            imageUrl: imageUrl,
+            senderId: currentUser.uid,
+            username: userData?.username || currentUser.displayName || 'Anonymous',
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            messageType: "image"
+          });
+
+          setUploadProgress(0);
+          setImageUpload(null);
+        }
+      );
+    } catch (error) {
+      console.error('Error handling image upload:', error);
+    }
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        setImageUpload(file);
+        handleImageUpload(file);
+      } else {
+        alert('Please select an image file');
+      }
+    }
+  };
+
   return (
     <div className="server-chat-container">
       <div className="channels-sidebar">
@@ -130,6 +194,14 @@ function ServerChat({ serverId }) {
               </div>
               <div className="server-message-content">
                 {message.content}
+                {message.imageUrl && (
+                  <img 
+                    src={message.imageUrl} 
+                    alt="Message attachment" 
+                    className="message-image"
+                    onClick={() => window.open(message.imageUrl, '_blank')}
+                  />
+                )}
               </div>
               <div className="server-message-timestamp">
                 {new Date(message.timestamp).toLocaleTimeString([], {
@@ -149,6 +221,27 @@ function ServerChat({ serverId }) {
             placeholder={`Message #${selectedChannel}`}
             className="server-chat-input"
           />
+          <div className="chat-input-actions">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelect}
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+            />
+            <button 
+              type="button" 
+              className="upload-image-btn"
+              onClick={() => fileInputRef.current.click()}
+            >
+              <FontAwesomeIcon icon={faImage} />
+            </button>
+          </div>
+          {uploadProgress > 0 && uploadProgress < 100 && (
+            <div className="upload-progress">
+              Uploading: {Math.round(uploadProgress)}%
+            </div>
+          )}
         </form>
       </div>
     </div>
