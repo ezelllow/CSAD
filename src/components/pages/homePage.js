@@ -12,7 +12,6 @@ import SellerCards from '../SellerCards';
 
 const filterOptions = ["Available", "Halal", "Spicy", "Bedok"];
 
-// Add this helper function at the top of the file, outside the HomePage component
 const capitalizeWords = (str) => {
   if (!str) return ''; // Handle undefined/null values
   return str.split(' ').map(word => 
@@ -24,9 +23,9 @@ function HomePage() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState([]); // ✅ Multi-select filters
+  const [selectedFilters, setSelectedFilters] = useState([]); 
   const { currentUser } = useAuth();
-  const [selectedListing, setSelectedListing] = useState(null); // Add this new state
+  const [selectedListing, setSelectedListing] = useState(null); 
   const [userLikes, setUserLikes] = useState({});
   const [sellerUsernames, setSellerUsernames] = useState({});
 
@@ -155,7 +154,6 @@ function HomePage() {
     });
   });
 
-  // ✅ Function to toggle filters on/off
   const toggleFilter = (filter) => {
     setSelectedFilters((prevFilters) =>
       prevFilters.includes(filter)
@@ -167,20 +165,23 @@ function HomePage() {
   // Update the handleLike function
   const handleLike = async (listingId, sellerId, e) => {
     e.stopPropagation();
+    
     if (!currentUser) {
       alert("Please log in to like listings");
       return;
     }
-    
+
+    let hasLiked = false;
+
     try {
-      const userLikesRef = database.ref(`Users/${currentUser.uid}/listingLikes/${listingId}`);
-      const listingRef = database.ref(`listings/${sellerId}/items/${listingId}`);
-      const sellerStatsRef = database.ref(`Users/${sellerId}/stats/totalLikes`);
+      // First check if user has liked this post
+      const userLikeRef = database.ref(`listings/${sellerId}/items/${listingId}/likedBy/${currentUser.uid}`);
+      const likesCountRef = database.ref(`listings/${sellerId}/items/${listingId}/likes`);
+      
+      const likeSnapshot = await userLikeRef.once('value');
+      hasLiked = likeSnapshot.val();
 
-      const likeSnapshot = await userLikesRef.once('value');
-      const hasLiked = likeSnapshot.val();
-
-      // Update local state immediately for better UX
+      // Update local state immediately
       setUserLikes(prev => ({
         ...prev,
         [listingId]: !hasLiked
@@ -188,43 +189,65 @@ function HomePage() {
 
       if (hasLiked) {
         // Unlike
-        await userLikesRef.remove();
-        const newLikes = await listingRef.child('likes').transaction(currentLikes => 
+        await userLikeRef.remove();
+        const newLikes = await likesCountRef.transaction(currentLikes => 
           (currentLikes || 0) > 0 ? currentLikes - 1 : 0
         );
+
+        // Update UI with new count
+        const updatedCount = newLikes.snapshot.val() || 0;
         
-        // Update selected listing if it exists
+        // Update listings state
+        setListings(prev => 
+          prev.map(item => 
+            item.id === listingId 
+              ? { ...item, likes: updatedCount }
+              : item
+          )
+        );
+
+        // Update selected listing if open
         if (selectedListing && selectedListing.id === listingId) {
           setSelectedListing(prev => ({
             ...prev,
-            likes: newLikes.snapshot.val()
+            likes: updatedCount
           }));
         }
-        
-        await sellerStatsRef.transaction(currentLikes => 
-          (currentLikes || 0) > 0 ? currentLikes - 1 : 0
-        );
       } else {
         // Like
-        await userLikesRef.set(true);
-        const newLikes = await listingRef.child('likes').transaction(currentLikes => 
+        await userLikeRef.set(true);
+        const newLikes = await likesCountRef.transaction(currentLikes => 
           (currentLikes || 0) + 1
         );
+
+        // Update UI with new count
+        const updatedCount = newLikes.snapshot.val() || 0;
         
-        // Update selected listing if it exists
+        // Update listings state
+        setListings(prev => 
+          prev.map(item => 
+            item.id === listingId 
+              ? { ...item, likes: updatedCount }
+              : item
+          )
+        );
+
+        // Update selected listing if open
         if (selectedListing && selectedListing.id === listingId) {
           setSelectedListing(prev => ({
             ...prev,
-            likes: newLikes.snapshot.val()
+            likes: updatedCount
           }));
         }
-        
-        await sellerStatsRef.transaction(currentLikes => 
-          (currentLikes || 0) + 1
-        );
       }
+
     } catch (error) {
       console.error('Error handling like:', error);
+      // Revert local state on error
+      setUserLikes(prev => ({
+        ...prev,
+        [listingId]: hasLiked
+      }));
     }
   };
 
@@ -302,7 +325,7 @@ function HomePage() {
               className={selectedFilters.includes(filter) ? "active" : ""}
               onClick={() => toggleFilter(filter)}
             >
-              {filter} {selectedFilters.includes(filter) && "✔"} {/* ✅ Shows checkmark on selected filters */}
+              {filter} {selectedFilters.includes(filter) && "✔"} {/* Show checkmark on selected filters */}
             </button>
           ))}
         </div>

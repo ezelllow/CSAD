@@ -1,6 +1,6 @@
 .socials-main {
   position: fixed;
-  top: 80px; /* Height of your navbar */
+  top: 80px; 
   left: 0;
   right: 0;
   bottom: 0;
@@ -46,7 +46,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: calc(100% - 100px); /* Adjust based on blinks container height */
+  height: calc(100% - 100px);
 }
 
 .socials-tabs {
@@ -161,7 +161,6 @@
   font-size: 1.1rem;
 }
 
-/* Scrollbar styling */
 .users-list::-webkit-scrollbar,
 .blinks-container::-webkit-scrollbar {
   width: 8px;
@@ -184,7 +183,6 @@
   background: #2E7D32;
 }
 
-/* Ensure Chat component takes full space */
 .content-area > :first-child {
   flex: 1;
   height: 100%;
@@ -324,7 +322,6 @@
   color: #72767d;
 }
 
-/* Critical changes for menu positioning */
 .menu-container {
   position: static;
 }
@@ -339,12 +336,10 @@
   pointer-events: auto;
 }
 
-/* Remove or update the arrow if it exists */
 .menu-dropdown::before {
-  display: none; /* Remove the arrow */
+  display: none; 
 }
 
-/* Update animation if needed */
 @keyframes menuSlideIn {
   from {
     opacity: 0;
@@ -435,7 +430,7 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px); /* Add for Safari compatibility */
+  -webkit-backdrop-filter: blur(4px); 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -620,7 +615,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-width: 0; /* Enable text truncation */
+  min-width: 0; 
 }
 
 .dm-name {
@@ -675,7 +670,6 @@
   font-size: 14px;
 }
 
-/* Update existing scrollbar styles to include dm-list */
 .dm-list::-webkit-scrollbar {
   width: 8px;
 }
@@ -925,7 +919,6 @@
   color: white;
 }
 
-/* Add/update these styles */
 .friends-content {
   flex: 1;
   overflow-y: auto;
@@ -942,7 +935,7 @@
   min-height: min-content;
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 200px); /* Adjust based on your header heights */
+  max-height: calc(100vh - 200px); 
 }
 
 .section-header {
@@ -986,26 +979,22 @@
   padding: 8px;
 }
 
-/* Adjust icon sizes if needed */
 .action-button svg {
   width: 20px;
   height: 20px;
   vertical-align: middle;
 }
 
-/* Ensure menu button has same dimensions */
 .action-button.menu {
 
 }
 
-/* Make sure the menu is visible */
 .user-result:hover .user-actions,
 .user-actions {
   opacity: 1;
   visibility: visible;
 }
 
-/* Add backdrop when menu is open */
 .menu-backdrop {
   position: fixed;
   top: 0;
@@ -1017,7 +1006,6 @@
   pointer-events: auto;
 }
 
-/* Remove overflow hidden from all parent containers */
 .friends-section,
 .section,
 .friends-content {
@@ -1042,7 +1030,6 @@
   margin-bottom: 2px;
 }
 
-/* Blocked users list styling */
 .blocked-user-item {
   display: flex;
   align-items: center;
@@ -1066,7 +1053,6 @@
   object-fit: cover;
 }
 
-/* Update scrollbar styling for friends content */
 .friends-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -1085,7 +1071,6 @@
   background: #2E7D32;
 }
 
-/* Ensure content within sections is properly spaced */
 .pending-requests,
 .blocked-users {
   padding: 8px;

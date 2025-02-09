@@ -64,7 +64,7 @@ function BusinessEventSlider() {
 
 // Function to handle "Remind me" button click
 const handleReminderClick = (e) => {
-  e.stopPropagation(); // ✅ This will now work correctly
+  e.stopPropagation();
   navigate("/calendar"); // Redirect to calendar page
 };
 

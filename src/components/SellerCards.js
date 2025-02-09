@@ -2,31 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { database } from '../firebase';
 import ReactCardFlip from 'react-card-flip';
 import './SellerCards.css';
-import burgerImage from './burger.jpg'; // Import the image
-import pizzaImage from './pizza.jpg'; // Import the image
-import butterChickenImage from './butter_chicken.jpg'; // Import the image
-import steakImage from './steak_fries.jpg'; // Import the image
-import vegetarianImage from './veg_food.jpg'; // Import the image
+import burgerImage from './burger.jpg'; 
+import pizzaImage from './pizza.jpg'; 
+import butterChickenImage from './butter_chicken.jpg';
+import steakImage from './steak_fries.jpg';
+import vegetarianImage from './veg_food.jpg';
 
-// Hardcoded store information mapped to user IDs
 const storeInfo = {
   'RW5ZlfzL7wcs1dMfzdpdmSn80TV2': {
     name: 'Green Earth Cafe',
-    image: vegetarianImage,  // Use the imported image
+    image: vegetarianImage,
     description: '"Sustainable vegetarian cuisine with a modern twist."',
     location: 'Bedok North Street 1',
     type: 'Vegetarian Restaurant Cafe'
   },
   'SAfhLlbX88eg0eB70iMS5rASGL82': {
     name: 'Spice Haven',
-    image: butterChickenImage,  // Use the imported image
+    image: butterChickenImage,
     description: '"Authentic Indian cuisine with a focus on traditional spices."',
     location: 'Tampines Street 81',
     type: 'Indian Restaurant'
   },
   'GWmlu7NEH6YzgRPfksakeVGBFmj1': {
     name: 'Big Burger Foods',
-    image: burgerImage,  // Use the imported image
+    image: burgerImage,
     description: '"Burgers to make your mouth water."',
     location: 'Bedok North Street 1',
     type: 'Burger Restaurant'
@@ -34,7 +33,7 @@ const storeInfo = {
 
   "l7mlg9VuOrdXVXEPzzhtjKgMg3g2": {
     name: 'Bird Bar',
-    image: steakImage,  // Use the imported image
+    image: steakImage,
     description: '"Western cuisine to make your mouth water."',
     location: 'Marina Bay Sands',
     type: 'Western Restaurant Bar'
@@ -42,7 +41,7 @@ const storeInfo = {
   },
   "pVWY6WL3HDUYzup9qnMKFLkk3ht2": {
     name: 'Pizza Planet',
-    image: pizzaImage,  // Use the imported image
+    image: pizzaImage,
     description: '"Pizza everywhere!"',
     location: 'Bedok North Street 1',
     type: 'Pizza Restaurant'
@@ -67,7 +66,7 @@ function SellerCards() {
             ...user,
             storeInfo: storeInfo[id] || {
               name: 'Store Front',
-              image: burgerImage,  // Use the imported image here too
+              image: burgerImage,
               description: 'A local establishment',
               location: 'Singapore',
               type: 'Food Establishment'

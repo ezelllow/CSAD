@@ -17,7 +17,6 @@ export default function PostDetail() {
   const [commentLikes, setCommentLikes] = useState({});
   const navigate = useNavigate();
 
-  // Move fetchedUserData outside useEffect to persist between renders
   const fetchUserData = async (userId) => {
     if (!userId) return null;
     try {

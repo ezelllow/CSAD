@@ -5,10 +5,10 @@ import './HeroSection.css';
 
 function HeroSection() {
   const handleDownload = () => {
-    const apkUrl = '/images/event.jpg'; // Update with your actual APK file path
+    const apkUrl = '/images/event.jpg'; 
     const link = document.createElement('a');
     link.href = apkUrl;
-    link.download = 'HarvestHub.apk'; // Suggested filename when downloading
+    link.download = 'HarvestHub.apk'; // filename when downloading
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

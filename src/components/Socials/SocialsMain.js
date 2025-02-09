@@ -94,7 +94,6 @@ function SocialsMain() {
                 .map(([id, user]) => ({
                   id,
                   ...user,
-                  // Check if user is a friend using object lookup instead of array includes
                   isFriend: !!friendsList[id],
                   isPending: false,
                   isBlocked: false
@@ -228,7 +227,6 @@ function SocialsMain() {
       // Clean up data and listeners when switching tabs
       setUsers([]);
       setBlinks([]);
-      // Don't reset selectedDM here
       setUserData({});
       
       // Remove listeners before switching tabs

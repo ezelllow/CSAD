@@ -253,7 +253,6 @@ button:not(:disabled):hover {
   color: white;
 }
 
-/* Add these new styles for online status */
 .avatar-container {
   position: relative;
   margin-right: 15px;
@@ -281,7 +280,6 @@ button:not(:disabled):hover {
   margin-bottom: 20px;
 }
 
-/* Update existing button styles */
 .user-info button {
   background-color: #2196f3;
   color: white;
@@ -293,7 +291,6 @@ button:not(:disabled):hover {
   background-color: #1976d2;
 }
 
-/* Add these styles for tabs */
 .tabs {
   display: flex;
   gap: 10px;
@@ -327,7 +324,6 @@ button:not(:disabled):hover {
   color: #2196f3;
 }
 
-/* Add counter badges */
 .tab span {
   background: #eee;
   padding: 2px 6px;
@@ -341,7 +337,6 @@ button:not(:disabled):hover {
   color: white;
 }
 
-/* Add specific styling for the online button */
 .friends-nav {
   display: flex;
   gap: 10px;
@@ -374,7 +369,6 @@ button:not(:disabled):hover {
   color: #fff;
 }
 
-/* Add specific styling for the pending count */
 .friends-nav-button span {
   background: rgba(79, 84, 92, 0.24);
   padding: 2px 6px;
@@ -383,7 +377,6 @@ button:not(:disabled):hover {
   margin-left: 4px;
 }
 
-/* Add Friend button specific styling */
 .friends-nav-button.add-friend {
   background: #3ba55c;
   color: white;
@@ -393,7 +386,6 @@ button:not(:disabled):hover {
   background: #2d7d46;
 }
 
-/* Pending Requests Styling */
 .pending-requests {
   padding: 8px;
 }
@@ -472,7 +464,6 @@ button:not(:disabled):hover {
   background: #c03537;
 }
 
-/* Blocked Users Styling */
 .blocked-users {
   padding: 8px;
 }

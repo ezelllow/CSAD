@@ -241,7 +241,6 @@
   transform: translateY(-1px);
 }
 
-/* Analytics Section */
 .analytics-section {
   margin-top: 3rem;
 }
@@ -285,7 +284,6 @@
   font-size: 1.1rem;
 }
 
-/* Image upload styles */
 .image-upload-label {
   display: block;
   cursor: pointer;
@@ -340,7 +338,6 @@
   cursor: pointer;
 }
 
-/* Responsive grid adjustments */
 @media (max-width: 1200px) {
   .listings-grid {
     grid-template-columns: repeat(4, 1fr);
@@ -401,7 +398,6 @@ textarea[placeholder="Ingredients (separate with commas)"] {
   font-family: inherit;
 }
 
-/* Custom radio button styling */
 .custom-radio {
   display: flex;
   align-items: center;
@@ -458,7 +454,6 @@ textarea[placeholder="Ingredients (separate with commas)"] {
   display: block;
 }
 
-/* Status group specific styling */
 .status-group {
   margin-top: 16px;
   padding: 16px;

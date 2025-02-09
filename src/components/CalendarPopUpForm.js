@@ -29,7 +29,6 @@ function CalendarPopupForm({ date, userId, selectedEvent, onClose, onAddEvent })
     e.preventDefault();
     if (!eventDetails.title.trim()) return;
     // Create event data
-    //const event = { title: eventTitle };
 
     // Save event to Firebase
     onAddEvent(eventDetails);

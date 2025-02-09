@@ -432,7 +432,6 @@ body {
   box-sizing: border-box;
 }
 
-/* Reset styles for the forums page */
 .forums-page-wrapper {
   width: 100%;
   min-height: 100vh;
@@ -440,7 +439,6 @@ body {
   z-index: 0;
 }
 
-/* Ensure text is visible */
 h1, h2, h3, p {
   position: relative;
   z-index: 3;
@@ -474,12 +472,10 @@ h1, h2, h3, p {
   align-items: center;
 }
 
-/* Remove this since we want consistent hover effect */
 .like-button.active:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-/* Update comment like button styles to match post likes */
 .comment-like-button {
   cursor: pointer;
   transition: transform 0.2s;
@@ -509,7 +505,6 @@ h1, h2, h3, p {
   margin-top: 8px;
 }
 
-/* Add scrollbar styling */
 .posts-grid::-webkit-scrollbar {
   width: 8px;
 }
@@ -528,7 +523,6 @@ h1, h2, h3, p {
   background: #555;
 }
 
-/* Modal Content */
 .modal-content {
   background-color: #ffffff !important;
   color: #333 !important;
@@ -536,19 +530,16 @@ h1, h2, h3, p {
   padding: 20px;
 }
 
-/* Overlay */
 .modal-overlay {
   background: rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Input fields */
 .modal-content .post-input {
   background-color: #f8f9fa !important;
   border: 1px solid #ddd !important;
   color: #333 !important;
 }
 
-/* Buttons */
 .modal-content .post-button {
   background-color: #2E7D32 !important;
   color: white !important;

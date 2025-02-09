@@ -33,7 +33,6 @@ h1 {
   margin-bottom: 24px;
 }
 
-/* Front of the card (using CardItem.js) */
 .card {
   width: 300px;
   height: 400px;
@@ -49,7 +48,6 @@ h1 {
   transform: scale(1.05);
 }
 
-/* Back of the card */
 .card-back {
   width: 300px;
   height: 400px;
@@ -105,7 +103,6 @@ h1 {
   line-height: 1.5;
 }
 
-/* Styles for CardItem.js (front of the card) */
 .cards__item {
   display: flex;
   flex: 1;

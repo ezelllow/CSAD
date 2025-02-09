@@ -1,6 +1,6 @@
 .post-detail {
   max-width: 800px;
-  margin: 120px auto 2rem; /* Increased top margin */
+  margin: 120px auto 2rem;
   padding: 0 1rem;
 }
 
@@ -77,7 +77,6 @@
   color: #666;
 }
 
-/* Author section styles */
 .post-author, .comment-author {
   display: flex;
   align-items: center;
@@ -112,7 +111,6 @@
   font-size: 0.85rem;
 }
 
-/* Post actions and meatballs menu */
 .post-actions {
   display: flex;
   align-items: center;
@@ -204,10 +202,9 @@
 
 .like-button.active,
 .comment-like-button.active {
-  color: #e91e63; /* Red heart color */
+  color: #e91e63;
 }
 
-/* Add these styles for better image handling */
 .post-image-container {
   width: 100%;
   max-height: 500px;

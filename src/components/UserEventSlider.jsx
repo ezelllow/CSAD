@@ -7,8 +7,8 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { database } from "../firebase"; // Firebase setup
 import { ref, onValue } from "firebase/database";
 import { useNavigate } from "react-router-dom"; 
-import "./UserEventSlider.css"; // Ensure styling for the slider
-import CalendarPopUpForm from './CalendarPopUpForm'; // Corrected the filename case
+import "./UserEventSlider.css"; // styling for the slider
+import CalendarPopUpForm from './CalendarPopUpForm'; 
 
 
 
@@ -41,7 +41,6 @@ function UserEventSlider() {
   }, []);
 
   const handleReminderClick = (event) => {
-    //event.stopPropagation(); // Prevent flipping
     setSelectedEvent(event);
     navigate("/calendar");
   };
@@ -73,7 +72,7 @@ function UserEventSlider() {
       <h1 className="app" id="slider-section">Upcoming Events</h1>
 
       {/* Community Cooking Events Slider */}
-      <h2 className="section-title cooking-title">Community Cooking Events</h2>
+      <h2>Community Cooking Events</h2>
       <hr className="section-divider" />
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}

@@ -10,39 +10,37 @@ body {
   margin: 0 auto;
   padding: 20px;
   min-height: calc(100vh - 80px - 200px);
-  position: relative !important; /* Force position */
-  top: 0 !important; /* Force top position */
-  bottom: auto !important; /* Reset bottom */
+  position: relative !important;
+  top: 0 !important;
+  bottom: auto !important; 
   display: flex;
   flex-direction: column;
   gap: 20px;
   overflow: visible;
   margin-top: 100px;
   margin-bottom: 100px;
-  z-index: 9999; /* Lower than navbar but higher than other content */
-  transform: none !important; /* Prevent transform issues */
+  z-index: 9999; 
+  transform: none !important; 
 }
 
-/* Search section styling */
 .menu-container .search-section {
   position: relative;
   width: 100%;
   background: #242424;
   padding: 20px;
   margin-top: 100px;
-  z-index: 998; /* Lower than menu-container */
+  z-index: 998; 
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   border-radius: 15px;
   height: auto;
 }
 
-/* Update h1 styling to be more specific */
 .menu-container .search-section h1 {
   margin-top: 15px;
   text-align: left;
   font-size: xx-large;
   margin-bottom: 15px;
-  color: white; /* Ensure text is white */
+  color: white; 
 }
 
 .search-bar {
@@ -86,7 +84,6 @@ body {
   background-color: #16a34a;
 }
 
-/* Menu grid container with scrolling */
 .menu-container .menu-grid-container {
   flex: 1;
   margin-top: 0px;
@@ -110,7 +107,6 @@ body {
   z-index: 1;
 }
 
-/* Custom scrollbar styling */
 .menu-container .menu-grid-container::-webkit-scrollbar {
   width: 8px;
 }
@@ -242,13 +238,12 @@ body {
   max-width: fit-content;
 }
 
-/* Update tags styling */
 .tags {
   display: flex;
   gap: 6px;
   margin-top: 4px;
   flex-wrap: wrap;
-  min-height: 28px; /* Maintain consistent height */
+  min-height: 28px;
 }
 
 .tag {
@@ -258,7 +253,6 @@ body {
   font-weight: 500;
 }
 
-/* Placeholder tag styling */
 .tag.placeholder {
   visibility: hidden;
   opacity: 0;
@@ -266,7 +260,6 @@ body {
   background-color: transparent;
 }
 
-/* Specific tag styles */
 .tag.halal {
   background-color: #e8f5e9;
   color: #2e7d32;
@@ -340,7 +333,6 @@ body {
   }
 }
 
-/* Popup styles - namespaced under menu-container */
 .menu-container .popup-overlay {
   position: fixed;
   top: 0;
@@ -468,12 +460,10 @@ body {
   padding-top: 5px;
 }
 
-/* Make menu cards clickable */
 .menu-container .menu-card {
   cursor: pointer;
 }
 
-/* Custom scrollbar for popup */
 .menu-container .popup-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -492,7 +482,6 @@ body {
   background: #555;
 }
 
-/* Responsive adjustments for popup */
 @media (max-width: 768px) {
   .menu-container .popup-content {
     width: 95%;
@@ -508,7 +497,6 @@ body {
   }
 }
 
-/* Optional: Add some hover effect to the popup image */
 .menu-container .popup-image:hover {
   cursor: zoom-in;
 }
@@ -541,21 +529,19 @@ body {
   margin-top: 8px;
 }
 
-/* Add this to both card and popup info sections */
 .listing-info, .popup-info {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-/* Seller info for menu cards */
 .seller-info {
   width: 100%;
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid #eee;
   text-align: right;
-  padding-right: 8px; /* Add right padding */
+  padding-right: 8px;
 }
 
 .seller-info span {
@@ -566,10 +552,9 @@ body {
   font-weight: lighter;
 }
 
-/* Seller info specific to popup */
 .popup-details .seller-info {
   margin-top: auto;
-  width: calc(100% - 40px); /* Account for popup padding */
+  width: calc(100% - 40px); 
   padding: 8px 0;
   border-top: 1px solid #eee;
   text-align: right;
@@ -586,12 +571,10 @@ body {
   font-weight: lighter;
 }
 
-/* Update popup actions to not interfere with seller info */
 .popup-details .popup-actions {
-  margin-bottom: 60px; /* Give space for seller info */
+  margin-bottom: 60px; 
 }
 
-/* Ensure consistent text wrapping */
 .listing-info .ingredients,
 .listing-info .location,
 .listing-info .quantity,

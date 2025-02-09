@@ -1,11 +1,11 @@
 .dm-chat-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px); /* Further reduced total height */
+  height: calc(100vh - 120px);
   background: #36393f;
   position: relative;
   width: 100%;
-  overflow: hidden; /* Prevent overflow */
+  overflow: hidden;
 }
 
 .dm-chat-header {
@@ -46,8 +46,8 @@
 .dm-chat-content {
   flex: 1;
   position: relative;
-  height: calc(100% - 120px); /* Further reduced content height */
-  min-height: 0; /* Allow content to shrink */
+  height: calc(100% - 120px);
+  min-height: 0;
 }
 
 .dm-chat-messages-container {
@@ -55,7 +55,7 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: 100px; /* Increased space for input */
+  bottom: 100px;
   overflow-y: auto;
   padding: 16px;
 }
@@ -97,7 +97,7 @@
 
 .dm-chat-input-container {
   position: absolute;
-  bottom: 30px; /* Moved up more */
+  bottom: 30px;
   left: 0;
   right: 0;
   padding: 0 16px;
@@ -167,7 +167,6 @@
   background: #2f3136;
 }
 
-/* Add these styles for image upload functionality */
 .chat-input-actions {
   padding: 0 12px;
   display: flex;
