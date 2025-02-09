@@ -172,35 +172,19 @@ export default function PostDetail() {
     setNewComment('');
   };
 
-  const handleDelete = async () => {
-    if (!currentUser || (currentUser.uid !== post.authorId)) {
-      alert("You don't have permission to delete this post");
-      return;
-    }
-
-    if (window.confirm('Are you sure you want to delete this post?')) {
-      try {
-        await database.ref(`posts/${postId}`).remove();
-        navigate('/forums');
-      } catch (error) {
-        console.error('Error deleting post:', error);
-      }
-    }
+  const handleMenuClick = (e) => {
+    e.stopPropagation();
+    setShowMenu(!showMenu);
   };
 
-  const handleBookmark = async () => {
-    if (!currentUser) return;
+  const handleDelete = async () => {
+    if (!currentUser || post.authorId !== currentUser.uid) return;
     
-    const bookmarkRef = database.ref(`users/${currentUser.uid}/bookmarks/${postId}`);
-    const snapshot = await bookmarkRef.once('value');
-    
-    if (snapshot.exists()) {
-      await bookmarkRef.remove();
-    } else {
-      await bookmarkRef.set({
-        postId: postId,
-        savedAt: new Date().toISOString()
-      });
+    try {
+      await database.ref(`posts/${postId}`).remove();
+      navigate('/forums');
+    } catch (error) {
+      console.error('Error deleting post:', error);
     }
   };
 
@@ -291,21 +275,15 @@ export default function PostDetail() {
             <div className="meatballs-menu">
               <button 
                 className="menu-trigger"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowMenu(!showMenu);
-                }}
+                onClick={handleMenuClick}
               >
                 ⋮
               </button>
               {showMenu && (
                 <div className="menu-content">
-                  <button onClick={handleBookmark}>
-                    🔖 Bookmark
-                  </button>
                   {currentUser?.uid === post.authorId && (
                     <button onClick={handleDelete} className="delete-button">
-                      🗑️ Delete Post
+                      <i className="fas fa-trash"></i> Delete Post
                     </button>
                   )}
                 </div>
