@@ -4,8 +4,6 @@ import Navbar from './components/Navbar'; // Original navbar for home page
 import HomeNavbar from './components/homeNavbar'; // Navbar for other pages
 import Home from './components/pages/Home';
 import HomePage from './components/pages/homePage';
-import Services from './components/pages/Services';
-import Products from './components/pages/Products';
 import Calendar from './components/pages/Calendar';
 import Bannoun from './components/pages/Bannoun';
 import Uannouncements from './components/pages/Uannouncements';
@@ -50,8 +48,6 @@ function App() {
           <Route path="/homePage" element={<HomePage />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/update-profile" element={<UpdateProfile />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/products" element={<Products />} />
           <Route path="/map" element={<Map />} />
           <Route path="/punggol" element={<Punggol />} />
           <Route path="/bedok" element={<Bedok />} />
