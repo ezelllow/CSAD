@@ -1,27 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import { database } from '../../../firebase';
-import { ref, get, push, onValue } from 'firebase/database'; // ✅ Ensure `onValue` is imported
+import { database, auth } from '../../../firebase';
+import { ref, get, push, onValue } from 'firebase/database';
 import './Bedok.css';
 import '../../HeroSection.css';
 import { Link } from 'react-router-dom';
 
-const filterOptions = ["Halal", "Spicy"]; // ✅ Filter options for Bedok
+const filterOptions = ["Halal", "Spicy"];
 
 function BedokFridge() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilters, setSelectedFilters] = useState([]);
+  const [showChat, setShowChat] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState('');
+  const [username, setUsername] = useState('Anonymous');
+  const user = auth.currentUser;
   const { currentUser } = useAuth();
 
   useEffect(() => {
-    const listingsRef = ref(database, 'listings');
+    if (user) {
+      const userRef = ref(database, `Users/${user.uid}/username`);
+      get(userRef).then((snapshot) => {
+        if (snapshot.exists()) {
+          setUsername(snapshot.val());
+        }
+      });
+    }
+  }, [user]);
 
+  useEffect(() => {
+    const chatRef = ref(database, 'chats/chat_room_1/messages');
+    const unsubscribe = onValue(chatRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setMessages(Object.values(data));
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const listingsRef = ref(database, 'listings');
     const unsubscribe = onValue(listingsRef, (snapshot) => {
-      if (!snapshot.exists()) {  // ✅ Prevent accessing undefined data
+      if (!snapshot.exists()) {
         console.warn("No data found in Firebase for 'listings'");
-        setListings([]); // Ensure state is updated safely
+        setListings([]);
         setLoading(false);
         return;
       }
@@ -33,7 +59,7 @@ function BedokFridge() {
 
         if (items) {
           Object.entries(items).forEach(([itemId, itemData]) => {
-            if (itemData.location?.toLowerCase() === "bedok") { // ✅ Only filter Bedok
+            if (itemData.location?.toLowerCase() === "bedok") {
               allListings.push({
                 id: itemId,
                 sellerId,
@@ -46,22 +72,35 @@ function BedokFridge() {
 
       allListings.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
-      console.log("Fetched Bedok Listings:", allListings); // ✅ Debugging log
+      console.log("Fetched Bedok Listings:", allListings);
       setListings(allListings);
       setLoading(false);
     }, (error) => {
-      console.error("Firebase read error:", error); // ✅ Catch any Firebase errors
+      console.error("Firebase read error:", error);
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
+  const sendMessage = () => {
+    if (message.trim() !== '' && user) {
+      const chatRef = ref(database, 'chats/chat_room_1/messages');
+      const newMessage = {
+        senderId: user.uid,
+        username,
+        message,
+        timestamp: Date.now(),
+      };
+
+      push(chatRef, newMessage);
+      setMessage('');
+    }
+  };
+
   const filteredListings = listings.filter((listing) => {
     const matchesSearch = listing.title?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    if (selectedFilters.length === 0) return matchesSearch; 
-
+    if (selectedFilters.length === 0) return matchesSearch;
     return (
       matchesSearch &&
       selectedFilters.some((filter) => {
@@ -86,7 +125,16 @@ function BedokFridge() {
   };
 
   return (
-    <div className="menu-container">
+    <div className="bedok-container">
+      <div className="livestream-section">
+        <iframe
+          src="https://www.youtube.com/embed/20sA-bYT5fY?autoplay=1&controls=0&mute=1&modestbranding=1&disablekb=1&fs=0&showinfo=0&rel=0"
+          title="Fridge Livestream"
+          className="livestream"
+          allowFullScreen
+        ></iframe>
+      </div>
+
       <div className="search-section">
         <h1>Bedok Food Listings</h1>
         <input
@@ -108,48 +156,70 @@ function BedokFridge() {
           ))}
         </div>
       </div>
-      
-      <div className="menu-grid-container">
-        <div className="menu-grid">
+
+      <div className="content-wrapper">
+        <div className={`food-list-section ${showChat ? 'with-chat' : ''}`}>
           {loading ? (
             <p>Loading listings...</p>
           ) : filteredListings.length > 0 ? (
-            filteredListings.map((listing) => (
-              <div key={listing.id} className="menu-card">
-                {listing.imageUrl && (
-                  <img 
-                    src={listing.imageUrl} 
-                    alt={listing.title} 
-                    className="menu-image"
-                  />
-                )}
-                <div className="menu-details">
-                  <h3>{listing.title}</h3>
-                  <p>{listing.description || "No description available"}</p>
-                  <div className="listing-meta">
-                    <div className="listing-info">
+            <div className="menu-grid">
+              {filteredListings.map((listing) => (
+                <div key={listing.id} className="menu-card">
+                  {listing.imageUrl && (
+                    <img 
+                      src={listing.imageUrl} 
+                      alt={listing.title} 
+                      className="menu-image"
+                    />
+                  )}
+                  <div className="menu-details">
+                    <h3>{listing.title}</h3>
+                    <p>{listing.description || "No description available"}</p>
+                    <div className="listing-meta">
                       <span className="location">📍 {listing.location || "Unknown"}</span>
                       <span className="expiry">⏰ Expires: {listing.expiryDate ? new Date(listing.expiryDate).toLocaleDateString() : "N/A"}</span>
-                      <span className="quantity">📦 Quantity: {listing.quantity || "N/A"}</span>
-                      <span className="ingredients">🥗 Ingredients: {listing.ingredients || "Not specified"}</span>
-                      <span className="status" data-status={listing.status || "available"}>
-                        Status: {listing.status || "Available"}
-                      </span>
-                    </div>
-                    
-                    <div className="tags">
-                      {listing.halal && <span className="tag halal">Halal</span>}
-                      {listing.spicy && <span className="tag spicy">Spicy</span>}
+                      <div className="tags">
+                        {listing.halal && <span className="tag halal">Halal</span>}
+                        {listing.spicy && <span className="tag spicy">Spicy</span>}
+                        <span className={`tag status-${listing.status?.toLowerCase() || "available"}`}>
+                          {listing.status || 'Available'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           ) : (
-            <p>No listings found</p>
+            <p>No food items available in Bedok</p>
           )}
         </div>
+
+        {showChat && (
+          <div className="chat-section">
+            <h2>Community Chat</h2>
+            <div className="chat-box">
+              {messages.map((msg, index) => (
+                <p key={index} className="chat-message"><strong>{msg.username}:</strong> {msg.message}</p>
+              ))}
+            </div>
+            <div className="chat-input">
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Type a message..."
+                className="chat-input-field"
+              />
+              <button onClick={sendMessage} className="chat-send-button">Send</button>
+            </div>
+          </div>
+        )}
       </div>
+
+      <button className="chat-toggle-button" onClick={() => setShowChat(!showChat)}>
+        {showChat ? 'Close Chat' : 'Open Chat'}
+      </button>
     </div>
   );
 }
