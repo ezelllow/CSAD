@@ -20,6 +20,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import DirectMessageChat from '../Chat/DirectMessageChat';
 import ServerChat from '../Chat/ServerChat';
 import firebase from 'firebase/compat/app';
+import { getDatabase, ref, get, push } from 'firebase/database';
 
 // Add icons to library
 library.add(faUserFriends, faCommentAlt, faSearch, faEllipsisV, faMessage, faCompass, faServer, faCheck, faTimes);
@@ -292,69 +293,68 @@ function SocialsMain() {
     return () => userRef.off();
   }, [currentUser]);
 
-  // Update the pending friends useEffect
+  // Update the useEffect for pending friends to better handle the data structure
   useEffect(() => {
     if (!currentUser) return;
 
     const userRef = database.ref(`Users/${currentUser.uid}`);
     
-    const pendingListener = async () => {
+    const fetchPendingRequests = async () => {
       try {
-        // Get both incoming and outgoing requests
+        // Get both pending and outgoing requests
         const [pendingSnapshot, outgoingSnapshot] = await Promise.all([
-          database.ref(`Users/${currentUser.uid}/pendingFriends`).get(),
-          database.ref(`Users/${currentUser.uid}/outgoingRequests`).get()
+          database.ref(`Users/${currentUser.uid}/pendingFriends`).once('value'),
+          database.ref(`Users/${currentUser.uid}/outgoingRequests`).once('value')
         ]);
 
         const pendingData = pendingSnapshot.val() || {};
         const outgoingData = outgoingSnapshot.val() || {};
 
-        // Get user data for incoming requests
-        const incomingRequests = await Promise.all(
-          Object.keys(pendingData).map(async (senderId) => {
-            const userSnapshot = await database.ref(`Users/${senderId}`).get();
+        // Only process valid requests (non-null values)
+        const validPending = Object.entries(pendingData)
+          .filter(([_, status]) => status === 'pending')
+          .map(([id]) => id);
+
+        const validOutgoing = Object.entries(outgoingData)
+          .filter(([_, status]) => status === true)
+          .map(([id]) => id);
+
+        // Fetch user data for valid requests
+        const requests = await Promise.all([
+          ...validPending.map(async (senderId) => {
+            const userSnapshot = await database.ref(`Users/${senderId}`).once('value');
             const userData = userSnapshot.val();
             return userData ? {
               id: senderId,
-              username: userData.username,
-              profilePicture: userData.profilePicture || '/pfp.png',
-              status: 'incoming'
+              status: 'incoming',
+              ...userData
             } : null;
-          })
-        );
-
-        // Get user data for outgoing requests
-        const outgoingRequests = await Promise.all(
-          Object.keys(outgoingData).map(async (receiverId) => {
-            const userSnapshot = await database.ref(`Users/${receiverId}`).get();
+          }),
+          ...validOutgoing.map(async (receiverId) => {
+            const userSnapshot = await database.ref(`Users/${receiverId}`).once('value');
             const userData = userSnapshot.val();
             return userData ? {
               id: receiverId,
-              username: userData.username,
-              profilePicture: userData.profilePicture || '/pfp.png',
-              status: 'outgoing'
+              status: 'outgoing',
+              ...userData
             } : null;
           })
-        );
+        ]);
 
-        // Combine and filter out null values
-        const allRequests = [...incomingRequests, ...outgoingRequests].filter(Boolean);
-        setPendingFriends(allRequests);
+        // Filter out null values and set state
+        setPendingFriends(requests.filter(Boolean));
       } catch (error) {
-        console.error('Error fetching pending requests:', error);
+        console.error('Error fetching requests:', error);
       }
     };
 
-    // Set up real-time listeners
-    const pendingRef = database.ref(`Users/${currentUser.uid}/pendingFriends`);
-    const outgoingRef = database.ref(`Users/${currentUser.uid}/outgoingRequests`);
-
-    pendingRef.on('value', pendingListener);
-    outgoingRef.on('value', pendingListener);
+    // Set up real-time listener for changes
+    const pendingListener = userRef.child('pendingFriends').on('value', fetchPendingRequests);
+    const outgoingListener = userRef.child('outgoingRequests').on('value', fetchPendingRequests);
 
     return () => {
-      pendingRef.off('value', pendingListener);
-      outgoingRef.off('value', pendingListener);
+      userRef.child('pendingFriends').off('value', pendingListener);
+      userRef.child('outgoingRequests').off('value', outgoingListener);
     };
   }, [currentUser]);
 
@@ -641,53 +641,57 @@ function SocialsMain() {
   // Update the handleAddFriendFromMenu function
   const handleAddFriendFromMenu = async (userId) => {
     try {
-      // Check if request already exists
+      // Check for existing requests first
       const existingRequest = pendingFriends.find(
         req => req.id === userId && req.status === 'outgoing'
       );
-      
       if (existingRequest) {
-        return; // Don't send another request if one exists
-      }
-
-      // Check if already friends
-      const isFriend = friends.some(friend => friend.id === userId);
-      if (isFriend) {
+        alert('Friend request already sent');
         return;
       }
 
-      // Check if user is blocked
-      const isBlocked = blockedUsers.some(user => user.id === userId);
-      if (isBlocked) {
-        return;
-      }
+      // Optimistic UI update
+      const tempRequest = {
+        id: userId,
+        status: 'outgoing',
+        username: users.find(u => u.id === userId)?.username,
+        profilePicture: users.find(u => u.id === userId)?.profilePicture
+      };
+      setPendingFriends(prev => [...prev, tempRequest]);
 
-      // Get user data
-      const userSnapshot = await database.ref(`Users/${userId}`).get();
-      const userData = userSnapshot.val();
-
-      // Proceed with request
+      // Firebase transaction
       const updates = {};
       updates[`Users/${userId}/pendingFriends/${currentUser.uid}`] = 'pending';
       updates[`Users/${currentUser.uid}/outgoingRequests/${userId}`] = true;
-
+      
       await database.ref().update(updates);
 
-      // Update local state to show request sent status
-      setUsers(prevUsers => prevUsers.map(user => 
-        user.id === userId ? { ...user, isPending: true } : user
-      ));
-
-      // Add to pending friends immediately
-      setPendingFriends(prev => [...prev, {
-        id: userId,
-        username: userData.username,
-        profilePicture: userData.profilePicture || '/pfp.png',
-        status: 'outgoing'
-      }]);
-
     } catch (error) {
+      // Rollback on error
+      setPendingFriends(prev => prev.filter(req => req.id !== userId));
       console.error("Error sending friend request:", error);
+    }
+  };
+
+  // Update the handleSendFriendRequest function to clean up old requests
+  const handleSendFriendRequest = async (recipientId) => {
+    if (!currentUser) return;
+
+    try {
+      const db = getDatabase();
+      
+      // Clean up any existing requests first
+      const updates = {};
+      updates[`Users/${currentUser.uid}/outgoingRequests/${recipientId}`] = true;
+      updates[`Users/${recipientId}/pendingFriends/${currentUser.uid}`] = 'pending';
+      
+      // Remove any old/invalid requests
+      updates[`Users/${currentUser.uid}/friends/${recipientId}`] = null;
+      updates[`Users/${recipientId}/friends/${currentUser.uid}`] = null;
+      
+      await database.ref().update(updates);
+    } catch (error) {
+      console.error('Error sending friend request:', error);
     }
   };
 
