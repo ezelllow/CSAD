@@ -29,17 +29,18 @@ body {
   width: 100%;
   background: #242424;
   padding: 20px;
+  margin-top: 100px;
   z-index: 998; /* Lower than menu-container */
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   border-radius: 15px;
   height: auto;
-  margin-bottom: 20px;
 }
 
 /* Update h1 styling to be more specific */
 .menu-container .search-section h1 {
+  margin-top: 15px;
   text-align: left;
-  font-size: 24px;
+  font-size: xx-large;
   margin-bottom: 15px;
   color: white; /* Ensure text is white */
 }
@@ -78,6 +79,7 @@ body {
 .filter-buttons button:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  background-color: rgba(255, 140, 0, 0.473);
 }
 
 .filter-buttons button.active {
@@ -87,21 +89,23 @@ body {
 /* Menu grid container with scrolling */
 .menu-container .menu-grid-container {
   flex: 1;
-  margin-top: 20px;
+  margin-top: 0px;
   padding: 1rem;
   background: white;
   overflow-y: auto;
   border-radius: 15px;
   position: relative;
-  z-index: 997; /* Lower than search section */
-  max-height: calc(100vh - 400px);
+  z-index: 997;
+  max-height: calc(100vh - 250px);
+  min-height: 600px;
 }
 
 .menu-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
-  margin-bottom: 40px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   position: relative;
   z-index: 1;
 }
@@ -130,16 +134,18 @@ body {
   border-radius: 10px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  height: auto;
-  min-height: 400px;
+  height: 100%;
+  min-height: 350px;
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease;
+  position: relative;
 }
 
 .menu-card:hover {
   transform: translateY(-5px);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: rgb(241, 241, 241);
 }
 
 .menu-image {
@@ -153,54 +159,98 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  align-items: flex-start;
+  width: 100%;
 }
 
 .menu-details h3 {
-  color: #333;
+  width: 100%;
+  text-align: left;
   margin: 0;
+  padding: 0;
+  color: #333;
   font-size: 16px;
   font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .menu-details p {
+  width: 100%;
+  text-align: left;
+  margin: 0;
+  padding: 0;
   color: #666;
-  margin: 5px 0;
   font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  line-height: 1.4;
 }
 
 .listing-meta {
+  width: 100%;
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  align-items: flex-start;
 }
 
-.location, .expiry {
+.listing-info {
+  width: 100%;
   display: flex;
-  align-items: center;
-  gap: 4px;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.listing-info span {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
   font-size: 13px;
   color: #666;
+  line-height: 1.4;
+}
+
+.listing-info span:before {
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.status {
+  align-self: flex-start;
+  margin-top: 4px;
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.status[data-status="available"] {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  max-width: fit-content;
+}
+
+.status[data-status="claimed"] {
+  background-color: #fff3e0;
+  color: #e65100;
+  max-width: fit-content;
 }
 
 .tags {
+  width: 100%;
   display: flex;
   gap: 6px;
-  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .tag {
-  background-color: #e8f5e9;
-  color: #2e7d32;
   padding: 4px 8px;
   font-size: 12px;
   border-radius: 4px;
@@ -208,49 +258,18 @@ body {
 }
 
 .tag.halal {
-  background-color: #e8f5e9;
+  background-color: #e0fae2;
   color: #2e7d32;
 }
 
 .tag.spicy {
-  background-color: #fff3e0;
-  color: #e65100;
+  background-color: #ffd7c0;
+  color: #e60000;
 }
 
-.tag.dover {
-  background-color: #e3f2fd;
-  color: #1565c0;
-}
-
-.listing-info {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-
-.listing-info span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #666;
-}
-
-.status {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: 500;
-}
-
-.status[data-status="available"] {
+.tag.available {
   background-color: #e8f5e9;
   color: #2e7d32;
-}
-
-.status[data-status="claimed"] {
-  background-color: #fff3e0;
-  color: #e65100;
 }
 
 @media (max-width: 1200px) {
@@ -269,14 +288,316 @@ body {
   .menu-grid {
     grid-template-columns: repeat(2, minmax(200px, 1fr));
   }
+  .menu-container .menu-grid-container {
+    max-height: calc(100vh - 200px);
+    min-height: 500px;
+  }
+  
+  .menu-container {
+    margin-top: 80px;
+    margin-bottom: 80px;
+  }
+
+  .menu-container .search-section {
+    margin-top: 80px;
+  }
 }
 
 @media (max-width: 480px) {
   .menu-grid {
     grid-template-columns: repeat(1, minmax(200px, 1fr));
+    gap: 15px;
   }
   .menu-card {
     width: 100%;
-    max-width: 300px;
+    max-width: none;
+    min-height: 300px;
   }
+  
+  .menu-container .menu-grid-container {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .menu-container .menu-grid-container {
+    max-height: calc(100vh - 180px);
+    min-height: 400px;
+  }
+  
+  .menu-card {
+    min-height: 280px;
+  }
+}
+
+/* Popup styles - namespaced under menu-container */
+.menu-container .popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.menu-container .popup-content {
+  margin-top: 100px;
+  background: white;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: menu-popup-appear 0.3s ease-out;
+}
+
+@keyframes menu-popup-appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-container .close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 2;
+}
+
+.menu-container .close-button:hover {
+  background-color: #f0f0f0;
+}
+
+.menu-container .popup-image-container {
+  width: 100%;
+  max-height: 500px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+}
+
+.menu-container .popup-image {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+}
+
+.menu-container .popup-details {
+  padding: 20px;
+  position: relative;
+  min-height: 200px;
+}
+
+.menu-container .popup-details h2 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 24px;
+}
+
+.menu-container .popup-description {
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.menu-container .popup-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.menu-container .popup-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.menu-container .popup-info span {
+  font-size: 14px;
+  color: #444;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-container .popup-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Make menu cards clickable */
+.menu-container .menu-card {
+  cursor: pointer;
+}
+
+/* Custom scrollbar for popup */
+.menu-container .popup-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.menu-container .popup-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.menu-container .popup-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.menu-container .popup-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive adjustments for popup */
+@media (max-width: 768px) {
+  .menu-container .popup-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .menu-container .popup-image-container {
+    height: 200px;
+  }
+
+  .menu-container .popup-details h2 {
+    font-size: 20px;
+  }
+}
+
+/* Optional: Add some hover effect to the popup image */
+.menu-container .popup-image:hover {
+  cursor: zoom-in;
+}
+
+.like-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  user-select: none;
+  width: fit-content;
+}
+
+.like-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.like-button.active {
+  color: #e11d48;
+}
+
+.listing-actions, .popup-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Add this to both card and popup info sections */
+.listing-info, .popup-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Seller info for menu cards */
+.seller-info {
+  width: 100%;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  text-align: right;
+  padding-right: 8px; /* Add right padding */
+}
+
+.seller-info span {
+  display: block;
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+  font-weight: lighter;
+}
+
+/* Seller info specific to popup */
+.popup-details .seller-info {
+  margin-top: auto;
+  width: calc(100% - 40px); /* Account for popup padding */
+  padding: 8px 0;
+  border-top: 1px solid #eee;
+  text-align: right;
+  position: absolute;
+  bottom: 15px;
+  right: 20px;
+}
+
+.popup-details .seller-info span {
+  display: block;
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+  font-weight: lighter;
+}
+
+/* Update popup actions to not interfere with seller info */
+.popup-details .popup-actions {
+  margin-bottom: 60px; /* Give space for seller info */
+}
+
+/* Ensure consistent text wrapping */
+.listing-info .ingredients,
+.listing-info .location,
+.listing-info .quantity,
+.listing-info .expiry {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listing-info .ingredients {
+  display: flex;
+  align-items: flex-start;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.listing-actions {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 8px;
 }
