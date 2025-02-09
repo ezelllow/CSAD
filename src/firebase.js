@@ -17,4 +17,8 @@ const app = firebase.initializeApp({
 export const auth = app.auth();
 export const database = app.database();
 export const storage = app.storage();
+
+export const getUserProfileRef = (uid) => database.ref(`Users/${uid}`);
+export const getProfilePictureRef = (uid) => storage.ref(`profilePictures/${uid}`);
+
 export default app;

@@ -1,0 +1,601 @@
+.user-search {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #2f3136;
+  color: #dcddde;
+}
+
+.search-header {
+  padding: 16px;
+  border-bottom: 1px solid #202225;
+}
+
+.search-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #72767d;
+  font-size: 14px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  background: #202225;
+  border: none;
+  border-radius: 4px;
+  color: #dcddde;
+  font-size: 14px;
+}
+
+.search-input::placeholder {
+  color: #72767d;
+}
+
+.search-sections {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.search-section {
+  margin-bottom: 16px;
+}
+
+.section-header {
+  padding: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #96989d;
+  text-transform: uppercase;
+}
+
+.user-result {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.user-result:hover {
+  background: #36393f;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  color: #dcddde;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.user-status {
+  color: #72767d;
+  font-size: 12px;
+}
+
+.friend-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  width: 100%;
+  z-index: 1;
+}
+
+.friend-info-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.friend-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+.action-button {
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.action-button.message {
+  background-color: #2E7D32;
+  color: white;
+}
+
+.action-button.menu {
+  background-color: #36393f;
+  color: #dcddde;
+}
+
+.action-button:hover {
+  background-color: #40444b;
+}
+
+.menu-container {
+  position: absolute;
+  top: 100%;
+  right: 16px;
+  z-index: 100;
+}
+
+.friends-section {
+  overflow-y: auto;
+}
+
+.section {
+  height: 100%;
+  padding: 0 8px;
+}
+
+.user-search-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.search-section {
+  margin-bottom: 30px;
+}
+
+.results-section h3 {
+  margin: 20px 0 10px;
+  color: #333;
+}
+
+.friend-requests,
+.friends-list,
+.search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+  object-fit: cover;
+}
+
+.user-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.username {
+  font-weight: 500;
+  color: #333;
+}
+
+.friend-actions {
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+button:not(:disabled):hover {
+  opacity: 0.9;
+}
+
+.friend-actions button:first-child {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.friend-actions button:last-child {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Add these new styles for online status */
+.avatar-container {
+  position: relative;
+  margin-right: 15px;
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background-color: #44b700;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.user-card.online {
+  border-left: 3px solid #44b700;
+}
+
+.online-friends {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Update existing button styles */
+.user-info button {
+  background-color: #2196f3;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+}
+
+.user-info button:hover {
+  background-color: #1976d2;
+}
+
+/* Add these styles for tabs */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.tab {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.tab.active {
+  color: #2196f3;
+  border-bottom: 2px solid #2196f3;
+}
+
+.tab.inactive {
+  color: #666;
+  border-bottom: 2px solid transparent;
+}
+
+.tab:hover {
+  color: #2196f3;
+}
+
+/* Add counter badges */
+.tab span {
+  background: #eee;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.tab.active span {
+  background: #2196f3;
+  color: white;
+}
+
+/* Add specific styling for the online button */
+.friends-nav {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+}
+
+.friends-nav-button {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  color: #72767d;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.friends-nav-button:hover {
+  background: rgba(79, 84, 92, 0.16);
+  color: #dcddde;
+}
+
+.friends-nav-button.active {
+  background: rgba(79, 84, 92, 0.32);
+  color: #fff;
+}
+
+/* Add specific styling for the pending count */
+.friends-nav-button span {
+  background: rgba(79, 84, 92, 0.24);
+  padding: 2px 6px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+/* Add Friend button specific styling */
+.friends-nav-button.add-friend {
+  background: #3ba55c;
+  color: white;
+}
+
+.friends-nav-button.add-friend:hover {
+  background: #2d7d46;
+}
+
+/* Pending Requests Styling */
+.pending-requests {
+  padding: 8px;
+}
+
+.pending-request-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  background: #2f3136;
+}
+
+.pending-request-item .user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pending-request-item .user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pending-request-item .user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.pending-request-item .username {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.pending-request-item .request-type {
+  color: #96989d;
+  font-size: 12px;
+}
+
+.request-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.request-actions button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.accept-button {
+  background: #3ba55c;
+  color: white;
+}
+
+.accept-button:hover {
+  background: #2d7d46;
+}
+
+.reject-button {
+  background: #ed4245;
+  color: white;
+}
+
+.reject-button:hover {
+  background: #c03537;
+}
+
+/* Blocked Users Styling */
+.blocked-users {
+  padding: 8px;
+}
+
+.blocked-user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  background: #2f3136;
+}
+
+.blocked-user-item .user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.blocked-user-item .user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.blocked-user-item .user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.blocked-user-item .username {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.blocked-label {
+  color: #96989d;
+  font-size: 12px;
+}
+
+.unblock-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #4f545c;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.unblock-button:hover {
+  background: #686d73;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px;
+  color: #96989d;
+}
+
+.friends-subsection {
+  margin-bottom: 20px;
+}
+
+.subsection-header {
+  color: #b9bbbe;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 8px 16px;
+  letter-spacing: 0.5px;
+}
+
+.online-indicator {
+  width: 10px;
+  height: 10px;
+  background: #3ba55c;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: 2px solid #2f3136;
+}
+
+.avatar-container {
+  position: relative;
+  margin-right: 12px;
+}
+
+.message-button {
+  background: #3ba55c;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.message-button:hover {
+  background: #2d7d46;
+}
+
+.menu-dropdown {
+  position: fixed;
+  background: #18191c;
+  border-radius: 4px;
+  min-width: 150px;
+  z-index: 1001;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
+}
+
+.menu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: transparent;
+} 

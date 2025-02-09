@@ -447,25 +447,66 @@ h1, h2, h3, p {
 }
 
 .like-button {
+  cursor: pointer;
+  transition: transform 0.2s;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  cursor: pointer;
+  background: none;
+  border: none;
   padding: 4px 8px;
   border-radius: 4px;
-  transition: all 0.2s ease;
+  color: #666;
 }
 
 .like-button:hover {
-  background-color: rgba(0,0,0,0.05);
+  transform: scale(1.1);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .like-button.active {
-  color: #e91e63;
+  color: #2E7D32;
 }
 
+.post-stats {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Remove this since we want consistent hover effect */
 .like-button.active:hover {
-  background-color: rgba(233, 30, 99, 0.1);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Update comment like button styles to match post likes */
+.comment-like-button {
+  cursor: pointer;
+  transition: transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #666;
+}
+
+.comment-like-button:hover {
+  transform: scale(1.1);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.comment-like-button.active {
+  color: #2E7D32;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: 8px;
 }
 
 /* Add scrollbar styling */

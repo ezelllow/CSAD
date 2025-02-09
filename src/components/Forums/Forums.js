@@ -13,6 +13,7 @@ export default function Forums() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [usersData, setUsersData] = useState({});
+  const [userProfilePic, setUserProfilePic] = useState('../pfp.png'); // Default profile pic
 
   // Define communities
   const communities = [
@@ -21,16 +22,32 @@ export default function Forums() {
     { id: 3, name: 'Community Events' }
   ];
 
+  // Fetch posts and user data
   useEffect(() => {
     const postsRef = database.ref('posts');
     
-    postsRef.on('value', (snapshot) => {
+    postsRef.on('value', async (snapshot) => {
       const data = snapshot.val();
       if (data) {
         let postsArray = Object.entries(data).map(([id, post]) => ({
           id,
           ...post
         }));
+
+        // Fetch user data for each post
+        const userPromises = postsArray.map(post => 
+          database.ref(`Users/${post.authorId}`).once('value')
+        );
+
+        const userSnapshots = await Promise.all(userPromises);
+        const userData = {};
+        userSnapshots.forEach((snapshot, index) => {
+          if (snapshot.exists()) {
+            userData[postsArray[index].authorId] = snapshot.val();
+          }
+        });
+
+        setUsersData(userData);
 
         // Apply sorting
         switch (sortBy) {
@@ -58,61 +75,33 @@ export default function Forums() {
 
     return () => postsRef.off();
   }, [sortBy, selectedCategory]);
-
-  // Add this useEffect to fetch user data
-  useEffect(() => {
-    const usersRef = database.ref('Users');
-    
-    usersRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        setUsersData(data);
+  
+    // Fetch current user's profile picture
+    useEffect(() => {
+      if (currentUser) {
+        const userRef = database.ref(`Users/${currentUser.uid}/profilePicture`);
+        userRef.on('value', (snapshot) => {
+          const profilePic = snapshot.val();
+          setUserProfilePic(profilePic || '/pfp.png'); // Use default if no profile pic exists
+        });
+  
+        return () => userRef.off();
       }
-    });
-
-    return () => usersRef.off();
-  }, []);
+    }, [currentUser]);
 
   const handlePostClick = (postId) => {
     navigate(`/forums/post/${postId}`);
   };
 
-  const handleLike = async (postId) => {
-    if (!currentUser) {
-      alert("Please log in to like posts");
-      return;
-    }
-    
-    const userLikesRef = database.ref(`users/${currentUser.uid}/likes/${postId}`);
-    const postRef = database.ref(`posts/${postId}`);
-
-    try {
-      // Check if user has already liked this post
-      const snapshot = await userLikesRef.once('value');
-      const hasLiked = snapshot.val();
-
-      if (hasLiked) {
-        // Unlike: Remove like from user's likes and decrement post likes
-        await userLikesRef.remove();
-        await postRef.child('likes').transaction(likes => Math.max((likes || 0) - 1, 0));
-      } else {
-        // Like: Add to user's likes and increment post likes
-        await userLikesRef.set(true);
-        await postRef.child('likes').transaction(likes => (likes || 0) + 1);
-      }
-    } catch (error) {
-      console.error('Error handling like:', error);
-    }
-  };
-
   // Add state to track liked posts
   const [userLikes, setUserLikes] = useState({});
 
-  // Add useEffect to fetch user's likes
+  // Fetch user's likes when component mounts
   useEffect(() => {
     if (!currentUser) return;
 
-    const userLikesRef = database.ref(`users/${currentUser.uid}/likes`);
+    // Updated database path to match your structure
+    const userLikesRef = database.ref(`Users/${currentUser.uid}/likes`);
     userLikesRef.on('value', (snapshot) => {
       const likes = snapshot.val() || {};
       setUserLikes(likes);
@@ -120,6 +109,40 @@ export default function Forums() {
 
     return () => userLikesRef.off();
   }, [currentUser]);
+
+  const handleLike = async (postId, e) => {
+    e.stopPropagation(); // Prevent post click event
+    if (!currentUser) {
+      alert("Please log in to like posts");
+      return;
+    }
+    
+    try {
+      // Updated database paths to match your structure
+      const userLikesRef = database.ref(`Users/${currentUser.uid}/likes/${postId}`);
+      const postLikesRef = database.ref(`posts/${postId}/likes`);
+
+      // Get current like status
+      const likeSnapshot = await userLikesRef.once('value');
+      const hasLiked = likeSnapshot.val();
+
+      if (hasLiked) {
+        // Unlike
+        await userLikesRef.remove();
+        await postLikesRef.transaction(currentLikes => 
+          currentLikes ? currentLikes - 1 : 0
+        );
+      } else {
+        // Like
+        await userLikesRef.set(true);
+        await postLikesRef.transaction(currentLikes => 
+          (currentLikes || 0) + 1
+        );
+      }
+    } catch (error) {
+      console.error('Error handling like:', error);
+    }
+  };
 
   return (
     <div className="forums-container">
@@ -186,17 +209,21 @@ export default function Forums() {
               <div className="post-content">
                 <div className="post-header">
                   <div className="post-author">
-                    <img 
-                      src={usersData[post.authorId]?.profilePicture || "/pfp.png"} 
-                      alt="Profile" 
+                    <img
+                      src={usersData[post.authorId]?.profilePicture || "/pfp.png"}
+                      alt="Profile"
                       className="author-avatar"
                     />
                     <div className="author-info">
-                      <span className="author-name">{usersData[post.authorId]?.username || 'Anonymous'}</span>
+                      <span className="author-name">
+                        {usersData[post.authorId]?.username || 'Anonymous'}
+                      </span>
                       <div className="post-meta">
                         <span className="post-community">{post.community}</span>
                         <span>•</span>
-                        <span className="post-time">{new Date(post.createdAt).toLocaleDateString()}</span>
+                        <span className="post-time">
+                          {new Date(post.createdAt).toLocaleDateString()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -209,10 +236,7 @@ export default function Forums() {
                 <div className="post-footer">
                   <div className="post-stats">
                     <span 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleLike(post.id);
-                      }}
+                      onClick={(e) => handleLike(post.id, e)}
                       className={`like-button ${userLikes[post.id] ? 'active' : ''}`}
                     >
                       {userLikes[post.id] ? '❤️' : '🤍'} {post.likes || 0}

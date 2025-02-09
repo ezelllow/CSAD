@@ -13,6 +13,7 @@ import {
   Legend
 } from 'chart.js';
 import './SellerDashboard.css';
+import HomePage from './pages/homePage';
 
 // Register ChartJS components
 ChartJS.register(
@@ -35,7 +36,10 @@ export default function SellerDashboard() {
     quantity: '',
     location: '',
     expiryDate: '',
-    imageUrl: ''
+    imageUrl: '',
+    halal: false,
+    spicy: false,
+    ingredients: []
   });
   const [stats, setStats] = useState({
     rating: 0,
@@ -47,41 +51,44 @@ export default function SellerDashboard() {
     interactions: []
   });
   const [imageUpload, setImageUpload] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const capitalizeWords = (str) => {
+    if (!str) return ''; // Handle undefined/null values
+    return str.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    ).join(' ');
+  };
 
   useEffect(() => {
-    // Fetch seller's listings
-    const listingsRef = database.ref(`listings/${currentUser.uid}`);
+    if (!currentUser) return;
+
+    const listingsRef = database.ref(`listings/${currentUser.uid}/items`);
+    const statsRef = database.ref(`Users/${currentUser.uid}/stats`);
+    const analyticsRef = database.ref(`Users/${currentUser.uid}/analytics`);
+
     listingsRef.on('value', (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        // Check if items exist in the data
-        const items = data.items || {};
-        setListings(Object.entries(items).map(([id, listing]) => ({
+        const items = Object.entries(data).map(([id, listing]) => ({
           id,
           ...listing
-        })));
+        }));
+        setListings(items);
+
+        // Calculate total likes
+        const totalLikes = items.reduce((sum, item) => sum + (item.likes || 0), 0);
+        database.ref(`Users/${currentUser.uid}/stats/totalLikes`).set(totalLikes);
+        setStats(prev => ({
+          ...prev,
+          totalLikes
+        }));
       } else {
         setListings([]);
       }
     });
 
-    // Fetch seller stats
-    const statsRef = database.ref(`Users/${currentUser.uid}/stats`);
-    statsRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        setStats(data);
-      } else {
-        // Initialize stats if they don't exist
-        database.ref(`Users/${currentUser.uid}/stats`).set({
-          rating: 0,
-          totalLikes: 0
-        });
-      }
-    });
-
     // Fetch analytics data
-    const analyticsRef = database.ref(`Users/${currentUser.uid}/analytics`);
     analyticsRef.on('value', (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -96,8 +103,8 @@ export default function SellerDashboard() {
 
     return () => {
       listingsRef.off();
-      database.ref(`Users/${currentUser.uid}/stats`).off();
-      database.ref(`Users/${currentUser.uid}/analytics`).off();
+      statsRef.off();
+      analyticsRef.off();
     };
   }, [currentUser]);
 
@@ -158,7 +165,10 @@ export default function SellerDashboard() {
         quantity: listing.quantity,
         location: listing.location,
         expiryDate: listing.expiryDate,
-        imageUrl: listing.imageUrl
+        imageUrl: listing.imageUrl,
+        halal: listing.halal,
+        spicy: listing.spicy,
+        ingredients: listing.ingredients
       });
     }
   };
@@ -236,51 +246,89 @@ export default function SellerDashboard() {
     return await fileRef.getDownloadURL();
   };
 
+  const handleIngredientsChange = (e) => {
+    const ingredientsArray = e.target.value.split(',').map(item => item.trim());
+    setNewListing(prev => ({
+      ...prev,
+      ingredients: ingredientsArray
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let imageUrl = newListing.imageUrl;
-    
-    if (imageUpload) {
-      try {
-        imageUrl = await uploadImage(imageUpload);
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        return;
-      }
-    }
-    
-    const listingsRef = database.ref(`listings/${currentUser.uid}`);
-    
-    if (editingListing) {
-      // Update existing listing
-      listingsRef.child('items').child(editingListing.id).update({
-        ...newListing,
-        imageUrl,
-        sellerId: currentUser.uid,
-        updatedAt: new Date().toISOString(),
-        status: editingListing.status || 'available'
-      });
-      setEditingListing(null);
-    } else {
-      // Add new listing
-      listingsRef.child('items').push({
-        ...newListing,
-        imageUrl,
-        sellerId: currentUser.uid,
-        createdAt: new Date().toISOString(),
-        status: 'available'
-      });
-    }
+    setLoading(true);
 
-    setNewListing({
-      title: '',
-      description: '',
-      quantity: '',
-      location: '',
-      expiryDate: '',
-      imageUrl: ''
-    });
-    setImageUpload(null);
+    try {
+      let imageUrl = newListing.imageUrl;
+      if (imageUpload) {
+        imageUrl = await uploadImage(imageUpload);
+      }
+
+      // Clean the data before sending to Firebase
+      const listingData = {
+        title: newListing.title || '',
+        description: newListing.description || '',
+        quantity: newListing.quantity || '',
+        location: newListing.location || '',
+        expiryDate: newListing.expiryDate || '',
+        imageUrl: imageUrl || '',
+        status: 'available',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        sellerId: currentUser.uid,
+        // Ensure ingredients is an array and filter out empty values
+        ingredients: Array.isArray(newListing.ingredients) ? 
+          newListing.ingredients.filter(Boolean) : 
+          newListing.ingredients.split(',')
+            .map(item => item.trim())
+            .filter(Boolean),
+        // Ensure boolean values
+        halal: Boolean(newListing.halal),
+        spicy: Boolean(newListing.spicy),
+        likes: newListing.likes || 0
+      };
+
+      // Remove any undefined or null values
+      Object.keys(listingData).forEach(key => 
+        (listingData[key] === undefined || listingData[key] === null) && delete listingData[key]
+      );
+
+      if (editingListing) {
+        // When updating, only send changed fields
+        const updates = {};
+        Object.keys(listingData).forEach(key => {
+          if (listingData[key] !== editingListing[key]) {
+            updates[key] = listingData[key];
+          }
+        });
+        
+        if (Object.keys(updates).length > 0) {
+          await database.ref(`listings/${currentUser.uid}/items/${editingListing.id}`).update(updates);
+        }
+      } else {
+        // For new listings, push all data
+        await database.ref(`listings/${currentUser.uid}/items`).push(listingData);
+      }
+
+      // Reset form
+      setNewListing({
+        title: '',
+        description: '',
+        quantity: '',
+        location: '',
+        expiryDate: '',
+        imageUrl: '',
+        halal: false,
+        spicy: false,
+        ingredients: []
+      });
+      setImageUpload(null);
+      setEditingListing(null);
+    } catch (error) {
+      console.error('Error saving listing:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -359,6 +407,63 @@ export default function SellerDashboard() {
                 />
               </div>
             </div>
+            <div className="form-row">
+              <div className="form-group radio-group">
+                <label>Halal:</label>
+                <div className="radio-options">
+                  <label>
+                    <input
+                      type="radio"
+                      name="halal"
+                      value="true"
+                      checked={newListing.halal === true}
+                      onChange={(e) => setNewListing({...newListing, halal: e.target.value === "true"})}
+                    /> Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="halal"
+                      value="false"
+                      checked={newListing.halal === false}
+                      onChange={(e) => setNewListing({...newListing, halal: e.target.value === "true"})}
+                    /> No
+                  </label>
+                </div>
+              </div>
+
+              <div className="form-group radio-group">
+                <label>Spicy:</label>
+                <div className="radio-options">
+                  <label>
+                    <input
+                      type="radio"
+                      name="spicy"
+                      value="true"
+                      checked={newListing.spicy === true}
+                      onChange={(e) => setNewListing({...newListing, spicy: e.target.value === "true"})}
+                    /> Yes
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="spicy"
+                      value="false"
+                      checked={newListing.spicy === false}
+                      onChange={(e) => setNewListing({...newListing, spicy: e.target.value === "true"})}
+                    /> No
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div className="form-group">
+              <textarea
+                placeholder="Ingredients (separate with commas)"
+                value={newListing.ingredients.join(', ')}
+                onChange={handleIngredientsChange}
+                required
+              />
+            </div>
             <div className="form-group">
               <label className="image-upload-label">
                 <input
@@ -383,7 +488,7 @@ export default function SellerDashboard() {
                 )}
               </label>
             </div>
-            <button type="submit" className="submit-btn">
+            <button type="submit" className="submit-btn" disabled={loading}>
               {editingListing ? 'Update Listing' : 'Add Listing'}
             </button>
             {editingListing && (
@@ -398,7 +503,10 @@ export default function SellerDashboard() {
                     quantity: '',
                     location: '',
                     expiryDate: '',
-                    imageUrl: ''
+                    imageUrl: '',
+                    halal: false,
+                    spicy: false,
+                    ingredients: []
                   });
                 }}
               >
@@ -409,7 +517,7 @@ export default function SellerDashboard() {
         </div>
 
         <div className="listings-section">
-          <h2>Your Listings</h2>
+          <h1>Your Listings:</h1>
           <div className="listings-grid">
             {listings.length > 0 ? listings.map(listing => (
               <div key={listing.id} className="listing-card">
@@ -418,13 +526,13 @@ export default function SellerDashboard() {
                     <img src={listing.imageUrl} alt={listing.title} />
                   </div>
                 )}
-                <h3>{listing.title}</h3>
+                <h3>{capitalizeWords(listing.title)}</h3>
                 <p>{listing.description}</p>
                 <div className="listing-details">
                   <span>Quantity: {listing.quantity}</span>
-                  <span>Location: {listing.location}</span>
+                  <span>Location: {capitalizeWords(listing.location)}</span>
                   <span className={`status ${listing.status}`}>
-                    {listing.status}
+                    {capitalizeWords(listing.status)}
                   </span>
                 </div>
                 <div className="listing-actions">

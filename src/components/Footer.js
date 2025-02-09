@@ -1,136 +1,87 @@
-import React, { useState } from 'react'; // ✅ Combine imports correctly
+import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Footer.css';
 import ContactForm from './contactForm';
 
 function Footer() {
   const [showForm, setShowForm] = useState(false);
+  const location = useLocation();
+
+  // Don't render footer on the socials page
+  if (location.pathname === '/socials') {
+    return null;
+  }
+
   return (
-    <div className='footer-container'>
-      <div className="footer-links">
-        <div className="footer-link-items">
-          <div className="contact-us-container" id='contact-us-section'>
-              <h2>Buissness Enquires</h2>
-              <button className="send-email-button" onClick={() => setShowForm(true)}>
-                Contact Us
-              </button>
-          </div>
+    <footer className="footer" id='contact-us-section'>
+      <div className="business-enquiries">
+        <h2>Business Enquiries</h2>
+        <button className="contact-button" onClick={() => setShowForm(true)}>
+          Contact Us
+        </button>
+      </div>
+
+      <div className="footer-content">
+        <div className="footer-section">
+          <h3>About Us</h3>
+          <ul>
+            <li>How it works</li>
+            <li>Testimonials</li>
+            <li>Careers</li>
+            <li>Investors</li>
+            <li>Terms of Service</li>
+          </ul>
+        </div>
+
+        <div className="footer-section">
+          <h3>Contact Us</h3>
+          <ul>
+            <li>Contact</li>
+            <li>Support</li>
+            <li>Destinations</li>
+            <li>Sponsorships</li>
+          </ul>
+        </div>
+
+        <div className="footer-section">
+          <h3>Videos</h3>
+          <ul>
+            <li>Submit Video</li>
+            <li>Ambassadors</li>
+            <li>Agency</li>
+            <li>Influencer</li>
+          </ul>
+        </div>
+
+        <div className="footer-section">
+          <h3>Social Media</h3>
+          <ul>
+            <li>Instagram</li>
+            <li>Facebook</li>
+            <li>Youtube</li>
+            <li>Twitter</li>
+          </ul>
         </div>
       </div>
 
-      {/* Modal Popup for Contact Form */}
-      {showForm && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={() => setShowForm(false)}>&times;</span>
-            <ContactForm setShowForm={setShowForm} />
-          </div>
+      <div className="footer-bottom">
+        <div className="footer-logo">
+          <span className="green">Harvest</span>
+          <span className="orange">Hub</span>
+          <img src="/images/harvest.png" alt="HarvestHub Logo" />
         </div>
-      )}
-      <div className='footer-links'>
-        <div className='footer-link-wrapper'>
-          <div className='footer-link-items'>
-            <h2>About Us</h2>
-            <a href='/sign-up'>How it works</a>
-            <a href='/'>Testimonials</a>
-            <a href='/'>Careers</a>
-            <a href='/'>Investors</a>
-            <a href='/'>Terms of Service</a>
-          </div>
-          <div className='footer-link-items'>
-            <h2>Contact Us</h2>
-            <a href='/'>Contact</a>
-            <a href='/'>Support</a>
-            <a href='/'>Destinations</a>
-            <a href='/'>Sponsorships</a>
-          </div>
-        </div>
-        <div className='footer-link-wrapper'>
-          <div className='footer-link-items'>
-            <h2>Videos</h2>
-            <a href='/'>Submit Video</a>
-            <a href='/'>Ambassadors</a>
-            <a href='/'>Agency</a>
-            <a href='/'>Influencer</a>
-          </div>
-          <div className='footer-link-items'>
-            <h2>Social Media</h2>
-            <a href='https://www.instagram.com/klimbmen' target='_blank' rel='noopener noreferrer'>Instagram</a>
-            <a href='https://www.facebook.com/ezell' target='_blank' rel='noopener noreferrer'>Facebook</a>
-            <a href='https://www.youtube.com/mrbeast' target='_blank' rel='noopener noreferrer'>Youtube</a>
-            <a href='https://www.twitter.com/elonmusk' target='_blank' rel='noopener noreferrer'>Twitter</a>
-          </div>
+        <p>HarvestHub © 2025</p>
+        <div className="social-icons">
+          <i className="fab fa-facebook"></i>
+          <i className="fab fa-instagram"></i>
+          <i className="fab fa-youtube"></i>
+          <i className="fab fa-twitter"></i>
+          <i className="fab fa-linkedin"></i>
         </div>
       </div>
-      <section className='social-media'>
-        <div className='social-media-wrap'>
-          <div className='footer-logo'>
-            <a href='/' className='social-logo'>
-              <span className='green'>Harvest</span>
-              <span className='orange'>Hub</span>
-              <img
-                src='/images/harvest.png'
-                alt='HarvestHub Logo'
-                className='navbar-logo-image'
-                style={{ height: '100px', width: 'auto' }}
-              />
-            </a>
-          </div>
-          <small className='website-rights'>HarvestHub © 2025</small>
-          <div className='social-icons'>
-            {/* Facebook */}
-            <a
-              className='social-icon-link facebook'
-              href='https://www.facebook.com/ezell'
-              target='_blank'
-              rel='noopener noreferrer'
-              aria-label='Facebook'
-            >
-              <i className='fab fa-facebook-f' />
-            </a>
-            {/* Instagram */}
-            <a
-              className='social-icon-link instagram'
-              href='https://www.instagram.com/klimbmen'
-              target='_blank'
-              rel='noopener noreferrer'
-              aria-label='Instagram'
-            >
-              <i className='fab fa-instagram' />
-            </a>
-            {/* YouTube */}
-            <a
-              className='social-icon-link youtube'
-              href='https://www.youtube.com/mrbeast'
-              target='_blank'
-              rel='noopener noreferrer'
-              aria-label='YouTube'
-            >
-              <i className='fab fa-youtube' />
-            </a>
-            {/* Twitter */}
-            <a
-              className='social-icon-link twitter'
-              href='https://www.twitter.com/elonmusk'
-              target='_blank'
-              rel='noopener noreferrer'
-              aria-label='Twitter'
-            >
-              <i className='fab fa-twitter' />
-            </a>
-            {/* LinkedIn */}
-            <a
-              className='social-icon-link linkedin'
-              href='https://www.linkedin.com/'
-              target='_blank'
-              rel='noopener noreferrer'
-              aria-label='LinkedIn'
-            >
-              <i className='fab fa-linkedin' />
-            </a>
-          </div>
-        </div>
-      </section>
-    </div>
+
+      {showForm && <ContactForm onClose={() => setShowForm(false)} />}
+    </footer>
   );
 }
 

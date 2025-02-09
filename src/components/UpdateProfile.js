@@ -1,10 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState } from 'react'
 import { Form, Button, Card, Alert } from 'react-bootstrap'
 import { useAuth } from '../context/AuthContext'
 import { Link, useNavigate } from "react-router-dom"
 import { EmailAuthProvider, reauthenticateWithCredential, sendEmailVerification } from 'firebase/auth';
-import { auth, database } from '../firebase'; // Import Firebase auth and database
-import { ref, get, set } from 'firebase/database'; // Import database functions
+import './updateProfile.css'
 
 export default function UpdateProfile() {
     const emailRef = useRef()
@@ -14,26 +13,8 @@ export default function UpdateProfile() {
 
     const { currentUser, updatePassword, updateEmail } = useAuth()
     const [error, setError] = useState('')
-    const [username, setUsername] = useState(''); // State to store username
     const [loading, setLoading] = useState(false)  //set to false as it doesnt load on default
     const navigate = useNavigate()
-
-    useEffect(() => {
-        const fetchUsername = async () => {
-          const user = auth.currentUser;
-          if (user) {
-            const userRef = ref(database, `Users/${user.uid}/username`);
-            const snapshot = await get(userRef);
-            if (snapshot.exists()) {
-              setUsername(snapshot.val()); // Set username from database
-            } else {
-              setUsername('User'); // Fallback username
-            }
-          }
-        };
-    
-        fetchUsername();
-      }, []);
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -47,12 +28,6 @@ export default function UpdateProfile() {
         setLoading(true);
         const promises = [];
         const user = currentUser;
-
-        // Update the username in Firebase (NEW)
-        const newUsername = username;
-        const userRef = ref(database, `Users/${user.uid}/username`);
-        set(userRef, newUsername);  // Update username in the database
-
 
         // Check if email needs to be updated
         if (emailRef.current.value !== user.email) {
@@ -96,52 +71,37 @@ export default function UpdateProfile() {
             });
     }
 
+
     return (
-        <>
-            <Card>
+        <div className="update-profile-container"> {/* ✅ Centering wrapper */}
+            <Card className="update-profile-card"> {/* ✅ Applied correct class */}
                 <Card.Body>
                     <h2 className='text-center mb-4'>Update Profile</h2>
                     {error && <Alert variant="danger">{error}</Alert>}
                     <Form onSubmit={handleSubmit}>
-                        <Form.Group id="username">
-                            <Form.Label>Username</Form.Label>
-                            <Form.Control type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                        </Form.Group>
                         <Form.Group id="email">
                             <Form.Label>Email</Form.Label>
                             <Form.Control type="email" ref={emailRef} required defaultValue={currentUser.email} />
                         </Form.Group>
                         <Form.Group id="password">
                             <Form.Label>Current Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                ref={currentPasswordRef}
-                                
-                                placeholder="Enter your current password" />
+                            <Form.Control type="password" ref={currentPasswordRef} required placeholder="Enter current password" />
                         </Form.Group>
                         <Form.Group id="password">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                ref={passwordRef}
-                                
-                                placeholder="Leave blank to keep the same" />
+                            <Form.Label>New Password</Form.Label>
+                            <Form.Control type="password" ref={passwordRef} placeholder="Leave blank to keep the same" />
                         </Form.Group>
                         <Form.Group id="password-confirm">
-                            <Form.Label>Confirm Password</Form.Label>
-                            <Form.Control
-                                type="password"
-                                ref={passwordConfirmRef}
-                                
-                                placeholder="Leave blank to keep the same" />
+                            <Form.Label>Confirm New Password</Form.Label>
+                            <Form.Control type="password" ref={passwordConfirmRef} placeholder="Leave blank to keep the same" />
                         </Form.Group>
-                        <Button disabled={loading} className="w-100" type="submit">Update</Button>
+                        <Button disabled={loading} className="update-btn w-100" type="submit">Update</Button>
                     </Form>
                 </Card.Body>
             </Card>
             <div className='w-100 text-center mt-3'>
                 <Link to="/profile" className="back-link">Back</Link>
             </div>
-        </>
+        </div>
     )
 }

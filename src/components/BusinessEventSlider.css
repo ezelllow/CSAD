@@ -1,4 +1,5 @@
 .swiper-container {
+
     width: 80%;
     margin: 2rem auto;
   }
@@ -132,12 +133,145 @@
 }
 
 .cooking-btn {
+
+  width: 80%;
+  margin: 2rem auto;
+}
+
+.app {
+  background-color: rgba(255, 253, 253, 0.7); 
+}
+
+.event-slide {
+  display: flex;
+  justify-content: center;
+}
+
+/* Event Card Styling */
+.event-card {
+  width: 320px;
+  height: 420px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+/* Front & Back Styles */
+.event-card-front, .event-card-back {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+}
+.event-image {
+  width: 100%;
+  height: 33%; /* Makes it take up one-third of the card */
+  object-fit: cover;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+.event-details {
+  padding: 15px;
+}
+
+
+.event-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2d2d2d;
+}
+.reminder-button {
+  margin-top: 10px;
+  padding: 10px;
+  background: #1d4ed8;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 90%;
+}
+
+.reminder-button:hover {
+  background: #173cb1;
+}
+
+/**/
+.event-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.event-card.flipped .event-card-inner {
+  transform: rotateY(180deg);
+}
+.event-card-front {
+  z-index: 2;
+}
+
+.event-card-back {
+  transform: rotateY(180deg);
+  padding: 20px;
+}
+
+
+
+
+
+
+.event-location {
+  font-size: 16px;
+  font-weight: bold;
+  color: #1d4ed8;
+}
+
+.event-meta {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* Section Headers */
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  margin-top: 80px;
+  font-weight: bold;
+  color: #333;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  margin-top: 40px;
+}
+
+/* Buttons */
+.cooking-btn, .donation-btn {
+
   background-color: darkgreen;
   color: white;
   padding: 8px 12px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+
   font-size: 14px;
   margin-left: 10px;
 }
@@ -169,3 +303,18 @@
 .donation-btn:hover {
   background-color: #d2691e; /* Slightly darker orange on hover */
 }
+
+
+
+.cooking-btn:hover, .donation-btn:hover {
+  background-color: #006400;
+}
+
+.donation-btn:hover{
+  background-color:#C9680D;
+}
+
+.donation-btn{
+  background-color:#C9680D;
+}
+

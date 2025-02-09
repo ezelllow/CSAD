@@ -1,14 +1,10 @@
 import React from 'react';
+import SocialsMain from './SocialsMain';
 
 export default function SocialsPage() {
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      backgroundColor: '#f5f5f5',
-      marginTop: '80px',
-      padding: '20px'
-    }}>
-      {/* Empty for now */}
+    <div className="socials-page">
+      <SocialsMain />
     </div>
   );
 } 

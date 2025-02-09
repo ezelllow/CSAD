@@ -18,8 +18,9 @@ function HeroSection() {
       <div className='hero-overlay'></div> {/* Overlay for background dimming */}
       <video src='/videos/fridge.mp4' autoPlay loop muted />
       <h1>
-        <p className='green'>LESS WASTE</p>
-        <p className='orange'>MORE TASTE</p>
+        <span className='green'>LESS WASTE</span>
+        <br />
+        <span className='orange'>MORE TASTE</span>
       </h1>
       <p>What are you waiting for?</p>
       <div className='hero-btns'>

@@ -1,3 +1,4 @@
+/* ✅ Main container */
 .bedok-container {
   display: flex;
   flex-direction: column;
@@ -5,6 +6,7 @@
   padding: 20px;
 }
 
+/* ✅ Livestream Section */
 .livestream-section {
   width: 80%;
   max-width: 800px;
@@ -19,6 +21,7 @@
   pointer-events: none; /* Prevent user interaction */
 }
 
+/* ✅ Content Wrapper (Moves when Chat Opens) */
 .content-wrapper {
   display: flex;
   width: 100%;
@@ -26,19 +29,91 @@
   transition: all 0.3s ease-in-out;
 }
 
+/* ✅ Search & Filter Section (Moves when Chat Opens) */
+.search-section {
+  width: 100%;
+  background: #242424;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 🔥 Moves search bar & filters when chat is open */
+.content-wrapper.with-chat .search-section {
+  width: 65%;
+}
+
+/* ✅ Food Listings Layout */
 .food-list-section {
   width: 100%;
   background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
 }
 
-/* When chat is opened, resize food list */
-.food-list-section.with-chat {
+/* ✅ Moves listings when chat is open */
+.content-wrapper.with-chat .food-list-section {
   width: 65%;
 }
 
+/* ✅ Listings Grid */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 🔥 Keeps multiple columns */
+  gap: 20px;
+  justify-content: center;
+}
+
+/* 🔥 Ensures listings have a fixed size */
+.menu-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 350px; /* 🔥 Prevents it from becoming too wide */
+  min-height: 420px; /* 🔥 Ensures a consistent height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
+}
+
+.menu-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.menu-details {
+  padding: 15px;
+  text-align: center; /* 🔥 Centers text content */
+}
+
+/* ✅ Tag Styles */
+.tags {
+  display: flex;
+  gap: 6px;
+}
+
+.tag.halal {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.tag.spicy {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+/* ✅ Chat Section */
 .chat-section {
   width: 35%;
   background: white;
@@ -48,41 +123,10 @@
   position: relative;
 }
 
-.chat-box {
-  height: 300px;
-  overflow-y: auto;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  padding: 10px;
-}
-
-.chat-input {
-  display: flex;
-  gap: 10px;
-  padding-bottom: 50px; /* Extra padding to avoid button overlap */
-  position: relative;
-}
-
-.chat-input-field {
-  flex: 1;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.chat-send-button {
-  padding: 8px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-/* Floating chat button */
+/* ✅ Floating Chat Button */
 .chat-toggle-button {
   position: fixed;
-  bottom: 20px;
+  bottom: 70px; /* 🔥 Slightly above */
   right: 20px;
   background: #007bff;
   color: white;
@@ -92,15 +136,34 @@
   font-size: 16px;
   cursor: pointer;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  z-index: 1000; /* Ensure it does not overlap */
-}
-
-/* Ensure the chat button does not overlap the chat input field */
-.chat-toggle-button {
-  bottom: 70px; /* Move the button slightly above */
+  z-index: 1000; /* Ensure it stays on top */
 }
 
 .chat-toggle-button:hover {
   background: #0056b3;
 }
 
+/* ✅ Responsive Adjustments */
+@media (max-width: 992px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+  .chat-section {
+    width: 100%;
+  }
+
+  /* 🔥 On small screens, search & listings stay full width even with chat open */
+  .content-wrapper.with-chat .search-section,
+  .content-wrapper.with-chat .food-list-section {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-grid {
+    grid-template-columns: repeat(1, minmax(200px, 1fr));
+  }
+}
+h1{
+  color: white;
+}
