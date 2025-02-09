@@ -69,11 +69,15 @@ function UserEventSlider() {
 
   return (
     <div className="swiper-container">
-      <h1 className="app" id="slider-section">Upcoming Events</h1>
+      <h1 className="colors">Upcoming Events</h1>
 
       {/* Community Cooking Events Slider */}
       <h2>Community Cooking Events</h2>
+<<<<<<< HEAD
       <hr className="section-divider" />
+=======
+      
+>>>>>>> 6754f430142615ba64d7a2c5c87799b194eb6a39
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         navigation
@@ -120,8 +124,8 @@ function UserEventSlider() {
       </Swiper>
 
       {/* Food Donation Drives Slider */}
-      <h2 className="section-title donation-title">Food Donation Drives</h2>
-      <hr className="section-divider" />
+      <h2 className="color">Food Donation Drives</h2>
+      
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         navigation
