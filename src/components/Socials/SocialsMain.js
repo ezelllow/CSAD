@@ -736,7 +736,10 @@ function SocialsMain() {
                       <div 
                         key={server.id}
                         className={`server-item ${selectedServer === server.id ? 'active' : ''}`}
-                        onClick={() => setSelectedServer(server.id)}
+                        onClick={() => {
+                          setSelectedServer(server.id);
+                          setShowExplore(false);
+                        }}
                       >
                         <img 
                           src={server.icon || "/server-icon.png"} 
@@ -759,16 +762,14 @@ function SocialsMain() {
                   <div className="explore-header">
                     <h2>Explore Servers</h2>
                     <div className="search-container">
-                      <div className="search-input-wrapper">
-                        <FontAwesomeIcon icon={faSearch} className="search-icon" />
-                        <input 
-                          type="text" 
-                          value={serverSearch}
-                          onChange={(e) => setServerSearch(e.target.value)}
-                          placeholder="Search servers..."
-                          className="server-search"
-                        />
-                      </div>
+                      <FontAwesomeIcon icon={faSearch} className="search-icon" />
+                      <input 
+                        type="text" 
+                        value={serverSearch}
+                        onChange={(e) => setServerSearch(e.target.value)}
+                        placeholder="Search servers..."
+                        className="server-search"
+                      />
                     </div>
                   </div>
 
