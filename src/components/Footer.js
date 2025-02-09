@@ -13,7 +13,7 @@ function Footer() {
   }
 
   return (
-    <footer className="footer">
+    <footer className="footer" id='contact-us-section'>
       <div className="business-enquiries">
         <h2>Business Enquiries</h2>
         <button className="contact-button" onClick={() => setShowForm(true)}>
