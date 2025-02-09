@@ -90,7 +90,7 @@ const handleReminderClick = (e) => {
     <div className="swiper-container">
       <h1 className="app" id="slider-section">Upcoming Events</h1>
         {/* Business Cooking Events Slider */}
-        <div className="section-header">
+        <div className="business-section-header">
           <h2 className="cooking-title">Community Cooking Events</h2>
           <button className="cooking-btn" onClick={() => handleOpenPopup("Announcements")}>
             + ADD EVENT
@@ -143,9 +143,8 @@ const handleReminderClick = (e) => {
       </Swiper>
   
       {/* Food Donation Drives Slider */}
-      <h2 className="section-title donation-title">Food Donation Drives</h2>
-      <hr className="section-divider" />
-      <div className="section-header">
+      
+      <div className="business-section-header">
         <h2 className="donation-title">Food Donation Drives</h2>
         <button className="donation-btn" onClick={() => handleOpenPopup("DonationDrives")}>
           + ADD EVENT
