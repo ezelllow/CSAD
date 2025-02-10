@@ -27,7 +27,6 @@ library.add(faUserFriends, faCommentAlt, faSearch, faEllipsisV, faMessage, faCom
 
 function SocialsMain() {
   const [activeTab, setActiveTab] = useState('servers');
-  const [blinks, setBlinks] = useState([]);
   const [users, setUsers] = useState([]);
   const { currentUser } = useAuth();
   const [selectedChat, setSelectedChat] = useState(null);
@@ -59,7 +58,6 @@ function SocialsMain() {
     return () => {
       // Cleanup all listeners when component unmounts
       database.ref('Users').off();
-      database.ref('blinks/status').off();
       database.ref('directMessages').off();
     };
   }, []);
@@ -71,8 +69,6 @@ function SocialsMain() {
     // Cleanup function for current listeners
     const cleanup = () => {
       database.ref('Users').off();
-      database.ref('blinks/status').off();
-      database.ref('directMessages').off();
     };
 
     const setupListeners = async () => {
@@ -112,18 +108,6 @@ function SocialsMain() {
           // Clear users data when switching to servers
           setUsers([]);
           setUserData({});
-          
-          const blinksRef = database.ref('blinks/status');
-          blinksRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-              const blinksArray = Object.entries(data).map(([id, blink]) => ({
-                id,
-                ...blink
-              }));
-              setBlinks(blinksArray);
-            }
-          });
         }
       } catch (error) {
         console.error('Error setting up listeners:', error);
@@ -270,13 +254,10 @@ function SocialsMain() {
     if (tab !== activeTab) {
       // Clean up data and listeners when switching tabs
       setUsers([]);
-      setBlinks([]);
-      // Don't reset selectedDM here
       setUserData({});
       
       // Remove listeners before switching tabs
       database.ref('Users').off();
-      database.ref('blinks/status').off();
     }
     setActiveTab(tab);
     if (tab === 'friends') {
@@ -1109,79 +1090,81 @@ function SocialsMain() {
                         className="search-input"
                       />
                     </div>
-                    <div className="users-list">
-                      {(searchQuery ? searchResults : users).map(user => {
-                        if (user.id === currentUser.uid) return null; 
-                        
-                        return (
-                          <div key={user.id} className="friend-item">
-                            <div className="friend-info-container">
-                              <img 
-                                src={user.profilePicture || "/pfp.png"} 
-                                alt={user.username} 
-                                className="friend-avatar"
-                              />
-                              <div className="friend-info">
-                                <span className="friend-name">{user.username}</span>
-                                <span className="friend-status">{user.role || 'User'}</span>
-                              </div>
-                            </div>
-                            <div className="friend-actions">
-                              <button 
-                                className="action-button message"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleStartChat(user.id);
-                                }}
-                              >
-                                <FontAwesomeIcon icon={faMessage} />
-                              </button>
-                              <button 
-                                className="action-button menu"
-                                onClick={(e) => handleMenuClick(e, user.id)}
-                              >
-                                <FontAwesomeIcon icon={faEllipsisV} />
-                              </button>
-                            </div>
-                            {activeMenu === user.id && (
-                              <>
-                                <div className="menu-backdrop" onClick={() => setActiveMenu(null)} />
-                                <div 
-                                  className="menu-dropdown" 
-                                  key={`${activeMenu}-${user.id}`} 
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  {console.log("✅ Rendering `.menu-dropdown` for:", user.id, "ActiveMenu:", activeMenu)}
-                                  <div className="menu-dropdown-section">
-                                    {console.log("🛠 Rendering `.menu-dropdown-section` for:", user.id)}
-                                    <button 
-                                      onClick={() => {
-                                        console.log("Adding friend:", user.id);
-                                        handleAddFriendFromMenu(user.id);
-                                        setActiveMenu(null);
-                                      }}
-                                      className={pendingFriends.some(f => f.id === user.id && f.status === 'outgoing') ? 'pending' : 'add-friend'}
-                                      disabled={pendingFriends.some(f => f.id === user.id && f.status === 'outgoing')}
-                                    >
-                                      {pendingFriends.some(f => f.id === user.id && f.status === 'outgoing') ? 'Request Sent' : 'Add Friend'}
-                                    </button>
-                                    <button 
-                                      onClick={() => {
-                                        console.log("Blocking user:", user.id);
-                                        handleBlockUser(user.id);
-                                        setActiveMenu(null);
-                                      }}
-                                      className={user.isBlocked ? 'blocked' : 'block'}
-                                    >
-                                      {user.isBlocked ? 'Blocked' : 'Block'}
-                                    </button>
-                                  </div>
+                    <div className="users-list-container" id="all-users-content">
+                      <div className="users-list">
+                        {(searchQuery ? searchResults : users).map(user => {
+                          if (user.id === currentUser.uid) return null; 
+                          
+                          return (
+                            <div key={user.id} className="friend-item">
+                              <div className="friend-info-container">
+                                <img 
+                                  src={user.profilePicture || "/pfp.png"} 
+                                  alt={user.username} 
+                                  className="friend-avatar"
+                                />
+                                <div className="friend-info">
+                                  <span className="friend-name">{user.username}</span>
+                                  <span className="friend-status">{user.role || 'User'}</span>
                                 </div>
-                              </>
-                            )}
-                          </div>
-                        );
-                      })}
+                              </div>
+                              <div className="friend-actions">
+                                <button 
+                                  className="action-button message"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleStartChat(user.id);
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faMessage} />
+                                </button>
+                                <button 
+                                  className="action-button menu"
+                                  onClick={(e) => handleMenuClick(e, user.id)}
+                                >
+                                  <FontAwesomeIcon icon={faEllipsisV} />
+                                </button>
+                              </div>
+                              {activeMenu === user.id && (
+                                <>
+                                  <div className="menu-backdrop" onClick={() => setActiveMenu(null)} />
+                                  <div 
+                                    className="menu-dropdown" 
+                                    key={`${activeMenu}-${user.id}`} 
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {console.log("✅ Rendering `.menu-dropdown` for:", user.id, "ActiveMenu:", activeMenu)}
+                                    <div className="menu-dropdown-section">
+                                      {console.log("🛠 Rendering `.menu-dropdown-section` for:", user.id)}
+                                      <button 
+                                        onClick={() => {
+                                          console.log("Adding friend:", user.id);
+                                          handleAddFriendFromMenu(user.id);
+                                          setActiveMenu(null);
+                                        }}
+                                        className={pendingFriends.some(f => f.id === user.id && f.status === 'outgoing') ? 'pending' : 'add-friend'}
+                                        disabled={pendingFriends.some(f => f.id === user.id && f.status === 'outgoing')}
+                                      >
+                                        {pendingFriends.some(f => f.id === user.id && f.status === 'outgoing') ? 'Request Sent' : 'Add Friend'}
+                                      </button>
+                                      <button 
+                                        onClick={() => {
+                                          console.log("Blocking user:", user.id);
+                                          handleBlockUser(user.id);
+                                          setActiveMenu(null);
+                                        }}
+                                        className={user.isBlocked ? 'blocked' : 'block'}
+                                      >
+                                        {user.isBlocked ? 'Blocked' : 'Block'}
+                                      </button>
+                                    </div>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1316,7 +1299,7 @@ function SocialsMain() {
               </button>
             </div>
             <form onSubmit={handleAddFriend}>
-              <div className="modal-content">
+              <div className="modal-content dark-modal-content">
                 <p className="modal-description">
                   You can add friends with their HarvestHub username.
                 </p>
