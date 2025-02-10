@@ -3,7 +3,7 @@
   height: calc(100vh - 80px);
   background-color: #36393f;
   position: relative;
-  z-index: 1;
+  z-index: 1; /* Ensure chat stays above footer */
 }
 
 .channels-sidebar {
@@ -48,7 +48,7 @@
   flex-direction: column;
   background-color: #36393f;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; 
 }
 
 .chat-header {
@@ -165,7 +165,7 @@
   background-color: #1B5E20;
 }
 
-/* Scrollbar styling */
+/*Scrollbar styling*/
 .messages-container::-webkit-scrollbar {
   width: 8px;
 }
@@ -183,6 +183,7 @@
   background: #2E7D32;
 }
 
+
 .messages-container::after {
   content: '';
   display: block;
@@ -194,11 +195,13 @@
   z-index: 2;
 }
 
+
 .messages-container::after {
   content: '';
   display: block;
   height: 20px;
 }
+
 
 .chat-main::after {
   content: none;
