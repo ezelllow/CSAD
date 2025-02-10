@@ -30,7 +30,7 @@ function DirectMessageChat({ chatId, otherParticipant }) {
           }))
           .sort((a, b) => a.timestamp - b.timestamp);
         setMessages(messagesList);
-        scrollToBottom();
+        scrollToBottom(100);
       }
     });
 
@@ -52,40 +52,44 @@ function DirectMessageChat({ chatId, otherParticipant }) {
     return () => userRef.off();
   }, [currentUser]);
 
-  const scrollToBottom = () => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-    }
+  const scrollToBottom = (delay = 0) => {
+    setTimeout(() => {
+      if (messagesContainerRef.current) {
+        const scrollHeight = messagesContainerRef.current.scrollHeight;
+        const height = messagesContainerRef.current.clientHeight;
+        const maxScrollTop = scrollHeight - height;
+        messagesContainerRef.current.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
+      }
+    }, delay);
   };
 
   const sendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
-
+  
     try {
       const messageData = {
         content: newMessage,
         senderId: currentUser.uid,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-
-      // Adding a new message
+  
       const messagesRef = database.ref(`directMessages/${chatId}/messages`);
       await messagesRef.push(messageData);
-
-      // Updating chat
+  
       const chatRef = database.ref(`directMessages/${chatId}`);
       await chatRef.update({
         lastMessage: messageData,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       });
-
+  
       setNewMessage('');
       scrollToBottom();
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
+  
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -134,12 +138,21 @@ function DirectMessageChat({ chatId, otherParticipant }) {
 
           setUploadProgress(0);
           setImageUpload(null);
+          scrollToBottom();
         }
       );
     } catch (error) {
       console.error('Error handling image upload:', error);
     }
   };
+
+  // Add this useEffect for initial scroll when messages first load
+  useEffect(() => {
+    if (messages.length > 0) {
+      // Use a longer delay for initial load
+      scrollToBottom(300);
+    }
+  }, []); // Empty dependency array for initial load
 
   return (
     <div className="dm-chat-container">
@@ -157,75 +170,71 @@ function DirectMessageChat({ chatId, otherParticipant }) {
       </div>
 
       <div className="dm-chat-content">
-        <div className="dm-chat-messages-container">
-          <div className="dm-chat-messages" ref={messagesContainerRef}>
-            {messages.map(message => (
-              <div 
-                key={message.id}
-                className={`dm-message ${message.senderId === currentUser.uid ? 'own-message' : ''}`}
-              >
-                <div className="dm-message-header">
-                  <span className="dm-message-username">
-                    {message.senderId === currentUser.uid 
-                      ? currentUserData?.username 
-                      : otherParticipant?.username}
-                  </span>
-                </div>
-                <div className="dm-message-content">
-                  {message.content}
-                  {message.imageUrl && (
-                    <img 
-                      src={message.imageUrl} 
-                      alt="Message attachment" 
-                      className="message-image"
-                      onClick={() => window.open(message.imageUrl, '_blank')}
-                    />
-                  )}
-                </div>
-                <div className="dm-message-timestamp">
-                  {new Date(message.timestamp).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </div>
+        <div className="dm-chat-messages" ref={messagesContainerRef}>
+          {messages.map(message => (
+            <div 
+              key={message.id}
+              className={`dm-message ${message.senderId === currentUser.uid ? 'own-message' : ''}`}
+            >
+              <div className="dm-message-header">
+                <span className="dm-message-username">
+                  {message.senderId === currentUser.uid 
+                    ? currentUserData?.username 
+                    : otherParticipant?.username}
+                </span>
               </div>
-            ))}
-          </div>
+              <div className="dm-message-content">
+                {message.content}
+                {message.imageUrl && (
+                  <img 
+                    src={message.imageUrl} 
+                    alt="Message attachment" 
+                    className="message-image"
+                    onClick={() => window.open(message.imageUrl, '_blank')}
+                  />
+                )}
+              </div>
+              <div className="dm-message-timestamp">
+                {new Date(message.timestamp).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </div>
+            </div>
+          ))}
         </div>
 
-        <div className="dm-chat-input-container">
-          <form onSubmit={sendMessage} className="dm-chat-input-form">
+        <form onSubmit={sendMessage} className="dm-chat-input-form">
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder={`Message @${otherParticipant?.username}`}
+            className="dm-chat-input"
+            autoFocus
+          />
+          <div className="chat-input-actions">
             <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder={`Message @${otherParticipant?.username}`}
-              className="dm-chat-input"
-              autoFocus
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelect}
+              ref={fileInputRef}
+              style={{ display: 'none' }}
             />
-            <div className="chat-input-actions">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                ref={fileInputRef}
-                style={{ display: 'none' }}
-              />
-              <button 
-                type="button" 
-                className="upload-image-btn"
-                onClick={() => fileInputRef.current.click()}
-              >
-                <FontAwesomeIcon icon={faImage} />
-              </button>
-            </div>
-          </form>
-          {uploadProgress > 0 && uploadProgress < 100 && (
-            <div className="upload-progress">
-              Uploading: {Math.round(uploadProgress)}%
-            </div>
-          )}
-        </div>
+            <button 
+              type="button" 
+              className="upload-image-btn"
+              onClick={() => fileInputRef.current.click()}
+            >
+              <FontAwesomeIcon icon={faImage} />
+            </button>
+          </div>
+        </form>
+        {uploadProgress > 0 && uploadProgress < 100 && (
+          <div className="upload-progress">
+            Uploading: {Math.round(uploadProgress)}%
+          </div>
+        )}
       </div>
     </div>
   );

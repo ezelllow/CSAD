@@ -8,7 +8,7 @@ import { faImage } from '@fortawesome/free-solid-svg-icons';
 
 function ServerChat({ serverId }) {
   const [channels, setChannels] = useState([]);
-  const [selectedChannel, setSelectedChannel] = useState('general');
+  const [selectedChannel, setSelectedChannel] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const { currentUser } = useAuth();
@@ -37,6 +37,16 @@ function ServerChat({ serverId }) {
   }, [currentUser, serverId]);
 
   useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        }
+      }, 100);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!currentUser || !serverId || !selectedChannel) return;
 
     const messagesRef = database.ref(`Servers/${serverId}/channels/${selectedChannel}/messages`);
@@ -56,7 +66,11 @@ function ServerChat({ serverId }) {
             }))
             .sort((a, b) => a.timestamp - b.timestamp);
           setMessages(messagesList);
-          scrollToBottom();
+          setTimeout(() => {
+            if (messagesContainerRef.current) {
+              messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+            }
+          }, 100);
         }
       });
 
@@ -191,41 +205,47 @@ function ServerChat({ serverId }) {
 
       <div className="server-chat-main">
         <div className="server-chat-header">
-          <h3># {selectedChannel}</h3>
+          <h3>{selectedChannel ? `# ${selectedChannel}` : 'Select a channel'}</h3>
         </div>
 
         <div className="server-chat-messages" ref={messagesContainerRef}>
-          {messages.map(message => (
-            <div 
-              key={message.id}
-              className={`server-message ${message.senderId === currentUser.uid ? 'own-message' : ''}`}
-            >
-              <div className="server-message-header">
-                <span className="server-message-username">
-                  {message.senderId === currentUser.uid 
-                    ? currentUserData?.username 
-                    : message.username}
-                </span>
+          {selectedChannel ? (
+            messages.map(message => (
+              <div 
+                key={message.id}
+                className={`server-message ${message.senderId === currentUser.uid ? 'own-message' : ''}`}
+              >
+                <div className="server-message-header">
+                  <span className="server-message-username">
+                    {message.senderId === currentUser.uid 
+                      ? currentUserData?.username 
+                      : message.username}
+                  </span>
+                </div>
+                <div className="server-message-content">
+                  {message.content}
+                  {message.imageUrl && (
+                    <img 
+                      src={message.imageUrl} 
+                      alt="Message attachment" 
+                      className="message-image"
+                      onClick={() => window.open(message.imageUrl, '_blank')}
+                    />
+                  )}
+                </div>
+                <div className="server-message-timestamp">
+                  {new Date(message.timestamp).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </div>
               </div>
-              <div className="server-message-content">
-                {message.content}
-                {message.imageUrl && (
-                  <img 
-                    src={message.imageUrl} 
-                    alt="Message attachment" 
-                    className="message-image"
-                    onClick={() => window.open(message.imageUrl, '_blank')}
-                  />
-                )}
-              </div>
-              <div className="server-message-timestamp">
-                {new Date(message.timestamp).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </div>
+            ))
+          ) : (
+            <div className="no-channel-selected">
+              <p>Please select a channel to start messaging</p>
             </div>
-          ))}
+          )}
         </div>
 
         <form onSubmit={handleSendMessage} className="server-chat-input-form">
@@ -233,8 +253,9 @@ function ServerChat({ serverId }) {
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder={`Message #${selectedChannel}`}
+            placeholder={selectedChannel ? `Message #${selectedChannel}` : 'Select a channel first'}
             className="server-chat-input"
+            disabled={!selectedChannel}
           />
           <div className="chat-input-actions">
             <input
@@ -243,11 +264,13 @@ function ServerChat({ serverId }) {
               onChange={handleFileSelect}
               ref={fileInputRef}
               style={{ display: 'none' }}
+              disabled={!selectedChannel}
             />
             <button 
               type="button" 
               className="upload-image-btn"
               onClick={() => fileInputRef.current.click()}
+              disabled={!selectedChannel}
             >
               <FontAwesomeIcon icon={faImage} />
             </button>
