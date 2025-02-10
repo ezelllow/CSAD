@@ -101,6 +101,13 @@ export default function Profile() {
     }
   };
 
+  // Update the modal close handler
+  const handleModalClose = () => {
+    setShowModal(false);
+    setSelectedFile(null);
+    setImagePreview(null);
+  };
+
   return (
     <div className="profile-container">
       <Card className="profile-card">
@@ -124,9 +131,9 @@ export default function Profile() {
       </Card>
 
       {/* Centered Modal for Updating Profile Picture */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+      <Modal show={showModal} onHide={handleModalClose} centered className="profile-modal-wrapper">
         <Modal.Header closeButton>
-          <Modal.Title>Update Profile Picture</Modal.Title>
+          <Modal.Title className="white">Update Profile Picture</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="modal-content-container">
@@ -140,7 +147,7 @@ export default function Profile() {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
+          <Button variant="secondary" onClick={handleModalClose}>Cancel</Button>
           <Button variant="primary" onClick={handleUpload}>Upload</Button>
         </Modal.Footer>
       </Modal>
