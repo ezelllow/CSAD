@@ -64,7 +64,7 @@ function BusinessEventSlider() {
 
 // Function to handle "Remind me" button click
 const handleReminderClick = (e) => {
-  e.stopPropagation(); // ✅ This will now work correctly
+  e.stopPropagation();
   navigate("/calendar"); // Redirect to calendar page
 };
 
@@ -143,8 +143,7 @@ const handleReminderClick = (e) => {
       </Swiper>
   
       {/* Food Donation Drives Slider */}
-      <h2 className="section-title donation-title">Food Donation Drives</h2>
-      <hr className="section-divider" />
+      
       <div className="business-section-header">
         <h2 className="donation-title">Food Donation Drives</h2>
         <button className="donation-btn" onClick={() => handleOpenPopup("DonationDrives")}>

@@ -9,7 +9,6 @@
   top: 0;
   z-index: 999;
 }
-/* Popup Background */
 .popup {
   position: fixed;
   top: 0;
@@ -23,7 +22,6 @@
   z-index: 1000;
 }
 
-/* Popup Content */
 .popup-content {
   background: white;
   padding: 20px;
@@ -33,7 +31,6 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Close Button */
 .close-btn {
   position: absolute;
   top: 10px;
@@ -42,7 +39,6 @@
   cursor: pointer;
 }
 
-/* Form Styles */
 .popup-content form {
   display: flex;
   flex-direction: column;
@@ -56,7 +52,6 @@
   border-radius: 5px;
 }
 
-/* Button */
 .popup-content button {
   background: #2E7D32;
   color: white;
@@ -71,7 +66,6 @@
   background: #27672A;
 }
 
-/* Link to switch between login/signup */
 .popup-link {
   color: #C9680D;
   cursor: pointer;

@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import './map.css';
 // Import custom marker image
-import markerIcon from "./arrow.png"; // Ensure this file exists in your project
+import markerIcon from "./arrow.png";
 
 // Define locations with lat, lng, and corresponding page routes
 const locations = [

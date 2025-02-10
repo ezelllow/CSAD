@@ -4,7 +4,7 @@ import { ref, push } from "firebase/database";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 import "./PopUpForm.css"; 
 
-function PopupForm({ category, onClose }) {
+function PopupForm({ category, onClose, }) {
   const [formData, setFormData] = useState({
     image: "",
     title: "",
@@ -12,6 +12,7 @@ function PopupForm({ category, onClose }) {
     date: "",
     time: "",
     location: "",
+    eventType: 0,
   });
   const [imageFile, setImageFile] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
@@ -25,6 +26,11 @@ function PopupForm({ category, onClose }) {
   const handleImageChange = (e) => {
     setImageFile(e.target.files[0]);
   };
+
+  const handleEventTypeChange = (e) => {
+    setFormData({ ...formData, eventType: parseInt(e.target.value) });
+  };
+
   useEffect(() => {
     const handleEscClose = (event) => {
       if (event.key === "Escape") {
@@ -37,6 +43,7 @@ function PopupForm({ category, onClose }) {
       document.removeEventListener("keydown", handleEscClose);
     };
   }, [onClose]);
+
   const handleOutsideClick = (event) => {
     if (event.target.classList.contains("popup-overlay")) {
       onClose();
@@ -74,6 +81,7 @@ function PopupForm({ category, onClose }) {
         date: "",
         time: "",
         location: "",
+        eventType: 0,
       });
       setImageFile(null);
 
@@ -115,7 +123,16 @@ function PopupForm({ category, onClose }) {
 
         <label>Location:</label>
         <input type="text" name="location" value={formData.location} onChange={handleChange} required />
-          <button type="submit" className="submit-btn">Submit</button>
+
+        <label>Event Type:</label>
+          <select name="eventType" value={formData.eventType} onChange={handleEventTypeChange} required>
+            <option value={0}>Select Event Type</option>
+            <option value={1}>Cooking</option>
+            <option value={2}>Donation</option>
+          </select>
+          <br/>
+          <br/>
+        <button type="submit" className="submit-btn">Submit</button>
         </form>
       </div>
     </div>

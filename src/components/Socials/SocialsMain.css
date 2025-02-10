@@ -1,6 +1,6 @@
 .socials-main {
   position: fixed;
-  top: 80px; /* Height of your navbar */
+  top: 80px; 
   left: 0;
   right: 0;
   bottom: 0;
@@ -46,7 +46,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: calc(100% - 100px); /* Adjust based on blinks container height */
+  height: calc(100% - 100px); 
 }
 
 .socials-tabs {
@@ -295,7 +295,7 @@
 .friend-actions {
   display: flex;
   align-items: center;
-  gap: 8px; /* Adjust spacing between buttons */
+  gap: 8px; 
 }
 
 .menu-trigger {
@@ -326,13 +326,13 @@
 
 .menu-dropdown {
   position: absolute;
-  top: 50%; /* Center vertically */
-  left: -200px; /* Move it leftwards */
-  transform: translateY(-50%); /* Ensure it's centered properly */
+  top: 50%;
+  left: -200px; 
+  transform: translateY(-50%); 
   background: #18191c;
-  border-radius: 8px; /* More rounded edges like Discord */
+  border-radius: 8px; 
   padding: 12px 0;
-  min-width: 200px; /* Increase width */
+  min-width: 200px; 
   box-shadow: 0 8px 16px rgba(0,0,0,0.24);
   z-index: 100001;
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -345,7 +345,7 @@
 
 .menu-dropdown-section button {
   width: 100%;
-  padding: 12px 16px; /* Increase padding for a bigger click area */
+  padding: 12px 16px;
   text-align: left;
   background: none;
   border: none;
@@ -424,7 +424,7 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px); /* Add for Safari compatibility */
+  -webkit-backdrop-filter: blur(4px); 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -609,7 +609,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-width: 0; /* Enable text truncation */
+  min-width: 0; 
 }
 
 .dm-name {
@@ -664,7 +664,7 @@
   font-size: 14px;
 }
 
-/* Update existing scrollbar styles to include dm-list */
+
 .dm-list::-webkit-scrollbar {
   width: 8px;
 }
@@ -914,7 +914,7 @@
   color: white;
 }
 
-/* Add/update these styles */
+
 .friends-content {
   flex: 1;
   overflow-y: auto;
@@ -962,7 +962,7 @@
   overflow: visible !important;
 }
 
-/* Common button styles for all sections */
+
 .action-button {
   width: 36px;
   height: 36px;
@@ -993,7 +993,7 @@
   color: white;
 }
 
-/* Section Headers */
+
 .section-header {
   color: white;
   padding: 16px;
@@ -1011,7 +1011,7 @@
   height: 16px;
 }
 
-/* Menu Dropdown */
+
 .menu-dropdown {
   position: absolute;
   top: calc(100% + 4px);
@@ -1094,18 +1094,18 @@
   background: #c82333;
 }
 
-/* Common avatar styles */
+
 .user-avatar,
 .friend-avatar,
 .blocked-user-avatar {
   width: 40px;
   height: 40px;
-  min-width: 40px; /* Prevent shrinking */
+  min-width: 40px; 
   border-radius: 50%;
   object-fit: cover;
 }
 
-/* Pending Section Styles */
+
 .pending-request-item {
   display: flex;
   align-items: center;
@@ -1121,7 +1121,7 @@
   align-items: center;
   gap: 12px;
   flex: 1;
-  justify-content: center; /* Center the user info */
+  justify-content: center; 
 }
 
 .pending-request-item .user-avatar {
@@ -1146,7 +1146,7 @@
   font-size: 12px;
 }
 
-/* Request Action Buttons */
+
 .request-actions {
   display: flex;
   gap: 12px;
@@ -1183,19 +1183,19 @@
   background: #c82333;
 }
 
-/* Make icons in buttons slightly larger */
+
 .accept-button svg,
 .reject-button svg {
   width: 16px;
   height: 16px;
 }
 
-/* Active menu state */
+
 .friend-item.active-menu {
   z-index: 4;
 }
 
-/* Ensure parent containers allow overflow */
+
 .friends-content,
 .users-list,
 .friend-item {
@@ -1207,7 +1207,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 200px; /* Adjust this value as needed */
+  height: 200px; 
   width: 100%;
 }
 

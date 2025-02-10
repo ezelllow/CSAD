@@ -1111,7 +1111,7 @@ function SocialsMain() {
                     </div>
                     <div className="users-list">
                       {(searchQuery ? searchResults : users).map(user => {
-                        if (user.id === currentUser.uid) return null; // Don't show current user
+                        if (user.id === currentUser.uid) return null; 
                         
                         return (
                           <div key={user.id} className="friend-item">
@@ -1188,7 +1188,7 @@ function SocialsMain() {
 
                 {friendsView === 'pending' && (
                   <>
-                    {/* Incoming Requests Section */}
+                    {/*Incoming Requests Section*/}
                     <div className="section">
                       <h3 className="section-header">
                         INCOMING REQUESTS — {pendingFriends.filter(req => req.status === 'incoming').length}
@@ -1228,7 +1228,7 @@ function SocialsMain() {
                       </div>
                     </div>
 
-                    {/* Outgoing Requests Section */}
+                    {/*Outgoing Requests Section*/}
                     <div className="section">
                       <h3 className="section-header">
                         OUTGOING REQUESTS — {pendingFriends.filter(req => req.status === 'outgoing').length}

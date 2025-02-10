@@ -100,7 +100,6 @@ export default function Forums() {
   useEffect(() => {
     if (!currentUser) return;
 
-    // Updated database path to match your structure
     const userLikesRef = database.ref(`Users/${currentUser.uid}/likes`);
     userLikesRef.on('value', (snapshot) => {
       const likes = snapshot.val() || {};
@@ -118,7 +117,6 @@ export default function Forums() {
     }
     
     try {
-      // Updated database paths to match your structure
       const userLikesRef = database.ref(`Users/${currentUser.uid}/likes/${postId}`);
       const postLikesRef = database.ref(`posts/${postId}/likes`);
 
@@ -127,13 +125,11 @@ export default function Forums() {
       const hasLiked = likeSnapshot.val();
 
       if (hasLiked) {
-        // Unlike
         await userLikesRef.remove();
         await postLikesRef.transaction(currentLikes => 
           currentLikes ? currentLikes - 1 : 0
         );
       } else {
-        // Like
         await userLikesRef.set(true);
         await postLikesRef.transaction(currentLikes => 
           (currentLikes || 0) + 1

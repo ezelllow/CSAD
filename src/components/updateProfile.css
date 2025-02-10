@@ -1,13 +1,11 @@
-/* Center the entire page */
 .update-profile-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Full screen height */
-    background-color: #f8f9fa; /* Light gray background */
+    height: 100vh;
+    background-color: #f8f9fa;
 }
 
-/* Style the update profile card */
 .update-profile-card {
     width: 100%;
     max-width: 400px;
@@ -18,12 +16,10 @@
     text-align: center;
 }
 
-/* Add spacing between form groups */
 .form-group {
     margin-bottom: 15px;
 }
 
-/* Update button styling */
 .update-btn {
     background-color: #007bff;
     border: none;
@@ -36,7 +32,6 @@
     background-color: #0056b3;
 }
 
-/* Back link styling */
 .back-link {
     color: #007bff;
     text-decoration: none;

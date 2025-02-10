@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction"; // For click events
 import { ref, onValue, remove, set } from "firebase/database";
-import { database } from "../../firebase"; // Import your Firebase instance
+import { database } from "../../firebase";
 import { getAuth } from "firebase/auth";
 import "./Calendar.css"; // Import the CSS file
 import CalendarPopupForm from "../CalendarPopUpForm"; // Import pop-up form

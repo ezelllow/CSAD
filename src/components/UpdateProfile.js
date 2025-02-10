@@ -32,14 +32,13 @@ export default function UpdateProfile() {
         // Check if email needs to be updated
         if (emailRef.current.value !== user.email) {
             try {
-                // 🔥 Use the entered current password for re-authentication
+                // Use the entered current password for re-authentication
                 const credential = EmailAuthProvider.credential(
                     user.email,
                     currentPasswordRef.current.value // Use entered password
                 );
                 await reauthenticateWithCredential(user, credential);
                 
-                // Step 1: Send email verification
                 await updateEmail(user, emailRef.current.value);
                 await sendEmailVerification(user); // Send verification email to the new email
 
@@ -73,8 +72,8 @@ export default function UpdateProfile() {
 
 
     return (
-        <div className="update-profile-container"> {/* ✅ Centering wrapper */}
-            <Card className="update-profile-card"> {/* ✅ Applied correct class */}
+        <div className="update-profile-container"> {/* Centering wrapper */}
+            <Card className="update-profile-card"> {/* Applied correct class */}
                 <Card.Body>
                     <h2 className='text-center mb-4'>Update Profile</h2>
                     {error && <Alert variant="danger">{error}</Alert>}

@@ -8,10 +8,10 @@ import ChatbotButton from '../ChatbotButton';
 import HeroSection from '../HeroSection';
 import Cards from '../Cards';
 import Slider from '../Slider';
+import SellerCards from '../SellerCards';
 
-const filterOptions = ["Available", "Halal", "Spicy"]; // Changed "Dover" to "Available"
+const filterOptions = ["Available", "Halal", "Spicy", "Bedok"];
 
-// Add this helper function at the top of the file, outside the HomePage component
 const capitalizeWords = (str) => {
   if (!str) return ''; // Handle undefined/null values
   return str.split(' ').map(word => 
@@ -23,9 +23,9 @@ function HomePage() {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState([]); // ✅ Multi-select filters
+  const [selectedFilters, setSelectedFilters] = useState([]); 
   const { currentUser } = useAuth();
-  const [selectedListing, setSelectedListing] = useState(null); // Add this new state
+  const [selectedListing, setSelectedListing] = useState(null); 
   const [userLikes, setUserLikes] = useState({});
   const [sellerUsernames, setSellerUsernames] = useState({});
 
@@ -131,30 +131,29 @@ function HomePage() {
     };
   }, [currentUser]);
 
-  // ✅ Multi-Select Filtering Logic
+  // Update the filtering logic
   const filteredListings = listings.filter((listing) => {
     const matchesSearch = listing.title?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    if (selectedFilters.length === 0) return matchesSearch; // No filters selected, show all results
+    if (selectedFilters.length === 0) return matchesSearch;
 
-    return (
-      matchesSearch &&
-      selectedFilters.some((filter) => {
-        switch (filter) {
-          case "Halal":
-            return listing.halal === true;
-          case "Spicy":
-            return listing.spicy === true;
-          case "Available":  // Changed from "Dover" case
-            return listing.status?.toLowerCase() === "available" || !listing.status;
-          default:
-            return false;
-        }
-      })
-    );
+    // Check if listing matches ALL selected filters
+    return matchesSearch && selectedFilters.every((filter) => {
+      switch (filter) {
+        case "Halal":
+          return listing.halal === true;
+        case "Spicy":
+          return listing.spicy === true;
+        case "Available":
+          return listing.status?.toLowerCase() === "available" || !listing.status;
+        case "Bedok":
+          return listing.location?.toLowerCase() === "bedok";
+        default:
+          return false;
+      }
+    });
   });
 
-  // ✅ Function to toggle filters on/off
   const toggleFilter = (filter) => {
     setSelectedFilters((prevFilters) =>
       prevFilters.includes(filter)
@@ -166,40 +165,89 @@ function HomePage() {
   // Update the handleLike function
   const handleLike = async (listingId, sellerId, e) => {
     e.stopPropagation();
+    
     if (!currentUser) {
       alert("Please log in to like listings");
       return;
     }
-    
-    try {
-      const userLikesRef = database.ref(`Users/${currentUser.uid}/listingLikes/${listingId}`);
-      const listingRef = database.ref(`listings/${sellerId}/items/${listingId}`);
-      const sellerStatsRef = database.ref(`Users/${sellerId}/stats/totalLikes`);
 
-      const likeSnapshot = await userLikesRef.once('value');
-      const hasLiked = likeSnapshot.val();
+    let hasLiked = false;
+
+    try {
+      // First check if user has liked this post
+      const userLikeRef = database.ref(`listings/${sellerId}/items/${listingId}/likedBy/${currentUser.uid}`);
+      const likesCountRef = database.ref(`listings/${sellerId}/items/${listingId}/likes`);
+      
+      const likeSnapshot = await userLikeRef.once('value');
+      hasLiked = likeSnapshot.val();
+
+      // Update local state immediately
+      setUserLikes(prev => ({
+        ...prev,
+        [listingId]: !hasLiked
+      }));
 
       if (hasLiked) {
         // Unlike
-        await userLikesRef.remove();
-        await listingRef.child('likes').transaction(currentLikes => 
+        await userLikeRef.remove();
+        const newLikes = await likesCountRef.transaction(currentLikes => 
           (currentLikes || 0) > 0 ? currentLikes - 1 : 0
         );
-        await sellerStatsRef.transaction(currentLikes => 
-          (currentLikes || 0) > 0 ? currentLikes - 1 : 0
+
+        // Update UI with new count
+        const updatedCount = newLikes.snapshot.val() || 0;
+        
+        // Update listings state
+        setListings(prev => 
+          prev.map(item => 
+            item.id === listingId 
+              ? { ...item, likes: updatedCount }
+              : item
+          )
         );
+
+        // Update selected listing if open
+        if (selectedListing && selectedListing.id === listingId) {
+          setSelectedListing(prev => ({
+            ...prev,
+            likes: updatedCount
+          }));
+        }
       } else {
         // Like
-        await userLikesRef.set(true);
-        await listingRef.child('likes').transaction(currentLikes => 
+        await userLikeRef.set(true);
+        const newLikes = await likesCountRef.transaction(currentLikes => 
           (currentLikes || 0) + 1
         );
-        await sellerStatsRef.transaction(currentLikes => 
-          (currentLikes || 0) + 1
+
+        // Update UI with new count
+        const updatedCount = newLikes.snapshot.val() || 0;
+        
+        // Update listings state
+        setListings(prev => 
+          prev.map(item => 
+            item.id === listingId 
+              ? { ...item, likes: updatedCount }
+              : item
+          )
         );
+
+        // Update selected listing if open
+        if (selectedListing && selectedListing.id === listingId) {
+          setSelectedListing(prev => ({
+            ...prev,
+            likes: updatedCount
+          }));
+        }
       }
+
     } catch (error) {
       console.error('Error handling like:', error);
+      // Revert local state on error
+      setUserLikes(prev => ({
+        ...prev,
+        [listingId]: hasLiked
+      }));
     }
   };
 
@@ -224,7 +272,7 @@ function HomePage() {
               <p className="popup-description">{selectedListing.description || "No description available"}</p>
               <div className="popup-meta">
                 <div className="popup-info">
-                  <span className="location">📍 Location: {selectedListing.location || "Unknown"}</span>
+                  <span className="location">📍 Location: {capitalizeWords(selectedListing.location) || "Unknown"}</span>
                   <span className="expiry">⏰ Expires: {selectedListing.expiryDate ? new Date(selectedListing.expiryDate).toLocaleDateString() : "N/A"}</span>
                   <span className="quantity">📦 Quantity: {selectedListing.quantity || "N/A"}</span>
                   <span className="ingredients">🥗 Ingredients: {Array.isArray(selectedListing.ingredients) ? 
@@ -242,8 +290,15 @@ function HomePage() {
                   </div>
                 </div>
                 <div className="popup-tags">
-                  {selectedListing.halal && <span className="tag halal">Halal</span>}
-                  {selectedListing.spicy && <span className="tag spicy">Spicy</span>}
+                  {(selectedListing.halal || selectedListing.spicy) ? (
+                    <>
+                      {selectedListing.halal && <span className="tag halal">Halal</span>}
+                      {selectedListing.spicy && <span className="tag spicy">Spicy</span>}
+                    </>
+                  ) : (
+                    // Placeholder tag when no real tags are present
+                    <span className="tag placeholder hidden">Placeholder</span>
+                  )}
                   <div className="seller-info">
                     <span className='se'>Posted by <i>{sellerUsernames[selectedListing.sellerId]}</i></span>
                   </div>
@@ -270,7 +325,7 @@ function HomePage() {
               className={selectedFilters.includes(filter) ? "active" : ""}
               onClick={() => toggleFilter(filter)}
             >
-              {filter} {selectedFilters.includes(filter) && "✔"} {/* ✅ Shows checkmark on selected filters */}
+              {filter} {selectedFilters.includes(filter) && "✔"} {/* Show checkmark on selected filters */}
             </button>
           ))}
         </div>
@@ -299,7 +354,7 @@ function HomePage() {
                   <p>{listing.description || "No description available"}</p>
                   <div className="listing-meta">
                     <div className="listing-info">
-                      <span className="location">📍 {listing.location || "Unknown"}</span>
+                      <span className="location">📍 {capitalizeWords(listing.location) || "Unknown"}</span>
                       <span className="expiry">⏰ Expires: {listing.expiryDate ? new Date(listing.expiryDate).toLocaleDateString() : "N/A"}</span>
                       <span className="quantity">📦 Quantity: {listing.quantity || "N/A"}</span>
                       <span className="ingredients">🥗 Ingredients: {Array.isArray(listing.ingredients) ? 
@@ -318,8 +373,15 @@ function HomePage() {
                     </div>
                     
                     <div className="tags">
-                      {listing.halal && <span className="tag halal">Halal</span>}
-                      {listing.spicy && <span className="tag spicy">Spicy</span>}
+                      {(listing.halal || listing.spicy) ? (
+                        <>
+                          {listing.halal && <span className="tag halal">Halal</span>}
+                          {listing.spicy && <span className="tag spicy">Spicy</span>}
+                        </>
+                      ) : (
+                        // Placeholder tag when no real tags are present
+                        <span className="tag placeholder hidden">Placeholder</span>
+                      )}
                     </div>
                   </div>
                   <div className="seller-info">
@@ -333,6 +395,9 @@ function HomePage() {
           )}
         </div>
       </div>
+      
+      {/* Add the seller cards section */}
+      <SellerCards />
     </div>
   );
 }
