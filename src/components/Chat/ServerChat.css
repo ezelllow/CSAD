@@ -1,7 +1,7 @@
 .server-chat-container {
   display: flex;
   width: 100%;
-  height: calc(100vh - 120px); /* Reduced from 100vh - 80px */
+  height: calc(100vh - 120px);
   position: relative;
   overflow: hidden;
 }
@@ -71,12 +71,12 @@
   height: 100%;
   position: relative;
   overflow: hidden;
-  padding: 0 16px; /* Add padding to main container */
+  padding: 0 16px;
 }
 
 .server-chat-header {
   padding: 16px;
-  margin: 0 -16px; /* Compensate for main container padding */
+  margin: 0 -16px;
   background: #36393f;
   border-bottom: 1px solid #202225;
   height: 48px;
@@ -94,11 +94,11 @@
 .server-chat-messages {
   position: absolute;
   top: 48px;
-  left: 16px; /* Align with padding */
-  right: 16px; /* Align with padding */
-  bottom: 100px; /* Increased from 80px */
+  left: 16px;
+  right: 16px;
+  bottom: 100px;
   overflow-y: auto;
-  padding: 16px 0; /* Remove horizontal padding */
+  padding: 16px 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -144,15 +144,15 @@
 }
 
 .server-chat-input-form {
-  position: absolute; /* Changed from fixed */
-  bottom: 16px; /* Increased from 20px */
-  left: 16px; /* Align with main container padding */
-  right: 16px; /* Align with main container padding */
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
   background: #40444b;
   border-radius: 8px;
   display: flex;
   align-items: center;
-  min-height: 48px; /* Increased from 44px */
+  min-height: 48px;
   z-index: 10;
 }
 
@@ -221,7 +221,6 @@
   color: #72767d;
 }
 
-/* Add this new style for the search bar container */
 .search-container {
   position: relative;
   width: 100%;
@@ -230,7 +229,7 @@
 
 .search-icon {
   position: absolute;
-  left: 28px; /* Adjust based on padding */
+  left: 28px;
   top: 50%;
   transform: translateY(-50%);
   color: #72767d;
@@ -239,7 +238,7 @@
 
 .server-search {
   width: 100%;
-  padding: 8px 16px 8px 40px; /* Increased left padding for icon */
+  padding: 8px 16px 8px 40px;
   background: #202225;
   border: none;
   border-radius: 4px;

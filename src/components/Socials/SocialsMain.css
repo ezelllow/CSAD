@@ -249,14 +249,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px;
-  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 2px;
   z-index: 1;
-  pointer-events: auto;
 }
 
 .friend-item:hover {
   background: rgba(79, 84, 92, 0.16);
+  z-index: 2;
 }
 
 .friend-info-container {
@@ -294,91 +295,79 @@
 .friend-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
-  position: relative;
-  z-index: 2;
-  pointer-events: auto;
+  gap: 8px; /* Adjust spacing between buttons */
 }
 
-.action-button {
-  padding: 6px;
+.menu-trigger {
+  background: none;
   border: none;
-  border-radius: 4px;
+  padding: 4px;
   cursor: pointer;
+  color: #72767d;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  position: relative;
+  border-radius: 4px;
 }
 
-.action-button.message {
-  background-color: #2E7D32;
-  color: white;
+.menu-trigger:hover {
+  background: rgba(79, 84, 92, 0.16);
 }
 
-.action-button.menu {
-  background-color: #36393f;
-  color: #72767d;
-}
-
-/* Critical changes for menu positioning */
-.menu-container {
-  position: static;
+.menu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 100000;
 }
 
 .menu-dropdown {
-  position: fixed;
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: -200px; /* Move it leftwards */
+  transform: translateY(-50%); /* Ensure it's centered properly */
   background: #18191c;
-  border-radius: 4px;
-  min-width: 150px;
+  border-radius: 8px; /* More rounded edges like Discord */
+  padding: 12px 0;
+  min-width: 200px; /* Increase width */
+  box-shadow: 0 8px 16px rgba(0,0,0,0.24);
   z-index: 100001;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
-  pointer-events: auto;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* Remove or update the arrow if it exists */
-.menu-dropdown::before {
-  display: none; /* Remove the arrow */
-}
-
-/* Update animation if needed */
-@keyframes menuSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
 
 .menu-dropdown-section {
-  background: #2f3136;
-  padding: 6px;
-  pointer-events: auto;
+  width: 100%;
 }
 
-.menu-dropdown button {
+.menu-dropdown-section button {
   width: 100%;
-  padding: 8px 12px;
+  padding: 12px 16px; /* Increase padding for a bigger click area */
   text-align: left;
   background: none;
   border: none;
   color: #dcddde;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
-  border-radius: 3px;
-  position: relative;
-  z-index: 1;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-.menu-dropdown button:hover {
-  background: #36393f;
+.menu-dropdown-section button:hover {
+  background-color: rgba(79, 84, 92, 0.32);
+  color: white;
+}
+
+.menu-dropdown-section button.block {
+  color: #f04747;
+  font-weight: bold;
+}
+
+.menu-dropdown-section button.block:hover {
+  background-color: rgba(240, 71, 71, 0.3);
 }
 
 .menu-dropdown button.unfriend,
@@ -937,185 +926,293 @@
 }
 
 .section {
-  background: #2f3136;
-  border-radius: 4px;
-  min-height: min-content;
-  display: flex;
-  flex-direction: column;
-  max-height: calc(100vh - 200px); /* Adjust based on your header heights */
+  width: 100%;
+  padding: 16px;
 }
 
+.search-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #72767d;
+  z-index: 1;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  background: #202225;
+  border: none;
+  border-radius: 4px;
+  color: #dcddde;
+  font-size: 14px;
+}
+
+.users-list {
+  width: 100%;
+  overflow-y: auto;
+  max-height: calc(100vh - 250px);
+  overflow: visible !important;
+}
+
+/* Common button styles for all sections */
+.action-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.action-button.message {
+  background-color: #2E7D32;
+  color: white;
+}
+.action-button.hover{
+  opacity: 0.8;
+}
+
+.action-button.menu {
+  background-color: #dc3545;
+  color: white;
+  bottom: 1px;
+}
+
+.action-button svg {
+  color: white;
+}
+
+/* Section Headers */
 .section-header {
+  color: white;
   padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 12px;
   font-weight: 600;
-  color: #96989d;
   text-transform: uppercase;
-  background: #2f3136;
-  border-bottom: 1px solid #202225;
-  position: sticky;
-  top: 0;
-  z-index: 2;
 }
 
-.section > div:not(.section-header) {
-  overflow-y: auto;
-  flex: 1;
-  padding: 8px;
+.section-header svg {
+  color: white;
+  width: 16px;
+  height: 16px;
 }
 
-.section > div:not(.section-header)::-webkit-scrollbar {
-  width: 8px;
-}
-
-.section > div:not(.section-header)::-webkit-scrollbar-track {
-  background: #2f3136;
-  border-radius: 4px;
-}
-
-.section > div:not(.section-header)::-webkit-scrollbar-thumb {
-  background: #202225;
-  border-radius: 4px;
-}
-
-.section > div:not(.section-header)::-webkit-scrollbar-thumb:hover {
-  background: #2E7D32;
-}
-
-.pending-requests {
-  padding: 8px;
-}
-
-/* Adjust icon sizes if needed */
-.action-button svg {
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
-}
-
-/* Ensure menu button has same dimensions */
-.action-button.menu {
-
-}
-
-/* Make sure the menu is visible */
-.user-result:hover .user-actions,
-.user-actions {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Add backdrop when menu is open */
-.menu-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
+/* Menu Dropdown */
+.menu-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: auto;
   right: 0;
-  bottom: 0;
-  z-index: 100000;
-  background: transparent;
-  pointer-events: auto;
+  background: #18191c;
+  border-radius: 4px;
+  padding: 8px 0;
+  min-width: 180px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.24);
+  z-index: 100001;
 }
 
-/* Remove overflow hidden from all parent containers */
-.friends-section,
-.section,
-.friends-content {
-  overflow: visible !important;
+.menu-dropdown-section {
+  padding: 4px 0;
+}
+
+.menu-dropdown-section button {
+  width: 100%;
+  padding: 8px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #dcddde;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.menu-dropdown-section button:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Blocked Section */
+.blocked-user-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.blocked-user-item:hover {
+  background: rgba(79, 84, 92, 0.16);
+}
+
+.blocked-user-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.blocked-user-name {
+  color: white;
+  font-weight: 500;
+}
+
+.blocked-label {
+  background: #dc3545;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.unblock-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.unblock-button:hover {
+  background: #c82333;
+}
+
+/* Common avatar styles */
+.user-avatar,
+.friend-avatar,
+.blocked-user-avatar {
+  width: 40px;
+  height: 40px;
+  min-width: 40px; /* Prevent shrinking */
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Pending Section Styles */
+.pending-request-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  margin-bottom: 8px;
+  background: #2f3136;
+  border-radius: 4px;
 }
 
 .pending-request-item .user-info {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1;
+  justify-content: center; /* Center the user info */
 }
 
-.pending-request-item .user-details {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-top: -2px;
-}
-
-.pending-request-item .username {
-  line-height: 1.2;
-  margin-bottom: 2px;
-}
-
-/* Blocked users list styling */
-.blocked-user-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px;
-  margin: 4px 0;
-  background: #2f3136;
-  border-radius: 4px;
-}
-
-.blocked-user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.blocked-user-avatar {
+.pending-request-item .user-avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-/* Update scrollbar styling for friends content */
-.friends-content::-webkit-scrollbar {
-  width: 8px;
+.pending-request-item .user-details {
+  display: flex;
+  flex-direction: column;
 }
 
-.friends-content::-webkit-scrollbar-track {
-  background: #2f3136;
-  border-radius: 4px;
+.pending-request-item .username {
+  color: white;
+  font-weight: 500;
 }
 
-.friends-content::-webkit-scrollbar-thumb {
-  background: #202225;
-  border-radius: 4px;
+.pending-request-item .request-type {
+  color: #96989d;
+  font-size: 12px;
 }
 
-.friends-content::-webkit-scrollbar-thumb:hover {
+/* Request Action Buttons */
+.request-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.accept-button,
+.reject-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.accept-button {
   background: #2E7D32;
+  color: white;
 }
 
-/* Ensure content within sections is properly spaced */
-.pending-requests,
-.blocked-users {
-  padding: 8px;
+.accept-button:hover {
+  background: #1B5E20;
 }
 
-.friends-subsection {
-  padding: 8px;
+.reject-button {
+  background: #dc3545;
+  color: white;
 }
 
-.request-sent-text {
-  color: #b9bbbe;
-  font-size: 0.9rem;
+.reject-button:hover {
+  background: #c82333;
+}
+
+/* Make icons in buttons slightly larger */
+.accept-button svg,
+.reject-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Active menu state */
+.friend-item.active-menu {
+  z-index: 4;
+}
+
+/* Ensure parent containers allow overflow */
+.friends-content,
+.users-list,
+.friend-item {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+.empty-state {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  height: 200px; /* Adjust this value as needed */
+  width: 100%;
 }
 
-.request-sent-text svg {
-  color: #43b581;
-}
-
-.already-friends-text {
-  color: #43b581;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.add-friend-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.empty-state p {
+  color: #ffffff;
+  font-size: 16px;
+  text-align: center;
 }

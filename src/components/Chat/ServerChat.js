@@ -16,6 +16,7 @@ function ServerChat({ serverId }) {
   const [imageUpload, setImageUpload] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef(null);
+  const [currentUserData, setCurrentUserData] = useState(null);
 
   useEffect(() => {
     if (!currentUser || !serverId) return;
@@ -62,6 +63,20 @@ function ServerChat({ serverId }) {
     return () => messagesRef.off();
   }, [currentUser, serverId, selectedChannel]);
 
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const userRef = database.ref(`Users/${currentUser.uid}`);
+    userRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setCurrentUserData(data);
+      }
+    });
+
+    return () => userRef.off();
+  }, [currentUser]);
+
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
@@ -73,7 +88,7 @@ function ServerChat({ serverId }) {
     if (!newMessage.trim()) return;
 
     try {
-      // First get the current user's data to ensure we have the correct username
+    
       const userRef = database.ref(`Users/${currentUser.uid}`);
       const userSnapshot = await userRef.once('value');
       const userData = userSnapshot.val();
@@ -82,11 +97,9 @@ function ServerChat({ serverId }) {
       await messagesRef.push({
         content: newMessage.trim(),
         senderId: currentUser.uid,
-        // Use the username from user's profile data
         username: userData?.username || currentUser.displayName || 'Anonymous',
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         message: newMessage.trim(),
-        // Use the same username for senderName
         senderName: userData?.username || currentUser.displayName || 'Anonymous',
         messageType: "text"
       });
@@ -189,7 +202,9 @@ function ServerChat({ serverId }) {
             >
               <div className="server-message-header">
                 <span className="server-message-username">
-                  {message.senderId === currentUser.uid ? 'You' : message.username}
+                  {message.senderId === currentUser.uid 
+                    ? currentUserData?.username 
+                    : message.username}
                 </span>
               </div>
               <div className="server-message-content">

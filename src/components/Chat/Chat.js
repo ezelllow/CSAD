@@ -18,12 +18,12 @@ function Chat({ chatId, isDM, otherUser }) {
     return container.scrollHeight - container.scrollTop - container.clientHeight < 100;
   };
 
-  // Handle scroll event
+  // Handle scroll
   const handleScroll = () => {
     setAutoScroll(isNearBottom());
   };
 
-  // Scroll to bottom if autoScroll is true
+  // Scroll to bottom 
   const scrollToBottom = () => {
     const container = messagesContainerRef.current;
     if (container && autoScroll) {

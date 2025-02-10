@@ -3,7 +3,7 @@
   height: calc(100vh - 80px);
   background-color: #36393f;
   position: relative;
-  z-index: 1; /* Ensure chat stays above footer */
+  z-index: 1;
 }
 
 .channels-sidebar {
@@ -48,7 +48,7 @@
   flex-direction: column;
   background-color: #36393f;
   position: relative;
-  overflow: hidden; /* Prevent content from showing outside */
+  overflow: hidden; 
 }
 
 .chat-header {
@@ -75,14 +75,14 @@
   margin-bottom: 16px;
   padding: 12px 16px;
   border-radius: 4px;
-  background-color: #40444b; /* Dark grey background for chat bubbles */
+  background-color: #40444b;
   color: #dcddde;
   max-width: 80%;
 }
 
 .message.own-message {
   margin-left: auto;
-  background-color: #2E7D32; /* Green background for own messages */
+  background-color: #2E7D32;
 }
 
 .message-header {
@@ -165,7 +165,7 @@
   background-color: #1B5E20;
 }
 
-/* Scrollbar styling */
+/*Scrollbar styling*/
 .messages-container::-webkit-scrollbar {
   width: 8px;
 }
@@ -183,32 +183,30 @@
   background: #2E7D32;
 }
 
-/* Add these new styles for better scrolling and footer handling */
+
 .messages-container::after {
   content: '';
   display: block;
   height: 20px;
 }
 
-/* Ensure the chat container stays above the footer */
 .socials-main {
   position: relative;
   z-index: 2;
 }
 
-/* Add padding at the bottom of messages to prevent overlap with input */
+
 .messages-container::after {
   content: '';
   display: block;
   height: 20px;
 }
 
-/* Remove any potential floating elements */
+
 .chat-main::after {
   content: none;
 }
 
-/* Ensure messages container takes full available space */
 .messages-container {
   flex: 1;
   padding: 20px;
