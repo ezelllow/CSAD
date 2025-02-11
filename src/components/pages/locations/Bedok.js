@@ -128,7 +128,7 @@ function BedokFridge() {
     <div className="bedok-container">
       <div className="livestream-section">
         <iframe
-          src="https://www.youtube.com/embed/9iUFP0a2VB8?autoplay=1&controls=0&mute=1&modestbranding=1&disablekb=1&fs=0&showinfo=0&rel=0"
+          src="https://www.youtube.com/embed/SjfFkP7wqt4?autoplay=1&controls=0&mute=1&modestbranding=1&disablekb=1&fs=0&showinfo=0&rel=0"
           title="Fridge Livestream"
           className="livestream"
           allowFullScreen
