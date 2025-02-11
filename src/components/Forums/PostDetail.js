@@ -152,23 +152,27 @@ export default function PostDetail() {
     e.preventDefault();
     if (!newComment.trim()) return;
 
-    const commentsRef = database.ref(`comments/${postId}`);
-    const userRef = database.ref(`Users/${currentUser.uid}`);
-    const userSnapshot = await userRef.once('value');
-    const userData = userSnapshot.val();
+    try {
+      const commentsRef = database.ref(`comments/${postId}`);
+      const userRef = database.ref(`Users/${currentUser.uid}`);
+      const userSnapshot = await userRef.once('value');
+      const userData = userSnapshot.val();
 
-    await commentsRef.push({
-      content: newComment,
-      authorId: currentUser.uid,
-      authorRole: userData.role,
-      username: userData.username,
-      profilePicture: userData.profilePicture,
-      createdAt: new Date().toISOString(),
-      likes: 0
-    });
+      await commentsRef.push({
+        content: newComment,
+        authorId: currentUser.uid,
+        authorRole: userData.role,
+        username: userData.username,
+        profilePicture: userData.profilePicture || '/pfp.png',
+        createdAt: new Date().toISOString(),
+        likes: 0
+      });
 
-    await database.ref(`posts/${postId}/commentCount`).transaction(count => (count || 0) + 1);
-    setNewComment('');
+      await database.ref(`posts/${postId}/commentCount`).transaction(count => (count || 0) + 1);
+      setNewComment('');
+    } catch (error) {
+      console.error('Error posting comment:', error);
+    }
   };
 
   const handleMenuClick = (e) => {

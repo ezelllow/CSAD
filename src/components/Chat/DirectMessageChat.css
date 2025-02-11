@@ -48,25 +48,22 @@
 
 .dm-chat-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   position: relative;
-  height: calc(100% - 120px); 
-  min-height: 0; 
-}
-
-.dm-chat-messages-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 100px; 
-  overflow-y: auto;
-  padding: 16px;
+  overflow: hidden;
+  padding: 0 16px;
 }
 
 .dm-chat-messages {
-  height: calc(100% - 120px); /* Account for header and input */
-  padding: 16px;
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  bottom: 100px;
   overflow-y: auto;
+  padding: 16px 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -112,14 +109,16 @@
 }
 
 .dm-chat-input-form {
-  width: 100%;
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
   background: #40444b;
   border-radius: 8px;
-  padding: 2px 8px;
   display: flex;
   align-items: center;
-  height: 44px;
-  gap: 8px;
+  min-height: 48px;
+  z-index: 10;
 }
 
 .dm-chat-input {

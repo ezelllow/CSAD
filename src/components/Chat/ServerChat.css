@@ -2,7 +2,6 @@
   display: flex;
   width: 100%;
   height: calc(100vh - 120px);
-  height: calc(100vh - 120px);
   position: relative;
   overflow: hidden;
 }
@@ -259,4 +258,24 @@
 .server-search:focus {
   outline: none;
   background: #2f3136;
+}
+
+.server-chat-input:disabled {
+  background-color: #2f3136;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.upload-image-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.no-channel-selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #72767d;
+  font-size: 16px;
 }
