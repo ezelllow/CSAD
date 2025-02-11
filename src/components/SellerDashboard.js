@@ -48,8 +48,7 @@ export default function SellerDashboard() {
   });
   const [analyticsData, setAnalyticsData] = useState({
     views: [],
-    likes: [],
-    interactions: []
+    likes: []
   });
   const [imageUpload, setImageUpload] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -124,8 +123,7 @@ export default function SellerDashboard() {
     
     return {
       views: last7Days.map(date => ({ date, count: 0 })),
-      likes: last7Days.map(date => ({ date, count: 0 })),
-      interactions: last7Days.map(date => ({ date, count: 0 }))
+      likes: last7Days.map(date => ({ date, count: 0 }))
     };
   };
 
@@ -336,6 +334,96 @@ export default function SellerDashboard() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Update the useEffect for analytics
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const listingsRef = database.ref(`listings/${currentUser.uid}/items`);
+    const analyticsRef = database.ref(`Users/${currentUser.uid}/analytics`);
+
+    const fetchAnalytics = async () => {
+      try {
+        // Get all listings for this seller
+        const listingsSnapshot = await listingsRef.once('value');
+        const listingsData = listingsSnapshot.val() || {};
+
+        // Get today's date in local timezone
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        // Generate dates for last 7 days ending today
+        const last7Days = [...Array(7)].map((_, i) => {
+          const date = new Date(today);
+          date.setDate(today.getDate() - 6 + i); // Start from 6 days ago up to today
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        });
+
+        // Initialize analytics data
+        const analytics = {
+          views: last7Days.map(date => ({ date, count: 0 })),
+          likes: last7Days.map(date => ({ date, count: 0 }))
+        };
+
+        // Calculate total likes and views for each day
+        Object.values(listingsData).forEach(listing => {
+          if (listing.likes || listing.views) {
+            // Get the listing's date in local timezone
+            const listingDate = new Date();
+            const year = listingDate.getFullYear();
+            const month = String(listingDate.getMonth() + 1).padStart(2, '0');
+            const day = String(listingDate.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+            
+            // Find the corresponding day in our analytics
+            const dayIndex = last7Days.indexOf(dateStr);
+            
+            if (dayIndex !== -1) {
+              // Add likes if they exist
+              if (listing.likes) {
+                analytics.likes[dayIndex].count += listing.likes || 0;
+              }
+              // Add views if they exist
+              if (listing.views) {
+                analytics.views[dayIndex].count += listing.views || 0;
+              }
+            }
+          }
+        });
+
+        // Update analytics in Firebase and local state
+        await analyticsRef.set(analytics);
+        setAnalyticsData(analytics);
+      } catch (error) {
+        console.error('Error fetching analytics:', error);
+      }
+    };
+
+    // Initial fetch
+    fetchAnalytics();
+
+    // Set up listeners for real-time updates
+    listingsRef.on('value', fetchAnalytics);
+
+    return () => {
+      listingsRef.off('value', fetchAnalytics);
+    };
+  }, [currentUser]);
+
+  // Add view tracking function
+  const trackView = async (listingId) => {
+    if (!currentUser) return;
+
+    try {
+      const listingRef = database.ref(`listings/${currentUser.uid}/items/${listingId}`);
+      await listingRef.child('views').transaction(views => (views || 0) + 1);
+    } catch (error) {
+      console.error('Error tracking view:', error);
     }
   };
 
@@ -601,13 +689,6 @@ export default function SellerDashboard() {
               <h3>Likes</h3>
               <Line 
                 data={createChartConfig(analyticsData.likes, 'Likes', '#FF4081')} 
-                options={chartOptions}
-              />
-            </div>
-            <div className="chart-card">
-              <h3>Interactions</h3>
-              <Line 
-                data={createChartConfig(analyticsData.interactions, 'Interactions', '#4CAF50')} 
                 options={chartOptions}
               />
             </div>

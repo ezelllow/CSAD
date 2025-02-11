@@ -213,6 +213,9 @@ function HomePage() {
             likes: updatedCount
           }));
         }
+
+        // Update timestamp
+        await database.ref(`listings/${sellerId}/items/${listingId}/updatedAt`).set(Date.now());
       } else {
         // Like
         await userLikeRef.set(true);
@@ -239,6 +242,9 @@ function HomePage() {
             likes: updatedCount
           }));
         }
+
+        // Update timestamp
+        await database.ref(`listings/${sellerId}/items/${listingId}/updatedAt`).set(Date.now());
       }
 
     } catch (error) {
@@ -248,6 +254,19 @@ function HomePage() {
         ...prev,
         [listingId]: hasLiked
       }));
+    }
+  };
+
+  // Add view tracking when a listing is clicked
+  const handleListingClick = async (listing) => {
+    setSelectedListing(listing);
+    
+    // Track view
+    try {
+      const listingRef = database.ref(`listings/${listing.sellerId}/items/${listing.id}`);
+      await listingRef.child('views').transaction(views => (views || 0) + 1);
+    } catch (error) {
+      console.error('Error tracking view:', error);
     }
   };
 
@@ -340,7 +359,7 @@ function HomePage() {
               <div 
                 key={listing.id} 
                 className="menu-card"
-                onClick={() => setSelectedListing(listing)}
+                onClick={() => handleListingClick(listing)}
               >
                 {listing.imageUrl && (
                   <img 
