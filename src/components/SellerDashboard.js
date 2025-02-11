@@ -15,7 +15,6 @@ import {
 import './SellerDashboard.css';
 import HomePage from './pages/homePage';
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -54,7 +53,7 @@ export default function SellerDashboard() {
   const [loading, setLoading] = useState(false);
 
   const capitalizeWords = (str) => {
-    if (!str) return ''; // Handle undefined/null values
+    if (!str) return ''; 
     return str.split(' ').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
     ).join(' ');
@@ -66,8 +65,7 @@ export default function SellerDashboard() {
       return;
     }
 
-    console.log('Current user:', currentUser.uid); // Debug log
-    
+    console.log('Current user:', currentUser.uid); 
     const listingsRef = database.ref(`listings/${currentUser.uid}/items`);
     const statsRef = database.ref(`Users/${currentUser.uid}/stats`);
     const analyticsRef = database.ref(`Users/${currentUser.uid}/analytics`);
@@ -81,7 +79,7 @@ export default function SellerDashboard() {
         }));
         setListings(items);
 
-        // Calculate total likes
+
         const totalLikes = items.reduce((sum, item) => sum + (item.likes || 0), 0);
         database.ref(`Users/${currentUser.uid}/stats/totalLikes`).set(totalLikes);
         setStats(prev => ({
@@ -93,13 +91,11 @@ export default function SellerDashboard() {
       }
     });
 
-    // Fetch analytics data
     analyticsRef.on('value', (snapshot) => {
       const data = snapshot.val();
       if (data) {
         setAnalyticsData(data);
       } else {
-        // Initialize analytics if they don't exist
         const initialData = generateInitialAnalytics();
         database.ref(`Users/${currentUser.uid}/analytics`).set(initialData);
         setAnalyticsData(initialData);
@@ -113,7 +109,6 @@ export default function SellerDashboard() {
     };
   }, [currentUser]);
 
-  // Generate sample data for the last 7 days
   const generateInitialAnalytics = () => {
     const last7Days = [...Array(7)].map((_, i) => {
       const d = new Date();
@@ -287,11 +282,11 @@ export default function SellerDashboard() {
       };
 
       if (editingListing) {
-        // When updating, preserve existing data that shouldn't change
+
         const updateData = {
           ...listingData,
-          likes: editingListing.likes || 0, // Preserve existing likes
-          createdAt: editingListing.createdAt // Preserve original creation date
+          likes: editingListing.likes || 0, 
+          createdAt: editingListing.createdAt 
         };
 
         // Update existing listing
@@ -309,7 +304,6 @@ export default function SellerDashboard() {
         console.log('Successfully created new listing');
       }
 
-      // Reset form
       setNewListing({
         title: '',
         description: '',
@@ -337,7 +331,7 @@ export default function SellerDashboard() {
     }
   };
 
-  // Update the useEffect for analytics
+
   useEffect(() => {
     if (!currentUser) return;
 
@@ -346,57 +340,48 @@ export default function SellerDashboard() {
 
     const fetchAnalytics = async () => {
       try {
-        // Get all listings for this seller
         const listingsSnapshot = await listingsRef.once('value');
         const listingsData = listingsSnapshot.val() || {};
 
-        // Get today's date in local timezone
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-        // Generate dates for last 7 days ending today
         const last7Days = [...Array(7)].map((_, i) => {
           const date = new Date(today);
-          date.setDate(today.getDate() - 6 + i); // Start from 6 days ago up to today
+          date.setDate(today.getDate() - 6 + i);
           const year = date.getFullYear();
           const month = String(date.getMonth() + 1).padStart(2, '0');
           const day = String(date.getDate()).padStart(2, '0');
           return `${year}-${month}-${day}`;
         });
 
-        // Initialize analytics data
         const analytics = {
           views: last7Days.map(date => ({ date, count: 0 })),
           likes: last7Days.map(date => ({ date, count: 0 }))
         };
 
-        // Calculate total likes and views for each day
         Object.values(listingsData).forEach(listing => {
           if (listing.likes || listing.views) {
-            // Get the listing's date in local timezone
-            const listingDate = new Date();
-            const year = listingDate.getFullYear();
-            const month = String(listingDate.getMonth() + 1).padStart(2, '0');
-            const day = String(listingDate.getDate()).padStart(2, '0');
-            const dateStr = `${year}-${month}-${day}`;
-            
-            // Find the corresponding day in our analytics
-            const dayIndex = last7Days.indexOf(dateStr);
-            
-            if (dayIndex !== -1) {
-              // Add likes if they exist
-              if (listing.likes) {
-                analytics.likes[dayIndex].count += listing.likes || 0;
+            if (listing.views && listing.viewedAt) {
+              const viewDate = new Date(listing.viewedAt);
+              const viewDateStr = `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, '0')}-${String(viewDate.getDate()).padStart(2, '0')}`;
+              const viewDayIndex = last7Days.indexOf(viewDateStr);
+              if (viewDayIndex !== -1) {
+                analytics.views[viewDayIndex].count += listing.views || 0;
               }
-              // Add views if they exist
-              if (listing.views) {
-                analytics.views[dayIndex].count += listing.views || 0;
+            }
+
+            if (listing.likes && listing.updatedAt) {
+              const likeDate = new Date(listing.updatedAt);
+              const likeDateStr = `${likeDate.getFullYear()}-${String(likeDate.getMonth() + 1).padStart(2, '0')}-${String(likeDate.getDate()).padStart(2, '0')}`;
+              const likeDayIndex = last7Days.indexOf(likeDateStr);
+              if (likeDayIndex !== -1) {
+                analytics.likes[likeDayIndex].count += listing.likes || 0;
               }
             }
           }
         });
 
-        // Update analytics in Firebase and local state
         await analyticsRef.set(analytics);
         setAnalyticsData(analytics);
       } catch (error) {
@@ -404,7 +389,6 @@ export default function SellerDashboard() {
       }
     };
 
-    // Initial fetch
     fetchAnalytics();
 
     // Set up listeners for real-time updates
@@ -415,7 +399,7 @@ export default function SellerDashboard() {
     };
   }, [currentUser]);
 
-  // Add view tracking function
+
   const trackView = async (listingId) => {
     if (!currentUser) return;
 

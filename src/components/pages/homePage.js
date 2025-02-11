@@ -9,6 +9,7 @@ import HeroSection from '../HeroSection';
 import Cards from '../Cards';
 import Slider from '../Slider';
 import SellerCards from '../SellerCards';
+import firebase from 'firebase/compat/app';
 
 const filterOptions = ["Available", "Halal", "Spicy", "Bedok"];
 
@@ -215,7 +216,7 @@ function HomePage() {
         }
 
         // Update timestamp
-        await database.ref(`listings/${sellerId}/items/${listingId}/updatedAt`).set(Date.now());
+        await database.ref(`listings/${sellerId}/items/${listingId}/updatedAt`).set(firebase.database.ServerValue.TIMESTAMP);
       } else {
         // Like
         await userLikeRef.set(true);
@@ -244,7 +245,7 @@ function HomePage() {
         }
 
         // Update timestamp
-        await database.ref(`listings/${sellerId}/items/${listingId}/updatedAt`).set(Date.now());
+        await database.ref(`listings/${sellerId}/items/${listingId}/updatedAt`).set(firebase.database.ServerValue.TIMESTAMP);
       }
 
     } catch (error) {
@@ -261,10 +262,13 @@ function HomePage() {
   const handleListingClick = async (listing) => {
     setSelectedListing(listing);
     
-    // Track view
+    // Track view with timestamp
     try {
       const listingRef = database.ref(`listings/${listing.sellerId}/items/${listing.id}`);
-      await listingRef.child('views').transaction(views => (views || 0) + 1);
+      await listingRef.update({
+        views: firebase.database.ServerValue.increment(1),
+        viewedAt: firebase.database.ServerValue.TIMESTAMP
+      });
     } catch (error) {
       console.error('Error tracking view:', error);
     }
